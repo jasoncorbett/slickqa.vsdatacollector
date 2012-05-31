@@ -20,7 +20,7 @@ using System.Runtime.Serialization;
 namespace SlickSharp
 {
 	[DataContract]
-	class Result
+	class Result : JsonObject<Result>, IJsonObject
 	{
 		[DataMember(Name = "attributes")]
 		public Dictionary<String, String> Attributes;
@@ -81,6 +81,5 @@ namespace SlickSharp
 
 		[DataMember(Name = "testrun")]
 		public String TestRun;
-
 	}
 }

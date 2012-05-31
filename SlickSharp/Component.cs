@@ -19,7 +19,7 @@ using System.Runtime.Serialization;
 namespace SlickSharp
 {
 	[DataContract]
-	public class Component
+	public class Component :JsonObject<Component>, IJsonObject
 	{
 		[DataMember(Name = "code")]
 		public String Code;

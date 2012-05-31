@@ -19,7 +19,7 @@ using System.Runtime.Serialization;
 namespace SlickSharp
 {
 	[DataContract]
-	internal class Testcase
+	internal sealed class Testcase : JsonObject<Testcase>, IJsonObject
 	{
 		[DataMember(Name = "automationId")]
 		public String AutomationId;
@@ -35,6 +35,5 @@ namespace SlickSharp
 
 		[DataMember(Name = "testcaseId")]
 		public String Id;
-
 	}
 }

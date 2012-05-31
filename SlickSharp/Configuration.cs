@@ -20,7 +20,7 @@ using System.Runtime.Serialization;
 namespace SlickSharp
 {
 	[DataContract]
-	public class Configuration
+	public class Configuration : JsonObject<Configuration>, IJsonObject
 	{
 		[DataMember(Name = "configurationData")]
 		public Dictionary<String, String> ConfigurationData;
