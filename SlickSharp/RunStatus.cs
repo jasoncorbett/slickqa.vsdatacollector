@@ -13,10 +13,14 @@
  * limitations under the License.
  */
 
+using System.Runtime.Serialization;
+
 namespace SlickSharp
 {
+	[DataContract]
 	public enum RunStatus
 	{
+		[EnumMember]
 		TO_BE_RUN,
 	}
 }

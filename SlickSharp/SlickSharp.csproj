@@ -45,10 +45,12 @@
     <Compile Include="Component.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="ConfigurationType.cs" />
+    <Compile Include="DataDrivenProperty.cs" />
+    <Compile Include="DataExtension.cs" />
     <Compile Include="IJsonObject.cs" />
     <Compile Include="JsonObject.cs" />
+    <Compile Include="ListApiAttribute.cs" />
     <Compile Include="Project.cs" />
-    <Compile Include="Projects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Release.cs" />
     <Compile Include="Result.cs" />
@@ -56,6 +58,7 @@
     <Compile Include="ServerConfig.cs" />
     <Compile Include="Status.cs" />
     <Compile Include="TestCase.cs" />
+    <Compile Include="Utility\LinkedHashMap.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

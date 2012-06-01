@@ -13,56 +13,113 @@
  * limitations under the License.
  */
 
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 
 namespace SlickSharp
 {
+	[DataContract]
 	public abstract class JsonObject<T> where T : class, IJsonObject
 	{
 		public static T ReadFromStream(Stream stream)
 		{
-			var ser = new DataContractJsonSerializer(typeof(T));
+			var ser = new DataContractJsonSerializer(typeof(T), string.Empty);
 			return (T)ser.ReadObject(stream);
 		}
 
-		public void WriteToStream(Stream stream)
+		public static List<T> ReadListFromStream(Stream stream)
 		{
-			var ser = new DataContractJsonSerializer(typeof(T));
-			ser.WriteObject(stream, this);
+			var ser = new DataContractJsonSerializer(typeof(List<T>));
+			return (List<T>)ser.ReadObject(stream);
 		}
 
-		public static T Get()
+		private byte[] ConvertToByteBuffer()
 		{
-			var relUrl = ServerConfig.ObjectUri(typeof(T));
-			var httpWebRequest = (HttpWebRequest)WebRequest.Create(ServerConfig.BaseUrl + relUrl);
-			httpWebRequest.ContentType = "application/json";
-			httpWebRequest.Method = "GET";
-
-			using (var response = (HttpWebResponse)httpWebRequest.GetResponse())
+			using (var tempStream = new MemoryStream())
 			{
-				using (var stream = response.GetResponseStream())
+				var ser = new DataContractJsonSerializer(typeof(T));
+				ser.WriteObject(tempStream, this);
+				return tempStream.GetBuffer();
+			}
+		}
+
+		public T Get()
+		{
+			var type = typeof(T);
+			var attributes = type.GetCustomAttributes(typeof(ListApiAttribute), true);
+			if (attributes.Length != 0)
+			{
+				var relUrl = ((ListApiAttribute)attributes[0]).Uri; //TODO: Fix this URL handling.
+				var uri = new Uri(string.Format("{0}/{1}", ServerConfig.BaseUri, relUrl));
+				var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
+				httpWebRequest.ContentType = "application/json";
+				httpWebRequest.Method = "GET";
+
+				using (var response = (HttpWebResponse)httpWebRequest.GetResponse())
 				{
-					return ReadFromStream(stream);
+					using (var stream = response.GetResponseStream())
+					{
+						return ReadFromStream(stream);
+					}
 				}
 			}
+			return default(T);
+		}
+
+		public static List<T> GetList()
+		{
+			var type = typeof(T);
+			var attributes = type.GetCustomAttributes(typeof(ListApiAttribute), true);
+			if (attributes.Length != 0)
+			{
+				var relUrl = ((ListApiAttribute)attributes[0]).Uri; //TODO: Fix this URL handling.
+				var uri = new Uri(string.Format("{0}/{1}", ServerConfig.BaseUri, relUrl));
+				var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
+				httpWebRequest.ContentType = "application/json";
+				httpWebRequest.Method = "GET";
+
+				using (var response = (HttpWebResponse)httpWebRequest.GetResponse())
+				{
+					using (var stream = response.GetResponseStream())
+					{
+						return ReadListFromStream(stream);
+					}
+				}
+			}
+			return new List<T>();
 		}
 
 		public void Post()
 		{
-			var relUrl = ServerConfig.ObjectUri(typeof(T));
-			var httpWebRequest = (HttpWebRequest)WebRequest.Create(ServerConfig.BaseUrl + relUrl);
+			var type = typeof(T);
+			var attributes = type.GetCustomAttributes(typeof(ListApiAttribute), true);
+			if (attributes.Length == 0)
+			{
+				return;
+			}
+			var relUrl = ((ListApiAttribute)attributes[0]).Uri; //TODO: Fix this URL handling.
+			var uri = new Uri(string.Format("{0}/{1}", ServerConfig.BaseUri, relUrl));
+			var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
 			httpWebRequest.ContentType = "application/json";
 			httpWebRequest.Method = "POST";
+			var body = ConvertToByteBuffer();
+			httpWebRequest.ContentLength = body.Length;
 			using (var stream = httpWebRequest.GetRequestStream())
 			{
-				WriteToStream(stream);
+				stream.Write(body, 0, body.Length);
 			}
 			using (var response = (HttpWebResponse)httpWebRequest.GetResponse())
 			{
 				using (var stream = response.GetResponseStream())
 				{
+					using (TextReader r = new StreamReader(stream))
+					{
+						Console.WriteLine(r.ReadToEnd());
+					}
 				}
 			}
 		}

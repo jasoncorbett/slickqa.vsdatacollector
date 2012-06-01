@@ -16,14 +16,52 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using SlickSharp.Utility;
 
 namespace SlickSharp
 {
 	[DataContract]
+	[ListApi("projects")]
 	public class Project : JsonObject<Project>, IJsonObject
 	{
+		public Project()
+		{
+			Configuration = new Configuration();
+			Releases = new List<Release>();
+			Tags = new List<string>();
+			Attributes = new LinkedHashMap<string>();
+			AutomationTools = new List<string>();
+			Components = new List<Component>();
+			DataDrivenProperties = new List<DataDrivenProperty>();
+			Extensions = new List<DataExtension<Project>>();
+		}
+
+		[DataMember(Name = "id")]
+		public String Id; //TODO: Possibly org.bson.types.ObjectId compatible
+
+		[DataMember(Name = "name")]
+		public String Name;
+
+		[DataMember(Name = "description")]
+		public String Description;
+
+		[DataMember(Name = "configuration")]
+		public Configuration Configuration;
+
+		[DataMember(Name = "defaultRelease")]
+		public String DefaultRelease;
+
+		[DataMember(Name = "releases")]
+		public List<Release> Releases;
+
+		[DataMember(Name = "lastUpdated")]
+		public long LastUpdated; //TODO: java.util.Date;
+
+		[DataMember(Name = "tags")]
+		public List<String> Tags;
+
 		[DataMember(Name = "attributes")]
-		public Dictionary<String, String> Attributes;
+		public LinkedHashMap<String> Attributes;
 
 		[DataMember(Name = "automationTools")]
 		public List<String> AutomationTools;
@@ -31,37 +69,13 @@ namespace SlickSharp
 		[DataMember(Name = "components")]
 		public List<Component> Components;
 
-		[DataMember(Name = "configuration")]
-		public Configuration Configuration;
-
 		[DataMember(Name = "datadrivenProperties")]
-		public List<String> DataDrivenProperties;
+		public List<DataDrivenProperty> DataDrivenProperties;
+
+		[DataMember(Name = "extensions")]
+		public List<DataExtension<Project>> Extensions;
 
 		[DataMember(Name = "defaultBuildName")]
 		public String DefaultBuildName;
-
-		[DataMember(Name = "defaultRelease")]
-		public String DefaultRelease;
-
-		[DataMember(Name = "description")]
-		public String Description;
-
-		[DataMember(Name = "extensions")]
-		public List<String> Extensions;
-
-		[DataMember(Name = "id")]
-		public String Id; //TODO: Possibly GUID
-
-		[DataMember(Name = "lastUpdated")]
-		public int LastUpdated;
-
-		[DataMember(Name = "name")]
-		public String Name;
-
-		[DataMember(Name = "releases")]
-		public List<Release> Releases;
-
-		[DataMember(Name = "tags")]
-		public List<String> Tags;
 	}
 }

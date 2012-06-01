@@ -12,47 +12,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-using System.Diagnostics;
 
 namespace SlickSharp
 {
 	public static class ServerConfig
 	{
-		public static string BaseUrl { get; set; }
+		public static string SlickHost { private get; set; }
+		public static string SitePath { private get; set; }
+		public static int Port { private get; set; }
 
-		public static string ObjectUri(Type type)
+		public static Uri BaseUri
 		{
-			Debug.Assert(type != null, "type != null");
-			if (type == typeof(Build))
-			{
-				return String.Empty;
-			}
-			if (type == typeof(Component))
-			{
-				return String.Empty;
-			}
-			if (type == typeof(Configuration))
-			{
-				return String.Empty;
-			}
-			if (type == typeof(Project))
-			{
-				return String.Empty;
-			}
-			if (type == typeof(Release))
-			{
-				return String.Empty;
-			}
-			if (type == typeof(Result))
-			{
-				return String.Empty;
-			}
-			if (type == typeof(Testcase))
-			{
-				return String.Empty;
-			}
-			return String.Empty;
+			get { return new Uri(String.Format("http://{0}:{1}/{2}/api", SlickHost, Port, SitePath)); }
 		}
 	}
 }

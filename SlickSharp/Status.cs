@@ -13,10 +13,14 @@
  * limitations under the License.
  */
 
+using System.Runtime.Serialization;
+
 namespace SlickSharp
 {
+	[DataContract]
 	enum Status
 	{
+		[EnumMember]
 		NO_RESULT,
 	}
 }
