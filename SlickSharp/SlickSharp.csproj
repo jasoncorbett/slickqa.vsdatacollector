@@ -47,6 +47,7 @@
     <Compile Include="ConfigurationType.cs" />
     <Compile Include="DataDrivenProperty.cs" />
     <Compile Include="DataExtension.cs" />
+    <Compile Include="GetAttribute.cs" />
     <Compile Include="IJsonObject.cs" />
     <Compile Include="JsonObject.cs" />
     <Compile Include="ListApiAttribute.cs" />

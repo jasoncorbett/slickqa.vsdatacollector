@@ -20,8 +20,15 @@ using System.Runtime.Serialization;
 namespace SlickSharp
 {
 	[DataContract]
+	[ListApi("projects/{ParentId}/releases")]
+	[Get("", "Id", 0)]
+	[Get("byname", "Name", 1)]
 	public class Release : JsonObject<Release>, IJsonObject
 	{
+		public Release()
+		{
+			Builds = new List<Build>();
+		}
 		[DataMember(Name = "builds")]
 		public List<Build> Builds;
 
@@ -36,5 +43,8 @@ namespace SlickSharp
 
 		[DataMember(Name = "target")]
 		public String Target;
+
+		[IgnoreDataMember]
+		public string ParentId { get; set; }
 	}
 }

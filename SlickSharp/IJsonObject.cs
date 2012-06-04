@@ -17,5 +17,6 @@ namespace SlickSharp
 {
 	public interface IJsonObject
 	{
+		string ParentId { get; set; }
 	}
 }

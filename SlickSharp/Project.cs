@@ -22,6 +22,8 @@ namespace SlickSharp
 {
 	[DataContract]
 	[ListApi("projects")]
+	[Get("", "Id", 0)]
+	[Get("byname", "Name", 1)]
 	public class Project : JsonObject<Project>, IJsonObject
 	{
 		public Project()
@@ -77,5 +79,11 @@ namespace SlickSharp
 
 		[DataMember(Name = "defaultBuildName")]
 		public String DefaultBuildName;
+
+		public string ParentId
+		{
+			get { return String.Empty; }
+			set {}
+		}
 	}
 }

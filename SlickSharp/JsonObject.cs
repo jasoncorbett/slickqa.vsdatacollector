@@ -16,9 +16,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
+using System.Reflection;
 
 namespace SlickSharp
 {
@@ -27,13 +29,14 @@ namespace SlickSharp
 	{
 		public static T ReadFromStream(Stream stream)
 		{
-			var ser = new DataContractJsonSerializer(typeof(T), string.Empty);
+			var ser = new DataContractJsonSerializer(typeof(T));
 			return (T)ser.ReadObject(stream);
 		}
 
 		public static List<T> ReadListFromStream(Stream stream)
 		{
 			var ser = new DataContractJsonSerializer(typeof(List<T>));
+		   
 			return (List<T>)ser.ReadObject(stream);
 		}
 
@@ -47,18 +50,60 @@ namespace SlickSharp
 			}
 		}
 
+		public string normalizePath(string listPath)
+		{
+			return listPath.Replace("{ParentId}",((IJsonObject)this).ParentId);
+		}
 		public T Get()
 		{
 			var type = typeof(T);
-			var attributes = type.GetCustomAttributes(typeof(ListApiAttribute), true);
-			if (attributes.Length != 0)
-			{
-				var relUrl = ((ListApiAttribute)attributes[0]).Uri; //TODO: Fix this URL handling.
-				var uri = new Uri(string.Format("{0}/{1}", ServerConfig.BaseUri, relUrl));
-				var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
-				httpWebRequest.ContentType = "application/json";
-				httpWebRequest.Method = "GET";
+			var listAttributes = type.GetCustomAttributes(typeof(ListApiAttribute), true);
+			var apiList = type.GetCustomAttributes(typeof(GetAttribute), true);
+			string listPath = null;
 
+			if (listAttributes.Length != 0)
+			{
+				listPath = ((ListApiAttribute)listAttributes[0]).Uri;
+				listPath = normalizePath(listPath);
+			}
+
+			string getPath = null;
+			var getApis = apiList.OrderBy(a => { return ((GetAttribute)a).Index; }).Select(b => (GetAttribute)b).ToList();
+			foreach (var item in getApis)
+			{
+				var property = this.GetType().GetProperty(item.PropertyName);
+				if (property != null)
+				{
+					var propVal = property.GetValue(this, null);
+					var constructor = property.PropertyType.GetConstructor(System.Type.EmptyTypes);
+					if (ValidItem(propVal, constructor))
+					{
+						getPath = item.ApiPath + "/" + propVal;
+						break;
+					}
+				}
+				else
+				{
+					var field = this.GetType().GetField(item.PropertyName);
+					var propVal = field.GetValue(this);
+					var constructor = field.FieldType.GetConstructor(System.Type.EmptyTypes);
+					if (ValidItem(propVal, constructor))
+					{
+						getPath = item.ApiPath + "/" + propVal;
+						break;
+					}
+				}
+			}
+
+			var fullGetPath = listPath + "/" + getPath;
+
+			var uri = new Uri(String.Format("{0}/{1}", ServerConfig.BaseUri, fullGetPath));
+			var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
+			httpWebRequest.ContentType = "application/json";
+			httpWebRequest.Method = "GET";
+
+			try
+			{
 				using (var response = (HttpWebResponse)httpWebRequest.GetResponse())
 				{
 					using (var stream = response.GetResponseStream())
@@ -67,7 +112,26 @@ namespace SlickSharp
 					}
 				}
 			}
-			return default(T);
+			catch (Exception e)
+			{
+				return null;
+			}
+		}
+
+		private bool ValidItem(object propVal, ConstructorInfo constructor)
+		{
+			if (propVal != null)
+			{
+				if (constructor == null)
+				{
+					return true;
+				}
+				else if (propVal != constructor.Invoke(new Object[0]))
+				{
+					return true;
+				}
+			}
+			return false;
 		}
 
 		public static List<T> GetList()
@@ -93,15 +157,16 @@ namespace SlickSharp
 			return new List<T>();
 		}
 
-		public void Post()
+		public T Post()
 		{
 			var type = typeof(T);
 			var attributes = type.GetCustomAttributes(typeof(ListApiAttribute), true);
 			if (attributes.Length == 0)
 			{
-				return;
+				return null;
 			}
 			var relUrl = ((ListApiAttribute)attributes[0]).Uri; //TODO: Fix this URL handling.
+			relUrl = normalizePath(relUrl);
 			var uri = new Uri(string.Format("{0}/{1}", ServerConfig.BaseUri, relUrl));
 			var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
 			httpWebRequest.ContentType = "application/json";
@@ -116,10 +181,7 @@ namespace SlickSharp
 			{
 				using (var stream = response.GetResponseStream())
 				{
-					using (TextReader r = new StreamReader(stream))
-					{
-						Console.WriteLine(r.ReadToEnd());
-					}
+					return ReadFromStream(stream);
 				}
 			}
 		}

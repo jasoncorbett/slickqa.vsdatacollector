@@ -35,5 +35,8 @@ namespace SlickSharp
 
 		[DataMember(Name = "testcaseId")]
 		public String Id;
+
+		[IgnoreDataMember]
+		string IJsonObject.ParentId { get; set; }
 	}
 }

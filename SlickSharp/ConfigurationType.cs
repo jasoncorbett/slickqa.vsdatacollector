@@ -18,7 +18,7 @@ using System.Runtime.Serialization;
 namespace SlickSharp
 {
 	[DataContract(Name = "configurationType")]
-	public enum ConfigurationType
+	public enum ConfigurationType 
 	{
 		[EnumMember]
 		PROJECT,

@@ -26,7 +26,7 @@ namespace SlickSharp
 		public Dictionary<String, String> ConfigurationData;
 
 		[DataMember(Name = "configurationType")]
-		public ConfigurationType ConfigurationType;
+		public string ConfigurationType;
 
 		[DataMember(Name = "filename")]
 		public String Filename;
@@ -36,5 +36,8 @@ namespace SlickSharp
 
 		[DataMember(Name = "name")]
 		public String Name;
+
+		[IgnoreDataMember]
+		string IJsonObject.ParentId { get; set; }
 	}
 }
