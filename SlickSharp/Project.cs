@@ -79,11 +79,5 @@ namespace SlickSharp
 
 		[DataMember(Name = "defaultBuildName")]
 		public String DefaultBuildName;
-
-		public string ParentId
-		{
-			get { return String.Empty; }
-			set {}
-		}
 	}
 }

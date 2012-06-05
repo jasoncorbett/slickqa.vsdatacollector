@@ -15,10 +15,14 @@
 
 using System;
 using System.Runtime.Serialization;
+using System.Net;
 
 namespace SlickSharp
 {
 	[DataContract]
+	[ListApi("projects/{ProjectId}/releases/{ReleaseId}/builds")]
+	[Get("", "Id", 0)]
+	[Get("byname", "Name", 1)]
 	public class Build :JsonObject<Build>, IJsonObject
 	{
 		[DataMember(Name = "built")]
@@ -31,6 +35,18 @@ namespace SlickSharp
 		public String Name;
 
 		[IgnoreDataMember]
-		string IJsonObject.ParentId { get; set; }
+		public string ProjectId { get; set; }
+
+		[IgnoreDataMember]
+		public string ReleaseId { get; set; }
+
+		public void SetDefaultBuild()
+		{
+			var uri = new Uri(String.Format("{0}/{1}/{2}/{3}/{4}/{5}/{6}", ServerConfig.BaseUri.ToString(), "projects", ProjectId, "releases", ReleaseId, "setdefaultbuild", Id));
+			var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
+			httpWebRequest.ContentType = "application/json";
+			httpWebRequest.Method = "GET";
+			using (var response = (HttpWebResponse)httpWebRequest.GetResponse()) { }
+		}
 	}
 }

@@ -21,6 +21,7 @@ using System.Net;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace SlickSharp
 {
@@ -40,7 +41,7 @@ namespace SlickSharp
 			return (List<T>)ser.ReadObject(stream);
 		}
 
-		private byte[] ConvertToByteBuffer()
+		protected byte[] ConvertToByteBuffer()
 		{
 			using (var tempStream = new MemoryStream())
 			{
@@ -52,8 +53,34 @@ namespace SlickSharp
 
 		public string normalizePath(string listPath)
 		{
-			return listPath.Replace("{ParentId}",((IJsonObject)this).ParentId);
+			Regex r = new Regex("{([^/]+)}");
+			var matches = r.Matches(listPath);
+			foreach (Match m in matches)
+			{
+				var memberName = m.Groups[1].Captures[0].Value;
+				var memberValue = GetMemberValue(memberName);
+				listPath = listPath.Replace(m.Value, memberValue);
+			}
+			return listPath;
 		}
+
+		private string GetMemberValue(string memberName)
+		{
+
+			var field = this.GetType().GetField(memberName);
+			var prop = this.GetType().GetProperty(memberName);
+
+			if (field != null)
+			{
+				return field.GetValue(this).ToString();
+			}
+			if (prop != null)
+			{
+				return prop.GetValue(this, null).ToString();
+			}
+			return String.Empty;
+		}
+
 		public T Get()
 		{
 			var type = typeof(T);
