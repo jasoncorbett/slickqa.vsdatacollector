@@ -22,7 +22,6 @@ namespace SlickSharp
 	[DataContract]
 	[ListApi("projects/{ProjectId}/releases/{ReleaseId}/builds")]
 	[Get("", "Id", 0)]
-	[Get("byname", "Name", 1)]
 	public class Build :JsonObject<Build>, IJsonObject
 	{
 		[DataMember(Name = "built")]

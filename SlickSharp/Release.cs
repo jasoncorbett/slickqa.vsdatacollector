@@ -23,7 +23,6 @@ namespace SlickSharp
 	[DataContract]
 	[ListApi("projects/{ProjectId}/releases")]
 	[Get("", "Id", 0)]
-	[Get("byname", "Name", 1)]
 	public class Release : JsonObject<Release>, IJsonObject
 	{
 		public Release()
