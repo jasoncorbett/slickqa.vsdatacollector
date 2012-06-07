@@ -1,4 +1,4 @@
-/* Copyright 2012 AccessData Group, LLC.
+﻿/* Copyright 2012 AccessData Group, LLC.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,27 @@
  * limitations under the License.
  */
 
+using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
+using SlickSharp.Utility;
 
 namespace SlickSharp
 {
 	[DataContract]
-	public enum Status
+	public class ResultReference : JsonObject<ResultReference>, IJsonObject
 	{
-		[EnumMember]
-		PASS,
-		FAIL,
-		NOT_TESTED,
-		NO_RESULT,
-		BROKEN_TEST,
-		SKIPPED,
-		CANCELLED
+
+		[DataMember(Name = "resultId")]
+		public String Id;
+
+		[DataMember(Name = "status")]
+		public String ResultStatus;
+
+		[DataMember(Name = "recorded")]
+		public long DateRecorded;
+
+		[DataMember(Name = "build")]
+		public BuildReference build;
 	}
 }

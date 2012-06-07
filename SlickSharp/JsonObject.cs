@@ -41,7 +41,7 @@ namespace SlickSharp
 			return (List<T>)ser.ReadObject(stream);
 		}
 
-		protected byte[] ConvertToByteBuffer()
+		public byte[] ConvertToByteBuffer()
 		{
 			using (var tempStream = new MemoryStream())
 			{

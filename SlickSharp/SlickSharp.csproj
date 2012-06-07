@@ -46,6 +46,10 @@
     <Compile Include="Configuration.cs" />
     <Compile Include="ConfigurationType.cs" />
     <Compile Include="BuildReference.cs" />
+    <Compile Include="ConfigurationReference.cs" />
+    <Compile Include="ResultReference.cs" />
+    <Compile Include="TestRunReference.cs" />
+    <Compile Include="TestCaseQuery.cs" />
     <Compile Include="TestCaseReference.cs" />
     <Compile Include="ReleaseReference.cs" />
     <Compile Include="ProjectReference.cs" />

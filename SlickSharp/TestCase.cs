@@ -15,12 +15,16 @@
 
 using System;
 using System.Runtime.Serialization;
+using System.Net;
+using System.Collections.Generic;
 
 namespace SlickSharp
 {
 	[DataContract]
-	internal sealed class Testcase : JsonObject<Testcase>, IJsonObject
+	[ListApi("testcases")]
+	public class Testcase : JsonObject<Testcase>, IJsonObject
 	{
+
 		[DataMember(Name = "automationId")]
 		public String AutomationId;
 
@@ -33,7 +37,34 @@ namespace SlickSharp
 		[DataMember(Name = "name")]
 		public String Name;
 
-		[DataMember(Name = "testcaseId")]
+		[DataMember(Name = "id")]
 		public String Id;
+
+		[DataMember(Name = "project")]
+		public ProjectReference ProjectReference;
+
+		public static Testcase GetTestCaseByAutomationId(string AutomationId)
+		{
+			var uri = new Uri(string.Format("{0}/{1}{2}", ServerConfig.BaseUri, "testcases?automationId=", AutomationId));
+			var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
+			httpWebRequest.ContentType = "application/json";
+			httpWebRequest.Method = "GET";
+
+			try
+			{
+				using (var response = (HttpWebResponse)httpWebRequest.GetResponse())
+				{
+					using (var stream = response.GetResponseStream())
+					{
+						return ReadListFromStream(stream)[0];  // slick returns a list in case there are more than one so I will return the first one...
+					}
+				}
+			}
+			catch
+			{
+				return null;
+			}
+		}
+
 	}
 }

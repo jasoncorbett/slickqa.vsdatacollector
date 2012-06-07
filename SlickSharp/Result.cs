@@ -20,19 +20,23 @@ using System.Runtime.Serialization;
 namespace SlickSharp
 {
 	[DataContract]
-	class Result : JsonObject<Result>, IJsonObject
+	[ListApi("results")]
+	public class Result : JsonObject<Result>, IJsonObject
 	{
+		[DataMember(Name = "testrun")]
+		public TestRunReference TestRunReference;
+
 		[DataMember(Name = "attributes")]
 		public Dictionary<String, String> Attributes;
 
 		[DataMember(Name = "build")]
-		public String Build;
+		public BuildReference BuildReference;
 
 		[DataMember(Name = "component")]
 		public Component Component;
 
 		[DataMember(Name = "config")]
-		public Configuration Config;
+		public ConfigurationReference ConfigurationReference;
 
 		[DataMember(Name = "configurationOverride")]
 		public String ConfigurationOverride;
@@ -44,7 +48,7 @@ namespace SlickSharp
 		public List<String> Files;
 
 		[DataMember(Name = "history")]
-		public String History;
+		public List<ResultReference> History;
 
 		[DataMember(Name = "hostname")]
 		public String Hostname;
@@ -56,7 +60,7 @@ namespace SlickSharp
 		public String Log;
 
 		[DataMember(Name = "project")]
-		public Project Project;
+		public ProjectReference ProjectReference;
 
 		[DataMember(Name = "reason")]
 		public String Reason;
@@ -65,21 +69,19 @@ namespace SlickSharp
 		public String Recorded;
 
 		[DataMember(Name = "release")]
-		public Release Release;
+		public ReleaseReference ReleaseReference;
 
 		[DataMember(Name = "runlength")]
 		public String RunLength;
 
 		[DataMember(Name = "runstatus")]
-		public RunStatus RunStatus;
+		public String RunStatus;
 
 		[DataMember(Name = "status")]
-		public Status Status;
+		public String Status;
 
 		[DataMember(Name = "testcase")]
-		public Testcase Testcase;
+		public TestCaseReference TestCaseReference;
 
-		[DataMember(Name = "testrun")]
-		public String TestRun;
 	}
 }
