@@ -33,7 +33,7 @@ namespace SlickSharp
 		public BuildReference BuildReference;
 
 		[DataMember(Name = "component")]
-		public Component Component;
+		public ComponentReference ComponentReference;
 
 		[DataMember(Name = "config")]
 		public ConfigurationReference ConfigurationReference;

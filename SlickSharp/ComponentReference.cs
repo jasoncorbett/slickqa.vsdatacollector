@@ -21,17 +21,17 @@ using SlickSharp.Utility;
 namespace SlickSharp
 {
 	[DataContract]
-	public class ConfigurationReference : JsonObject<ConfigurationReference>, IJsonObject
+	public class ComponentReference : JsonObject<ComponentReference>, IJsonObject
 	{
 
-		[DataMember(Name = "configId")]
-		public String ConfigId;
+		[DataMember(Name = "id")]
+		public String Id;
 
 		[DataMember(Name = "name")]
 		public String Name;
 
-		[DataMember(Name = "filename")]
-		public String FileName;
+		[DataMember(Name = "code")]
+		public String Code;
 
 	}
 }

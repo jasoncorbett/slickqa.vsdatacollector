@@ -29,6 +29,7 @@ namespace SlickSharp
 			ProjectReference = new ProjectReference();
 			ReleaseReference = new ReleaseReference();
 			BuildReference = new BuildReference();
+			ConfigurationReference = new ConfigurationReference();
 		}
 
 		[DataMember(Name = "id")]
@@ -37,15 +38,16 @@ namespace SlickSharp
 		[DataMember(Name = "name")]
 		public String Name;
 
-
 		[DataMember(Name = "project")]
 		public ProjectReference ProjectReference;
-
 
 		[DataMember(Name = "release")]
 		public ReleaseReference ReleaseReference;
 
 		[DataMember(Name = "build")]
 		public BuildReference BuildReference;
+
+		[DataMember(Name = "config")]
+		public ConfigurationReference ConfigurationReference;
 	}
 }

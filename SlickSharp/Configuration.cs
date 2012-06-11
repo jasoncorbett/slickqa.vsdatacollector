@@ -20,6 +20,7 @@ using System.Runtime.Serialization;
 namespace SlickSharp
 {
 	[DataContract]
+	[ListApi("configurations")]
 	public class Configuration : JsonObject<Configuration>, IJsonObject
 	{
 		[DataMember(Name = "configurationData")]
@@ -36,5 +37,17 @@ namespace SlickSharp
 
 		[DataMember(Name = "name")]
 		public String Name;
+
+		public static Configuration GetEnvironmentConfiguration(string name)
+		{
+			try
+			{
+				return GetList("configurations?configurationType=ENVIRONMENT&name=" + name)[0];
+			}
+			catch
+			{
+				return null;
+			}
+		}
 	}
 }

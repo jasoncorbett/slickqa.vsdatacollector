@@ -40,8 +40,14 @@ namespace SlickSharp
 		[DataMember(Name = "id")]
 		public String Id;
 
+		[DataMember(Name = "automated")]
+		public Boolean IsAutomated;
+
 		[DataMember(Name = "project")]
 		public ProjectReference ProjectReference;
+
+		[DataMember(Name = "component")]
+		public ComponentReference ComponentReference;
 
 		[DataMember(Name = "purpose")]
 		public String Purpose;

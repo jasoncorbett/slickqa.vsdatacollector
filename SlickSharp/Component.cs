@@ -19,6 +19,8 @@ using System.Runtime.Serialization;
 namespace SlickSharp
 {
 	[DataContract]
+	[ListApi("projects/{ProjectId}/components")]
+	[Get("", "Id", 0)]
 	public class Component :JsonObject<Component>, IJsonObject
 	{
 		[DataMember(Name = "code")]
@@ -32,5 +34,8 @@ namespace SlickSharp
 
 		[DataMember(Name = "name")]
 		public String Name;
+
+		[IgnoreDataMember]
+		public String ProjectId;
 	}
 }
