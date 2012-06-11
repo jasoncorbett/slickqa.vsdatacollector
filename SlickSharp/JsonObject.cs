@@ -184,6 +184,30 @@ namespace SlickSharp
 			return new List<T>();
 		}
 
+		public static List<T> GetList(string relUrl)
+		{
+			var type = typeof(T);
+			try
+			{
+				var uri = new Uri(string.Format("{0}/{1}", ServerConfig.BaseUri, relUrl));
+				var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
+				httpWebRequest.ContentType = "application/json";
+				httpWebRequest.Method = "GET";
+
+				using (var response = (HttpWebResponse)httpWebRequest.GetResponse())
+				{
+					using (var stream = response.GetResponseStream())
+					{
+						return ReadListFromStream(stream);
+					}
+				}
+			}
+			catch
+			{
+				return new List<T>();
+			}
+		}
+
 		public T Post()
 		{
 			var type = typeof(T);

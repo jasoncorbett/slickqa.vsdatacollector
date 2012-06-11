@@ -43,22 +43,17 @@ namespace SlickSharp
 		[DataMember(Name = "project")]
 		public ProjectReference ProjectReference;
 
+		[DataMember(Name = "purpose")]
+		public String Purpose;
+
+		[DataMember(Name = "deleted")]
+		public Boolean Deleted;
+
 		public static Testcase GetTestCaseByAutomationId(string AutomationId)
 		{
-			var uri = new Uri(string.Format("{0}/{1}{2}", ServerConfig.BaseUri, "testcases?automationId=", AutomationId));
-			var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
-			httpWebRequest.ContentType = "application/json";
-			httpWebRequest.Method = "GET";
-
 			try
 			{
-				using (var response = (HttpWebResponse)httpWebRequest.GetResponse())
-				{
-					using (var stream = response.GetResponseStream())
-					{
-						return ReadListFromStream(stream)[0];  // slick returns a list in case there are more than one so I will return the first one...
-					}
-				}
+				return GetList("testcases?automationId=" + AutomationId)[0];
 			}
 			catch
 			{
@@ -66,5 +61,16 @@ namespace SlickSharp
 			}
 		}
 
+		public static Testcase GetTestCaseByAutomationKey(string AutomationKey)
+		{
+			try
+			{
+				return GetList("testcases?automationKey=" + AutomationKey)[0];
+			}
+			catch
+			{
+				return null;
+			}
+		}
 	}
 }
