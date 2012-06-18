@@ -45,7 +45,7 @@ namespace SlickSharp
 		public String Extensions;
 
 		[DataMember(Name = "files")]
-		public List<String> Files;
+		public List<StoredFile> Files;
 
 		[DataMember(Name = "history")]
 		public List<ResultReference> History;
