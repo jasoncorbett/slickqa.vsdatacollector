@@ -28,6 +28,11 @@ namespace SlickSharp
 		[DataMember(Name = "name")]
 		public String Name;
 
+		public TestRunReference()
+		{
+			TestRunId = default(String);
+			Name = default(String);
+		}
 		public TestRunReference(TestRun testRun)
 		{
 			TestRunId = testRun.Id;

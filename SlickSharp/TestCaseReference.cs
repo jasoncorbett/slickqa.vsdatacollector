@@ -37,6 +37,16 @@ namespace SlickSharp
 		[DataMember(Name = "automationTool")]
 		public String AutomationTool;
 
+
+		public TestCaseReference()
+		{
+			Id = default(String);
+			Name = default(String);
+			AutomationId = default(String);
+			AutomationKey = default(String);
+			AutomationTool = default(String);
+		}
+
 		public TestCaseReference(Testcase testcase)
 		{
 			Id = testcase.Id;

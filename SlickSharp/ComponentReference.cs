@@ -31,7 +31,12 @@ namespace SlickSharp
 		[DataMember(Name = "code")]
 		public String Code;
 
-
+		public ComponentReference()
+		{
+			Id = default(String);
+			Name = default(String);
+			Code = default(String);
+		}
 		public ComponentReference(Component component)
 		{
 			Id = component.Id;

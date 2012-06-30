@@ -34,6 +34,14 @@ namespace SlickSharp
 		[DataMember(Name = "build")]
 		public BuildReference Build;
 
+		public ResultReference()
+		{
+			Id = default(String);
+			ResultStatus = default(String);
+			DateRecorded = default(long);
+			Build = default(BuildReference);
+		}
+
 		public ResultReference(Result result)
 		{
 			Id = result.Id;
