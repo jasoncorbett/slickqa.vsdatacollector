@@ -14,9 +14,7 @@
  */
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
-using SlickSharp.Utility;
 
 namespace SlickSharp
 {
@@ -34,6 +32,19 @@ namespace SlickSharp
 		public long DateRecorded;
 
 		[DataMember(Name = "build")]
-		public BuildReference build;
+		public BuildReference Build;
+
+		public ResultReference(Result result)
+		{
+			Id = result.Id;
+			ResultStatus = result.Status;
+			DateRecorded = Convert.ToInt64(result.Recorded);
+			Build = result.BuildReference;
+		}
+
+		public static implicit operator ResultReference(Result result)
+		{
+			return new ResultReference(result);
+		}
 	}
 }
