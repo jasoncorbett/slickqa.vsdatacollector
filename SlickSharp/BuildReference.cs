@@ -14,21 +14,34 @@
  */
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
-using SlickSharp.Utility;
 
 namespace SlickSharp
 {
 	[DataContract]
 	public class BuildReference : JsonObject<BuildReference>, IJsonObject
 	{
-
 		[DataMember(Name = "buildId")]
 		public String Id;
 
 		[DataMember(Name = "name")]
 		public String Name;
 
+		public BuildReference()
+		{
+			Id = default(String);
+			Name = default(String);
+		}
+
+		public BuildReference(Build build)
+		{
+			Id = build.Id;
+			Name = build.Name;
+		}
+
+		public static implicit operator BuildReference(Build build)
+		{
+			return new BuildReference(build);
+		}
 	}
 }

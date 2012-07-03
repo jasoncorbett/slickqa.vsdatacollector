@@ -48,8 +48,8 @@
     <Compile Include="BuildReference.cs" />
     <Compile Include="ConfigurationReference.cs" />
     <Compile Include="ComponentReference.cs" />
-    <Compile Include="StoredFile.cs" />
     <Compile Include="ResultReference.cs" />
+    <Compile Include="StoredFile.cs" />
     <Compile Include="TestRunReference.cs" />
     <Compile Include="TestCaseQuery.cs" />
     <Compile Include="TestCaseReference.cs" />
@@ -58,10 +58,10 @@
     <Compile Include="TestRun.cs" />
     <Compile Include="DataDrivenProperty.cs" />
     <Compile Include="DataExtension.cs" />
-    <Compile Include="GetAttribute.cs" />
+    <Compile Include="Attributes\GetAttribute.cs" />
     <Compile Include="IJsonObject.cs" />
     <Compile Include="JsonObject.cs" />
-    <Compile Include="ListApiAttribute.cs" />
+    <Compile Include="Attributes\ListApiAttribute.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Release.cs" />

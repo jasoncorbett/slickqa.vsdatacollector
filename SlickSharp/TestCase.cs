@@ -15,8 +15,6 @@
 
 using System;
 using System.Runtime.Serialization;
-using System.Net;
-using System.Collections.Generic;
 
 namespace SlickSharp
 {
@@ -55,11 +53,11 @@ namespace SlickSharp
 		[DataMember(Name = "deleted")]
 		public Boolean Deleted;
 
-		public static Testcase GetTestCaseByAutomationId(string AutomationId)
+		public static Testcase GetTestCaseByAutomationId(string automationId)
 		{
 			try
 			{
-				return GetList("testcases?automationId=" + AutomationId)[0];
+				return GetList("testcases?automationId=" + automationId)[0];
 			}
 			catch
 			{
@@ -67,11 +65,11 @@ namespace SlickSharp
 			}
 		}
 
-		public static Testcase GetTestCaseByAutomationKey(string AutomationKey)
+		public static Testcase GetTestCaseByAutomationKey(string automationKey)
 		{
 			try
 			{
-				return GetList("testcases?automationKey=" + AutomationKey)[0];
+				return GetList("testcases?automationKey=" + automationKey)[0];
 			}
 			catch
 			{

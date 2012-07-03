@@ -14,9 +14,7 @@
  */
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
-using SlickSharp.Utility;
 
 namespace SlickSharp
 {
@@ -33,5 +31,22 @@ namespace SlickSharp
 		[DataMember(Name = "code")]
 		public String Code;
 
+		public ComponentReference()
+		{
+			Id = default(String);
+			Name = default(String);
+			Code = default(String);
+		}
+		public ComponentReference(Component component)
+		{
+			Id = component.Id;
+			Name = component.Name;
+			Code = component.Code;
+		}
+
+		public static implicit operator ComponentReference(Component component)
+		{
+			return new ComponentReference(component);
+		}
 	}
 }

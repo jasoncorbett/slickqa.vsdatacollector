@@ -14,9 +14,7 @@
  */
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
-using SlickSharp.Utility;
 
 namespace SlickSharp
 {
@@ -39,5 +37,28 @@ namespace SlickSharp
 		[DataMember(Name = "automationTool")]
 		public String AutomationTool;
 
+
+		public TestCaseReference()
+		{
+			Id = default(String);
+			Name = default(String);
+			AutomationId = default(String);
+			AutomationKey = default(String);
+			AutomationTool = default(String);
+		}
+
+		public TestCaseReference(Testcase testcase)
+		{
+			Id = testcase.Id;
+			Name = testcase.Name;
+			AutomationId = testcase.AutomationId;
+			AutomationKey = testcase.AutomationKey;
+			AutomationTool = testcase.AutomationTool;
+		}
+
+		public static implicit operator TestCaseReference(Testcase testcase)
+		{
+			return new TestCaseReference(testcase);
+		}
 	}
 }

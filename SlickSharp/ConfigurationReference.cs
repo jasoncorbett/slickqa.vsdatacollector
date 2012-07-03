@@ -14,9 +14,7 @@
  */
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
-using SlickSharp.Utility;
 
 namespace SlickSharp
 {
@@ -33,5 +31,23 @@ namespace SlickSharp
 		[DataMember(Name = "filename")]
 		public String FileName;
 
+		public ConfigurationReference()
+		{
+			ConfigId = default(String);
+			Name = default(String);
+			FileName = default(String);
+		}
+
+		public ConfigurationReference(Configuration configuration)
+		{
+			ConfigId = configuration.Id;
+			Name = configuration.Name;
+			FileName = configuration.Filename;
+		}
+
+		public static implicit operator ConfigurationReference(Configuration configuration)
+		{
+			return new ConfigurationReference(configuration);
+		}
 	}
 }

@@ -41,11 +41,12 @@ namespace SlickSharp
 
 		public void SetDefaultBuild()
 		{
-			var uri = new Uri(String.Format("{0}/{1}/{2}/{3}/{4}/{5}/{6}", ServerConfig.BaseUri.ToString(), "projects", ProjectId, "releases", ReleaseId, "setdefaultbuild", Id));
+			var uri = new Uri(String.Format("{0}/{1}/{2}/{3}/{4}/{5}/{6}", ServerConfig.BaseUri, "projects", ProjectId, "releases", ReleaseId, "setdefaultbuild", Id));
 			var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
 			httpWebRequest.ContentType = "application/json";
 			httpWebRequest.Method = "GET";
-			using (var response = (HttpWebResponse)httpWebRequest.GetResponse()) { }
+			using (httpWebRequest.GetResponse())
+			{ }
 		}
 	}
 }

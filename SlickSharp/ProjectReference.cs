@@ -14,9 +14,7 @@
  */
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
-using SlickSharp.Utility;
 
 namespace SlickSharp
 {
@@ -30,5 +28,21 @@ namespace SlickSharp
 		[DataMember(Name = "name")]
 		public String Name;
 
+		public ProjectReference()
+		{
+			Id = default(String);
+			Name = default(String);
+		}
+
+		public ProjectReference(Project project)
+		{
+			Id = project.Id;
+			Name = project.Name;
+		}
+
+		public static implicit operator ProjectReference(Project project)
+		{
+			return new ProjectReference(project);
+		}
 	}
 }

@@ -14,9 +14,7 @@
  */
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
-using SlickSharp.Utility;
 
 namespace SlickSharp
 {
@@ -32,7 +30,5 @@ namespace SlickSharp
 
 		[DataMember(Name = "fieldValue")]
 		public String FieldValue;
-
-
 	}
 }

@@ -82,6 +82,5 @@ namespace SlickSharp
 
 		[DataMember(Name = "testcase")]
 		public TestCaseReference TestCaseReference;
-
 	}
 }

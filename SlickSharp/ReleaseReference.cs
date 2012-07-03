@@ -14,21 +14,34 @@
  */
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
-using SlickSharp.Utility;
 
 namespace SlickSharp
 {
 	[DataContract]
 	public class ReleaseReference : JsonObject<ReleaseReference>, IJsonObject
 	{
-
 		[DataMember(Name = "releaseId")]
 		public String Id;
 
 		[DataMember(Name = "name")]
 		public String Name;
 
+		public ReleaseReference()
+		{
+			Id = default(String);
+			Name = default(String);
+		}
+
+		public ReleaseReference(Release release)
+		{
+			Id = release.Id;
+			Name = release.Name;
+		}
+
+		public static implicit operator ReleaseReference(Release release)
+		{
+			return new ReleaseReference(release);
+		}
 	}
 }
