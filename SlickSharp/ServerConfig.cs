@@ -25,7 +25,16 @@ namespace SlickSharp
 
 		public static Uri BaseUri
 		{
-			get { return new Uri(String.Format("http://{0}:{1}/{2}/api", SlickHost, Port, SitePath)); }
+			get
+			{
+				string sitePath = null;
+				if (!String.IsNullOrWhiteSpace(SitePath))
+				{
+					sitePath = SitePath + "/";
+				}
+				var uri = new Uri(String.Format("http://{0}:{1}/{2}api", SlickHost, Port, sitePath));
+				return uri;
+			}
 		}
 	}
 }
