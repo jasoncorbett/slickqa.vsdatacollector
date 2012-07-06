@@ -129,19 +129,40 @@ namespace SlickSharp
 			httpWebRequest.ContentType = "application/json";
 			httpWebRequest.Method = "GET";
 
-			try
+			// at times we don't get a good response back from slick when the GET should succeed
+			//  because of this we try 3 times, just to be sure
+			bool received404 = false;
+			int attempts = 0;
+			Exception ex = null;
+			while (!received404 && attempts <= 3)
 			{
-				using (var response = (HttpWebResponse)httpWebRequest.GetResponse())
+				try
 				{
-					using (var stream = response.GetResponseStream())
+					using (var response = (HttpWebResponse)httpWebRequest.GetResponse())
 					{
-						return ReadFromStream(stream);
+						using (var stream = response.GetResponseStream())
+						{
+							return ReadFromStream(stream);
+						}
 					}
 				}
+				catch (Exception e)
+				{
+					if (e.Message.Contains("404"))
+					{
+						received404 = true;
+					}
+					ex = e;
+					attempts++;
+				}
 			}
-			catch (Exception)
+			if (received404)
 			{
 				return null;
+			}
+			else
+			{
+				throw ex;
 			}
 		}
 

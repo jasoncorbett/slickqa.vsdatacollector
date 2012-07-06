@@ -34,7 +34,7 @@ namespace SlickSharp
 		[DataMember(Name=("mimetype"))]
 		public String Mimetype;  
 
-		public StoredFile postContent(byte[] file)
+		public StoredFile PostContent(byte[] file)
 		{
 			var uri = new Uri(string.Format("{0}/{1}/{2}/{3}", ServerConfig.BaseUri, "files", Id, "content"));
 			var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
