@@ -15,6 +15,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -37,7 +39,7 @@ namespace SlickSharp
 		public static List<T> ReadListFromStream(Stream stream)
 		{
 			var ser = new DataContractJsonSerializer(typeof(List<T>));
-		   
+
 			return (List<T>)ser.ReadObject(stream);
 		}
 
@@ -81,7 +83,7 @@ namespace SlickSharp
 			return String.Empty;
 		}
 
-		public T Get()
+		public T Get(bool createIfNotFound = false)
 		{
 			var type = typeof(T);
 			var listAttributes = type.GetCustomAttributes(typeof(ListApiAttribute), true);
@@ -95,14 +97,14 @@ namespace SlickSharp
 			}
 
 			string getPath = null;
-			var getApis = apiList.OrderBy(a => { return ((GetAttribute)a).Index; }).Select(b => (GetAttribute)b).ToList();
+			var getApis = apiList.OrderBy(a => ((GetAttribute)a).Index).Select(b => (GetAttribute)b).ToList();
 			foreach (var item in getApis)
 			{
 				var property = this.GetType().GetProperty(item.PropertyName);
 				if (property != null)
 				{
 					var propVal = property.GetValue(this, null);
-					var constructor = property.PropertyType.GetConstructor(System.Type.EmptyTypes);
+					var constructor = property.PropertyType.GetConstructor(Type.EmptyTypes);
 					if (ValidItem(propVal, constructor))
 					{
 						getPath = item.ApiPath + "/" + propVal;
@@ -111,9 +113,9 @@ namespace SlickSharp
 				}
 				else
 				{
-					var field = this.GetType().GetField(item.PropertyName);
+					var field = GetType().GetField(item.PropertyName);
 					var propVal = field.GetValue(this);
-					var constructor = field.FieldType.GetConstructor(System.Type.EmptyTypes);
+					var constructor = field.FieldType.GetConstructor(Type.EmptyTypes);
 					if (ValidItem(propVal, constructor))
 					{
 						getPath = item.ApiPath + "/" + propVal;
@@ -131,10 +133,9 @@ namespace SlickSharp
 
 			// at times we don't get a good response back from slick when the GET should succeed
 			//  because of this we try 3 times, just to be sure
-			bool received404 = false;
 			int attempts = 0;
 			Exception ex = null;
-			while (!received404 && attempts <= 3)
+			while (attempts <= 3)
 			{
 				try
 				{
@@ -146,27 +147,28 @@ namespace SlickSharp
 						}
 					}
 				}
+				catch (WebException e)
+				{
+					var resp = e.Response as HttpWebResponse;
+					if (resp != null && resp.StatusCode == HttpStatusCode.NotFound)
+					{
+						return createIfNotFound ? Post() : null;
+					}
+					
+					ex = e;
+					attempts++;
+				}
 				catch (Exception e)
 				{
-					if (e.Message.Contains("404"))
-					{
-						received404 = true;
-					}
 					ex = e;
 					attempts++;
 				}
 			}
-			if (received404)
-			{
-				return null;
-			}
-			else
-			{
-				throw ex;
-			}
+			Debug.Assert(ex != null, "ex != null");
+			throw ex;
 		}
 
-		private bool ValidItem(object propVal, ConstructorInfo constructor)
+		private static bool ValidItem(object propVal, ConstructorInfo constructor)
 		{
 			if (propVal != null)
 			{
@@ -174,7 +176,7 @@ namespace SlickSharp
 				{
 					return true;
 				}
-				else if (propVal != constructor.Invoke(new Object[0]))
+				if (propVal != constructor.Invoke(new Object[0]))
 				{
 					return true;
 				}
