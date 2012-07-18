@@ -36,6 +36,9 @@ namespace SlickSharp
 		[DataMember(Name = "name")]
 		public String Name;
 
+		[DataMember(Name = "testplanId")]
+		public String TestPlanId;
+
 		[DataMember(Name = "project")]
 		public ProjectReference ProjectReference;
 
