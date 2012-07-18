@@ -49,6 +49,8 @@ namespace SlickSharp
 			{
 				var ser = new DataContractJsonSerializer(typeof(T));
 				ser.WriteObject(tempStream, this);
+                Console.WriteLine(System.Text.Encoding.UTF8.GetString(tempStream.GetBuffer()));
+                Console.WriteLine();
 				return tempStream.GetBuffer();
 			}
 		}
