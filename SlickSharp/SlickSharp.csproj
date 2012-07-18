@@ -48,6 +48,7 @@
     <Compile Include="BuildReference.cs" />
     <Compile Include="ConfigurationReference.cs" />
     <Compile Include="ComponentReference.cs" />
+    <Compile Include="TestPlan.cs" />
     <Compile Include="ResultReference.cs" />
     <Compile Include="StoredFile.cs" />
     <Compile Include="TestRunReference.cs" />
