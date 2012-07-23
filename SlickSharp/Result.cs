@@ -16,6 +16,9 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Net;
+using System.Runtime.Serialization.Json;
+using System.IO;
 
 namespace SlickSharp
 {
@@ -57,7 +60,7 @@ namespace SlickSharp
 		public String Id;
 
 		[DataMember(Name = "log")]
-		public String Log;
+		public List<LogEntry> Log;
 
 		[DataMember(Name = "project")]
 		public ProjectReference ProjectReference;
@@ -82,5 +85,34 @@ namespace SlickSharp
 
 		[DataMember(Name = "testcase")]
 		public TestCaseReference TestCaseReference;
+
+        public static void AddToLog(String resultId, List<LogEntry> logaddon)
+        {
+            var uri = new Uri(string.Format("{0}/{1}/{2}/{3}", ServerConfig.BaseUri,"results", resultId, "log"));
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
+            httpWebRequest.ContentType = "application/json";
+            httpWebRequest.Method = "POST";
+            using (var tempStream = new MemoryStream())
+            {
+                var ser = new DataContractJsonSerializer(typeof(List<LogEntry>));
+                ser.WriteObject(tempStream, logaddon);
+                Console.WriteLine(System.Text.Encoding.UTF8.GetString(tempStream.GetBuffer()));
+                Console.WriteLine();
+                var body = tempStream.GetBuffer();
+                httpWebRequest.ContentLength = body.Length;
+                using (var stream = httpWebRequest.GetRequestStream())
+                {
+                    stream.Write(body, 0, body.Length);
+                }
+            }
+           
+            using (var response = (HttpWebResponse)httpWebRequest.GetResponse())
+            {
+                using (var stream = response.GetResponseStream())
+                {
+                    //return ReadFromStream(stream);
+                }
+            }
+        }
 	}
 }

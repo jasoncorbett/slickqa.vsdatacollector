@@ -48,6 +48,8 @@
     <Compile Include="BuildReference.cs" />
     <Compile Include="ConfigurationReference.cs" />
     <Compile Include="ComponentReference.cs" />
+    <Compile Include="LogEntry.cs" />
+    <Compile Include="LogLevel.cs" />
     <Compile Include="TestPlan.cs" />
     <Compile Include="ResultReference.cs" />
     <Compile Include="StoredFile.cs" />
