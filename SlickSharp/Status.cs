@@ -15,7 +15,7 @@
 
 using System.Runtime.Serialization;
 
-namespace SlickSharp
+namespace SlickQA.SlickSharp
 {
 	[DataContract]
 	public enum Status

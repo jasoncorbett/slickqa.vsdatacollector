@@ -14,15 +14,16 @@
  */
 
 using System;
-using System.Runtime.Serialization;
 using System.Net;
+using System.Runtime.Serialization;
+using SlickQA.SlickSharp.Attributes;
 
-namespace SlickSharp
+namespace SlickQA.SlickSharp
 {
 	[DataContract]
 	[ListApi("projects/{ProjectId}/releases/{ReleaseId}/builds")]
 	[Get("", "Id", 0)]
-	public class Build :JsonObject<Build>, IJsonObject
+	public class Build : JsonObject<Build>, IJsonObject
 	{
 		[DataMember(Name = "built")]
 		public String Built;
@@ -41,12 +42,16 @@ namespace SlickSharp
 
 		public void SetDefaultBuild()
 		{
-			var uri = new Uri(String.Format("{0}/{1}/{2}/{3}/{4}/{5}/{6}", ServerConfig.BaseUri, "projects", ProjectId, "releases", ReleaseId, "setdefaultbuild", Id));
+			var uri =
+				new Uri(String.Format("{0}/projects/{1}/releases/{2}/setdefaultbuild/{3}", ServerConfig.BaseUri, ProjectId,
+				                      ReleaseId, Id));
+
 			var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
 			httpWebRequest.ContentType = "application/json";
 			httpWebRequest.Method = "GET";
 			using (httpWebRequest.GetResponse())
-			{ }
+			{
+			}
 		}
 	}
 }

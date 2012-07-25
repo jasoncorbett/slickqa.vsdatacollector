@@ -16,23 +16,23 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace SlickSharp
+namespace SlickQA.SlickSharp
 {
 	[DataContract]
-	public class TestRunReference : JsonObject<TestRunReference>, IJsonObject
+	public sealed class TestRunReference : JsonObject<TestRunReference>, IJsonObject
 	{
+		[DataMember(Name = "name")]
+		public String Name;
 
 		[DataMember(Name = "testrunId")]
 		public String TestRunId;
-
-		[DataMember(Name = "name")]
-		public String Name;
 
 		public TestRunReference()
 		{
 			TestRunId = default(String);
 			Name = default(String);
 		}
+
 		public TestRunReference(TestRun testRun)
 		{
 			TestRunId = testRun.Id;

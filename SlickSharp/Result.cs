@@ -15,20 +15,20 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Net;
-using System.Runtime.Serialization.Json;
 using System.IO;
+using System.Net;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
+using System.Text;
+using SlickQA.SlickSharp.Attributes;
+using SlickQA.SlickSharp.Utility;
 
-namespace SlickSharp
+namespace SlickQA.SlickSharp
 {
 	[DataContract]
 	[ListApi("results")]
 	public class Result : JsonObject<Result>, IJsonObject
 	{
-		[DataMember(Name = "testrun")]
-		public TestRunReference TestRunReference;
-
 		[DataMember(Name = "attributes")]
 		public Dictionary<String, String> Attributes;
 
@@ -38,11 +38,11 @@ namespace SlickSharp
 		[DataMember(Name = "component")]
 		public ComponentReference ComponentReference;
 
-		[DataMember(Name = "config")]
-		public ConfigurationReference ConfigurationReference;
-
 		[DataMember(Name = "configurationOverride")]
 		public String ConfigurationOverride;
+
+		[DataMember(Name = "config")]
+		public ConfigurationReference ConfigurationReference;
 
 		[DataMember(Name = "extensions")]
 		public String Extensions;
@@ -86,33 +86,36 @@ namespace SlickSharp
 		[DataMember(Name = "testcase")]
 		public TestCaseReference TestCaseReference;
 
-        public static void AddToLog(String resultId, List<LogEntry> logaddon)
-        {
-            var uri = new Uri(string.Format("{0}/{1}/{2}/{3}", ServerConfig.BaseUri,"results", resultId, "log"));
-            var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
-            httpWebRequest.ContentType = "application/json";
-            httpWebRequest.Method = "POST";
-            using (var tempStream = new MemoryStream())
-            {
-                var ser = new DataContractJsonSerializer(typeof(List<LogEntry>));
-                ser.WriteObject(tempStream, logaddon);
-                Console.WriteLine(System.Text.Encoding.UTF8.GetString(tempStream.GetBuffer()));
-                Console.WriteLine();
-                var body = tempStream.GetBuffer();
-                httpWebRequest.ContentLength = body.Length;
-                using (var stream = httpWebRequest.GetRequestStream())
-                {
-                    stream.Write(body, 0, body.Length);
-                }
-            }
-           
-            using (var response = (HttpWebResponse)httpWebRequest.GetResponse())
-            {
-                using (var stream = response.GetResponseStream())
-                {
-                    //return ReadFromStream(stream);
-                }
-            }
-        }
+		[DataMember(Name = "testrun")]
+		public TestRunReference TestRunReference;
+
+		public static void AddToLog(String resultId, List<LogEntry> logaddon)
+		{
+			var uri = new Uri(string.Format("{0}/{1}/{2}/{3}", ServerConfig.BaseUri, "results", resultId, "log"));
+			var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
+			httpWebRequest.ContentType = "application/json";
+			httpWebRequest.Method = "POST";
+			using (var tempStream = new MemoryStream())
+			{
+				var ser = new DataContractJsonSerializer(typeof(List<LogEntry>));
+				ser.WriteObject(tempStream, logaddon);
+				Console.WriteLine(Encoding.UTF8.GetString(tempStream.GetBuffer()));
+				Console.WriteLine();
+				byte[] body = tempStream.GetBuffer();
+				httpWebRequest.ContentLength = body.Length;
+				using (Stream stream = httpWebRequest.GetRequestStream())
+				{
+					stream.Write(body, 0, body.Length);
+				}
+			}
+
+			using (var response = (HttpWebResponse)httpWebRequest.GetResponse())
+			{
+				using (Stream stream = response.GetResponseStream())
+				{
+					//return JsonStreamConverter<Result>.ReadFromStream(stream);
+				}
+			}
+		}
 	}
 }

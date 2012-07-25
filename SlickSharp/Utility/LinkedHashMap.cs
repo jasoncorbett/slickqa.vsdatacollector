@@ -18,10 +18,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace SlickSharp.Utility
+namespace SlickQA.SlickSharp.Utility
 {
 	[DataContract]
-	public class LinkedHashMap<T> :IDictionary<String, T> where T : class
+	public sealed class LinkedHashMap<T> : IDictionary<String, T> where T : class
 	{
 		private readonly Dictionary<String, T> _dict;
 
@@ -30,23 +30,17 @@ namespace SlickSharp.Utility
 			_dict = new Dictionary<String, T>();
 		}
 
-		protected LinkedHashMap(SerializationInfo info, StreamingContext context)
+		private LinkedHashMap(SerializationInfo info, StreamingContext context)
 		{
 			_dict = new Dictionary<String, T>();
-			foreach (var entry in info)
+			foreach (SerializationEntry entry in info)
 			{
 				var item = entry.Value as T;
 				_dict.Add(entry.Name, item);
 			}
 		}
 
-		public void GetObjectData(SerializationInfo info, StreamingContext context)
-		{
-			foreach (KeyValuePair<String, T> keyValuePair in _dict)
-			{
-				info.AddValue(keyValuePair.Key, keyValuePair.Value);
-			}
-		}
+		#region IDictionary<string,T> Members
 
 		public void Add(KeyValuePair<String, T> item)
 		{
@@ -134,6 +128,16 @@ namespace SlickSharp.Utility
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return GetEnumerator();
+		}
+
+		#endregion
+
+		public void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			foreach (var keyValuePair in _dict)
+			{
+				info.AddValue(keyValuePair.Key, keyValuePair.Value);
+			}
 		}
 	}
 }

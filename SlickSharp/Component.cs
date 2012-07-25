@@ -15,13 +15,14 @@
 
 using System;
 using System.Runtime.Serialization;
+using SlickQA.SlickSharp.Attributes;
 
-namespace SlickSharp
+namespace SlickQA.SlickSharp
 {
 	[DataContract]
 	[ListApi("projects/{ProjectId}/components")]
 	[Get("", "Id", 0)]
-	public class Component :JsonObject<Component>, IJsonObject
+	public class Component : JsonObject<Component>, IJsonObject
 	{
 		[DataMember(Name = "code")]
 		public String Code;

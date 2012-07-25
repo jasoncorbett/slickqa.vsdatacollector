@@ -16,23 +16,22 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace SlickSharp
+namespace SlickQA.SlickSharp
 {
 	[DataContract]
-	public class ResultReference : JsonObject<ResultReference>, IJsonObject
+	public sealed class ResultReference : JsonObject<ResultReference>, IJsonObject
 	{
+		[DataMember(Name = "build")]
+		public BuildReference Build;
+
+		[DataMember(Name = "recorded")]
+		public long DateRecorded;
 
 		[DataMember(Name = "resultId")]
 		public String Id;
 
 		[DataMember(Name = "status")]
 		public String ResultStatus;
-
-		[DataMember(Name = "recorded")]
-		public long DateRecorded;
-
-		[DataMember(Name = "build")]
-		public BuildReference Build;
 
 		public ResultReference()
 		{

@@ -15,7 +15,7 @@
 
 using System;
 
-namespace SlickSharp
+namespace SlickQA.SlickSharp.Attributes
 {
 	public sealed class ListApiAttribute : Attribute
 	{

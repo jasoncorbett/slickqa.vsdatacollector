@@ -14,25 +14,26 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
+using System.IO;
 using System.Net;
+using System.Runtime.Serialization;
+using SlickQA.SlickSharp.Attributes;
+using SlickQA.SlickSharp.Utility;
 
-namespace SlickSharp
+namespace SlickQA.SlickSharp
 {
 	[DataContract]
 	[ListApi("files")]
 	public class StoredFile : JsonObject<StoredFile>, IJsonObject
 	{
+		[DataMember(Name = "filename")]
+		public String FileName;
 
 		[DataMember(Name = "id")]
 		public String Id;
 
-		[DataMember(Name = "filename")]
-		public String FileName;
-
-		[DataMember(Name=("mimetype"))]
-		public String Mimetype;  
+		[DataMember(Name = ("mimetype"))]
+		public String Mimetype;
 
 		public StoredFile PostContent(byte[] file)
 		{
@@ -47,9 +48,9 @@ namespace SlickSharp
 			}
 			using (var response = (HttpWebResponse)httpWebRequest.GetResponse())
 			{
-				using (var stream = response.GetResponseStream())
+				using (Stream stream = response.GetResponseStream())
 				{
-					return ReadFromStream(stream);
+					return JsonStreamConverter<StoredFile>.ReadFromStream(stream);
 				}
 			}
 		}

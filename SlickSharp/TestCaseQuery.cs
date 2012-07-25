@@ -16,19 +16,18 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace SlickSharp
+namespace SlickQA.SlickSharp
 {
 	[DataContract]
 	public class TestCaseQuery : JsonObject<TestCaseQuery>, IJsonObject
 	{
-
-		[DataMember(Name = "className")]
-		public String SlickijClassName;
-
 		[DataMember(Name = "fieldName")]
 		public String FieldName;
 
 		[DataMember(Name = "fieldValue")]
 		public String FieldValue;
+
+		[DataMember(Name = "className")]
+		public String SlickijClassName;
 	}
 }

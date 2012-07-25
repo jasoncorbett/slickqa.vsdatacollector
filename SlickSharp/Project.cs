@@ -16,9 +16,10 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using SlickSharp.Utility;
+using SlickQA.SlickSharp.Attributes;
+using SlickQA.SlickSharp.Utility;
 
-namespace SlickSharp
+namespace SlickQA.SlickSharp
 {
 	[DataContract]
 	[ListApi("projects")]
@@ -26,6 +27,48 @@ namespace SlickSharp
 	[Get("byname", "Name", 1)]
 	public class Project : JsonObject<Project>, IJsonObject
 	{
+		[DataMember(Name = "attributes")]
+		public LinkedHashMap<String> Attributes;
+
+		[DataMember(Name = "automationTools")]
+		public List<String> AutomationTools;
+
+		[DataMember(Name = "components")]
+		public List<Component> Components;
+
+		[DataMember(Name = "configuration")]
+		public Configuration Configuration;
+
+		[DataMember(Name = "datadrivenProperties")]
+		public List<DataDrivenProperty> DataDrivenProperties;
+
+		[DataMember(Name = "defaultBuildName")]
+		public String DefaultBuildName;
+
+		[DataMember(Name = "defaultRelease")]
+		public String DefaultRelease;
+
+		[DataMember(Name = "description")]
+		public String Description;
+
+		[DataMember(Name = "extensions")]
+		public List<DataExtension<Project>> Extensions;
+
+		[DataMember(Name = "id")]
+		public String Id; //TODO: Possibly org.bson.types.ObjectId compatible
+
+		[DataMember(Name = "lastUpdated")]
+		public long LastUpdated; //TODO: java.util.Date;
+
+		[DataMember(Name = "name")]
+		public String Name;
+
+		[DataMember(Name = "releases")]
+		public List<Release> Releases;
+
+		[DataMember(Name = "tags")]
+		public List<String> Tags;
+
 		public Project()
 		{
 			Configuration = new Configuration();
@@ -38,46 +81,24 @@ namespace SlickSharp
 			Extensions = new List<DataExtension<Project>>();
 		}
 
-		[DataMember(Name = "id")]
-		public String Id; //TODO: Possibly org.bson.types.ObjectId compatible
+		public override string ToString()
+		{
+			return Name;
+		}
 
-		[DataMember(Name = "name")]
-		public String Name;
+		public override bool Equals(object obj)
+		{
+			var other = obj as Project;
+			if (other == null)
+			{
+				return false;
+			}
+			return other.Id == Id;
+		}
 
-		[DataMember(Name = "description")]
-		public String Description;
-
-		[DataMember(Name = "configuration")]
-		public Configuration Configuration;
-
-		[DataMember(Name = "defaultRelease")]
-		public String DefaultRelease;
-
-		[DataMember(Name = "releases")]
-		public List<Release> Releases;
-
-		[DataMember(Name = "lastUpdated")]
-		public long LastUpdated; //TODO: java.util.Date;
-
-		[DataMember(Name = "tags")]
-		public List<String> Tags;
-
-		[DataMember(Name = "attributes")]
-		public LinkedHashMap<String> Attributes;
-
-		[DataMember(Name = "automationTools")]
-		public List<String> AutomationTools;
-
-		[DataMember(Name = "components")]
-		public List<Component> Components;
-
-		[DataMember(Name = "datadrivenProperties")]
-		public List<DataDrivenProperty> DataDrivenProperties;
-
-		[DataMember(Name = "extensions")]
-		public List<DataExtension<Project>> Extensions;
-
-		[DataMember(Name = "defaultBuildName")]
-		public String DefaultBuildName;
+		public override int GetHashCode()
+		{
+			return Convert.ToInt32(Id.Substring(0, Id.Length > 5 ? 5 : Id.Length), 16);
+		}
 	}
 }

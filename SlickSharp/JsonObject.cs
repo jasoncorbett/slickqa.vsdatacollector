@@ -16,121 +16,19 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Net;
 using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
-using System.Reflection;
-using System.Text.RegularExpressions;
+using SlickQA.SlickSharp.Utility;
+using UriBuilder = SlickQA.SlickSharp.Utility.UriBuilder;
 
-namespace SlickSharp
+namespace SlickQA.SlickSharp
 {
 	[DataContract]
 	public abstract class JsonObject<T> where T : class, IJsonObject
 	{
-		public static T ReadFromStream(Stream stream)
-		{
-			var ser = new DataContractJsonSerializer(typeof(T));
-			return (T)ser.ReadObject(stream);
-		}
-
-		public static List<T> ReadListFromStream(Stream stream)
-		{
-			var ser = new DataContractJsonSerializer(typeof(List<T>));
-
-			return (List<T>)ser.ReadObject(stream);
-		}
-
-		public byte[] ConvertToByteBuffer()
-		{
-			using (var tempStream = new MemoryStream())
-			{
-				var ser = new DataContractJsonSerializer(typeof(T));
-				ser.WriteObject(tempStream, this);
-                Console.WriteLine(System.Text.Encoding.UTF8.GetString(tempStream.GetBuffer()));
-                Console.WriteLine();
-				return tempStream.GetBuffer();
-			}
-		}
-
-		public string normalizePath(string listPath)
-		{
-			Regex r = new Regex("{([^/]+)}");
-			var matches = r.Matches(listPath);
-			foreach (Match m in matches)
-			{
-				var memberName = m.Groups[1].Captures[0].Value;
-				var memberValue = GetMemberValue(memberName);
-				listPath = listPath.Replace(m.Value, memberValue);
-			}
-			return listPath;
-		}
-
-		private string GetMemberValue(string memberName)
-		{
-
-			var field = this.GetType().GetField(memberName);
-			var prop = this.GetType().GetProperty(memberName);
-
-			if (field != null)
-			{
-				return field.GetValue(this).ToString();
-			}
-			if (prop != null)
-			{
-				return prop.GetValue(this, null).ToString();
-			}
-			return String.Empty;
-		}
-
 		public T Get(bool createIfNotFound = false)
 		{
-			var type = typeof(T);
-			var listAttributes = type.GetCustomAttributes(typeof(ListApiAttribute), true);
-			var apiList = type.GetCustomAttributes(typeof(GetAttribute), true);
-			string listPath = null;
-
-			if (listAttributes.Length != 0)
-			{
-				listPath = ((ListApiAttribute)listAttributes[0]).Uri;
-				listPath = normalizePath(listPath);
-			}
-
-			string getPath = null;
-			var getApis = apiList.OrderBy(a => ((GetAttribute)a).Index).Select(b => (GetAttribute)b).ToList();
-			foreach (var item in getApis)
-			{
-				var property = this.GetType().GetProperty(item.PropertyName);
-				if (property != null)
-				{
-					var propVal = property.GetValue(this, null);
-					var constructor = property.PropertyType.GetConstructor(Type.EmptyTypes);
-					if (ValidItem(propVal, constructor))
-					{
-						getPath = item.ApiPath + "/" + propVal;
-						break;
-					}
-				}
-				else
-				{
-					var field = GetType().GetField(item.PropertyName);
-					var propVal = field.GetValue(this);
-					var constructor = field.FieldType.GetConstructor(Type.EmptyTypes);
-					if (ValidItem(propVal, constructor))
-					{
-						getPath = item.ApiPath + "/" + propVal;
-						break;
-					}
-				}
-			}
-
-			var fullGetPath = listPath + "/" + getPath;
-
-			var uri = new Uri(String.Format("{0}/{1}", ServerConfig.BaseUri, fullGetPath));
-			var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
-			httpWebRequest.ContentType = "application/json";
+			var uri = UriBuilder.RetrieveGetUri(this);
+			IHttpWebRequest httpWebRequest = RequestFactory.Create(uri);
 			httpWebRequest.Method = "GET";
 
 			// at times we don't get a good response back from slick when the GET should succeed
@@ -141,24 +39,11 @@ namespace SlickSharp
 			{
 				try
 				{
-					using (var response = (HttpWebResponse)httpWebRequest.GetResponse())
-					{
-						using (var stream = response.GetResponseStream())
-						{
-							return ReadFromStream(stream);
-						}
-					}
+					return JsonStreamConverter<T>.ReadResponse(httpWebRequest);
 				}
-				catch (WebException e)
+				catch (NotFoundException)
 				{
-					var resp = e.Response as HttpWebResponse;
-					if (resp != null && resp.StatusCode == HttpStatusCode.NotFound)
-					{
-						return createIfNotFound ? Post() : null;
-					}
-					
-					ex = e;
-					attempts++;
+					return createIfNotFound ? Post() : null;
 				}
 				catch (Exception e)
 				{
@@ -170,62 +55,25 @@ namespace SlickSharp
 			throw ex;
 		}
 
-		private static bool ValidItem(object propVal, ConstructorInfo constructor)
-		{
-			if (propVal != null)
-			{
-				if (constructor == null)
-				{
-					return true;
-				}
-				if (propVal != constructor.Invoke(new Object[0]))
-				{
-					return true;
-				}
-			}
-			return false;
-		}
-
 		public static List<T> GetList()
 		{
-			var type = typeof(T);
-			var attributes = type.GetCustomAttributes(typeof(ListApiAttribute), true);
-			if (attributes.Length != 0)
-			{
-				var relUrl = ((ListApiAttribute)attributes[0]).Uri; //TODO: Fix this URL handling.
-				var uri = new Uri(string.Format("{0}/{1}", ServerConfig.BaseUri, relUrl));
-				var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
-				httpWebRequest.ContentType = "application/json";
-				httpWebRequest.Method = "GET";
+			var listPath = UriBuilder.GetListPath<T>(null);
 
-				using (var response = (HttpWebResponse)httpWebRequest.GetResponse())
-				{
-					using (var stream = response.GetResponseStream())
-					{
-						return ReadListFromStream(stream);
-					}
-				}
+			if (String.IsNullOrWhiteSpace(listPath))
+			{
+				return new List<T>();
 			}
-			return new List<T>();
+
+			var uri = new Uri(string.Format("{0}/{1}", ServerConfig.BaseUri, listPath));
+			return RetrieiveList(uri);
 		}
 
-		public static List<T> GetList(string relUrl)
+		protected static List<T> GetList(string relUrl)
 		{
-			var type = typeof(T);
 			try
 			{
-				var uri = new Uri(string.Format("{0}/{1}", ServerConfig.BaseUri, relUrl));
-				var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
-				httpWebRequest.ContentType = "application/json";
-				httpWebRequest.Method = "GET";
-
-				using (var response = (HttpWebResponse)httpWebRequest.GetResponse())
-				{
-					using (var stream = response.GetResponseStream())
-					{
-						return ReadListFromStream(stream);
-					}
-				}
+				var uri = UriBuilder.RelativeGetUrl(relUrl);
+				return RetrieiveList(uri);
 			}
 			catch
 			{
@@ -233,33 +81,29 @@ namespace SlickSharp
 			}
 		}
 
+		private static List<T> RetrieiveList(Uri uri)
+		{
+			IHttpWebRequest httpWebRequest = RequestFactory.Create(uri);
+			httpWebRequest.Method = "GET";
+
+			return JsonStreamConverter<T>.ReadListResponse(httpWebRequest);
+		}
+
 		public T Post()
 		{
-			var type = typeof(T);
-			var attributes = type.GetCustomAttributes(typeof(ListApiAttribute), true);
-			if (attributes.Length == 0)
+			string listPath = UriBuilder.GetListPath(this);
+			if (String.IsNullOrWhiteSpace(listPath))
 			{
 				return null;
 			}
-			var relUrl = ((ListApiAttribute)attributes[0]).Uri; //TODO: Fix this URL handling.
-			relUrl = normalizePath(relUrl);
-			var uri = new Uri(string.Format("{0}/{1}", ServerConfig.BaseUri, relUrl));
-			var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
-			httpWebRequest.ContentType = "application/json";
+
+			var uri = new Uri(string.Format("{0}/{1}", ServerConfig.BaseUri, listPath));
+			IHttpWebRequest httpWebRequest = RequestFactory.Create(uri);
 			httpWebRequest.Method = "POST";
-			var body = ConvertToByteBuffer();
-			httpWebRequest.ContentLength = body.Length;
-			using (var stream = httpWebRequest.GetRequestStream())
-			{
-				stream.Write(body, 0, body.Length);
-			}
-			using (var response = (HttpWebResponse)httpWebRequest.GetResponse())
-			{
-				using (var stream = response.GetResponseStream())
-				{
-					return ReadFromStream(stream);
-				}
-			}
+
+			JsonStreamConverter<T>.WriteRequestStream(httpWebRequest, this);
+
+			return JsonStreamConverter<T>.ReadResponse(httpWebRequest);
 		}
 
 		public void Put()

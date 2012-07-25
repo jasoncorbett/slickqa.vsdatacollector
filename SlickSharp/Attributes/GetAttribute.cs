@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace SlickSharp
+namespace SlickQA.SlickSharp.Attributes
 {
-	[AttributeUsage(AttributeTargets.Class, AllowMultiple=true, Inherited=true)]
-	class GetAttribute : Attribute
+	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
+	internal sealed class GetAttribute : Attribute
 	{
 		public GetAttribute(string apiPath, string propertyName, int index)
 		{

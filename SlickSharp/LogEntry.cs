@@ -14,25 +14,16 @@
  */
 
 using System;
-using System.Runtime.Serialization;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
-namespace SlickSharp
+namespace SlickQA.SlickSharp
 {
 	[DataContract]
-	public class LogEntry: JsonObject<LogEntry>, IJsonObject
+	public class LogEntry : JsonObject<LogEntry>, IJsonObject
 	{
 		[DataMember(Name = "entryTime")]
 		public String EntryTime;
-
-		[DataMember(Name = "level")]
-		public String Level;
-
-		[DataMember(Name = "loggerName")]
-		public String LoggerName;
-
-		[DataMember(Name = "message")]
-		public String Message;
 
 		[DataMember(Name = "exceptionClassName")]
 		public String ExceptionClassName;
@@ -42,5 +33,14 @@ namespace SlickSharp
 
 		[DataMember(Name = "exceptionStackTrace")]
 		public List<String> ExceptionStackTrace;
+
+		[DataMember(Name = "level")]
+		public String Level;
+
+		[DataMember(Name = "loggerName")]
+		public String LoggerName;
+
+		[DataMember(Name = "message")]
+		public String Message;
 	}
 }

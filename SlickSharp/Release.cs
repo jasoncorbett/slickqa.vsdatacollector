@@ -15,20 +15,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using System.Net;
+using System.Runtime.Serialization;
+using SlickQA.SlickSharp.Attributes;
 
-namespace SlickSharp
+namespace SlickQA.SlickSharp
 {
 	[DataContract]
 	[ListApi("projects/{ProjectId}/releases")]
 	[Get("", "Id", 0)]
 	public class Release : JsonObject<Release>, IJsonObject
 	{
-		public Release()
-		{
-			Builds = new List<Build>();
-		}
 		[DataMember(Name = "builds")]
 		public List<Build> Builds;
 
@@ -44,16 +41,24 @@ namespace SlickSharp
 		[DataMember(Name = "target")]
 		public String Target;
 
+		public Release()
+		{
+			Builds = new List<Build>();
+		}
+
 		[IgnoreDataMember]
 		public string ProjectId { get; set; }
 
 		public void SetDefaultRelease()
 		{
-			var uri = new Uri(String.Format("{0}/{1}/{2}/{3}/{4}", ServerConfig.BaseUri.ToString(), "projects", ProjectId, "setdefaultrelease", Id));
+			var uri =
+				new Uri(String.Format("{0}/{1}/{2}/{3}/{4}", ServerConfig.BaseUri, "projects", ProjectId, "setdefaultrelease", Id));
 			var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
 			httpWebRequest.ContentType = "application/json";
 			httpWebRequest.Method = "GET";
-			using (var response = (HttpWebResponse)httpWebRequest.GetResponse()) { }
+			using (var response = (HttpWebResponse)httpWebRequest.GetResponse())
+			{
+			}
 		}
 	}
 }

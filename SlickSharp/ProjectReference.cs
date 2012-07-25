@@ -16,14 +16,13 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace SlickSharp
+namespace SlickQA.SlickSharp
 {
 	[DataContract]
-	public class ProjectReference : JsonObject<ProjectReference>, IJsonObject
+	public sealed class ProjectReference : JsonObject<ProjectReference>, IJsonObject
 	{
-
 		[DataMember(Name = "id")]
-		public String Id; 
+		public String Id;
 
 		[DataMember(Name = "name")]
 		public String Name;

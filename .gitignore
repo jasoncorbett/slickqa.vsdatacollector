@@ -1,6 +1,5 @@
-
 *.suo
 *.user
-/_ReSharper.SlickSharp
-/SlickSharp/bin
-/SlickSharp/obj
+/_ReSharper.*
+bin
+obj

@@ -16,11 +16,13 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace SlickSharp
+namespace SlickQA.SlickSharp
 {
 	[DataContract]
-	public class ComponentReference : JsonObject<ComponentReference>, IJsonObject
+	public sealed class ComponentReference : JsonObject<ComponentReference>, IJsonObject
 	{
+		[DataMember(Name = "code")]
+		public String Code;
 
 		[DataMember(Name = "id")]
 		public String Id;
@@ -28,15 +30,13 @@ namespace SlickSharp
 		[DataMember(Name = "name")]
 		public String Name;
 
-		[DataMember(Name = "code")]
-		public String Code;
-
 		public ComponentReference()
 		{
 			Id = default(String);
 			Name = default(String);
 			Code = default(String);
 		}
+
 		public ComponentReference(Component component)
 		{
 			Id = component.Id;

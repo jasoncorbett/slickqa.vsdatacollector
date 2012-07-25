@@ -15,14 +15,14 @@
 
 using System;
 using System.Runtime.Serialization;
+using SlickQA.SlickSharp.Attributes;
 
-namespace SlickSharp
+namespace SlickQA.SlickSharp
 {
 	[DataContract]
 	[ListApi("testcases")]
 	public class Testcase : JsonObject<Testcase>, IJsonObject
 	{
-
 		[DataMember(Name = "automationId")]
 		public String AutomationId;
 
@@ -32,8 +32,11 @@ namespace SlickSharp
 		[DataMember(Name = "automationTool")]
 		public String AutomationTool;
 
-		[DataMember(Name = "name")]
-		public String Name;
+		[DataMember(Name = "component")]
+		public ComponentReference ComponentReference;
+
+		[DataMember(Name = "deleted")]
+		public Boolean Deleted;
 
 		[DataMember(Name = "id")]
 		public String Id;
@@ -41,17 +44,14 @@ namespace SlickSharp
 		[DataMember(Name = "automated")]
 		public Boolean IsAutomated;
 
+		[DataMember(Name = "name")]
+		public String Name;
+
 		[DataMember(Name = "project")]
 		public ProjectReference ProjectReference;
 
-		[DataMember(Name = "component")]
-		public ComponentReference ComponentReference;
-
 		[DataMember(Name = "purpose")]
 		public String Purpose;
-
-		[DataMember(Name = "deleted")]
-		public Boolean Deleted;
 
 		public static Testcase GetTestCaseByAutomationId(string automationId)
 		{

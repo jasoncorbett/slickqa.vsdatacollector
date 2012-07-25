@@ -16,12 +16,14 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using SlickQA.SlickSharp.Attributes;
 
-namespace SlickSharp
+namespace SlickQA.SlickSharp
 {
 	[DataContract]
 	[ListApi("configurations")]
-	public class Configuration : JsonObject<Configuration>, IJsonObject
+	[Get("", "Id", 0)]
+	public sealed class Configuration : JsonObject<Configuration>, IJsonObject
 	{
 		[DataMember(Name = "configurationData")]
 		public Dictionary<String, String> ConfigurationData;

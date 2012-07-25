@@ -15,10 +15,11 @@
 
 using System;
 
-namespace SlickSharp
+namespace SlickQA.SlickSharp
 {
 	public static class ServerConfig
 	{
+		public static string Scheme { private get; set; }
 		public static string SlickHost { private get; set; }
 		public static string SitePath { private get; set; }
 		public static int Port { private get; set; }
@@ -32,7 +33,7 @@ namespace SlickSharp
 				{
 					sitePath = SitePath + "/";
 				}
-				var uri = new Uri(String.Format("http://{0}:{1}/{2}api", SlickHost, Port, sitePath));
+				var uri = new Uri(String.Format("{0}://{1}:{2}/{3}api", Scheme, SlickHost, Port, sitePath));
 				return uri;
 			}
 		}

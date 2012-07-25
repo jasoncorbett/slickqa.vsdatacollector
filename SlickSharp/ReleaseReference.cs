@@ -16,10 +16,10 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace SlickSharp
+namespace SlickQA.SlickSharp
 {
 	[DataContract]
-	public class ReleaseReference : JsonObject<ReleaseReference>, IJsonObject
+	public sealed class ReleaseReference : JsonObject<ReleaseReference>, IJsonObject
 	{
 		[DataMember(Name = "releaseId")]
 		public String Id;

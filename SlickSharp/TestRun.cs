@@ -15,20 +15,19 @@
 
 using System;
 using System.Runtime.Serialization;
+using SlickQA.SlickSharp.Attributes;
 
-namespace SlickSharp
+namespace SlickQA.SlickSharp
 {
 	[DataContract]
 	[ListApi("testruns")]
 	public class TestRun : JsonObject<TestRun>, IJsonObject
 	{
-		public TestRun()
-		{
-			ProjectReference = new ProjectReference();
-			ReleaseReference = new ReleaseReference();
-			BuildReference = new BuildReference();
-			ConfigurationReference = new ConfigurationReference();
-		}
+		[DataMember(Name = "build")]
+		public BuildReference BuildReference;
+
+		[DataMember(Name = "config")]
+		public ConfigurationReference ConfigurationReference;
 
 		[DataMember(Name = "id")]
 		public String Id;
@@ -36,19 +35,21 @@ namespace SlickSharp
 		[DataMember(Name = "name")]
 		public String Name;
 
-		[DataMember(Name = "testplanId")]
-		public String TestPlanId;
-
 		[DataMember(Name = "project")]
 		public ProjectReference ProjectReference;
 
 		[DataMember(Name = "release")]
 		public ReleaseReference ReleaseReference;
 
-		[DataMember(Name = "build")]
-		public BuildReference BuildReference;
+		[DataMember(Name = "testplanId")]
+		public String TestPlanId;
 
-		[DataMember(Name = "config")]
-		public ConfigurationReference ConfigurationReference;
+		public TestRun()
+		{
+			ProjectReference = new ProjectReference();
+			ReleaseReference = new ReleaseReference();
+			BuildReference = new BuildReference();
+			ConfigurationReference = new ConfigurationReference();
+		}
 	}
 }

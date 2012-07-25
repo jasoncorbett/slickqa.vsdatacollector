@@ -8,8 +8,8 @@
     <ProjectGuid>{4DB0F133-F095-4C10-BF62-0939195F26FB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SlickSharp</RootNamespace>
-    <AssemblyName>SlickSharp</AssemblyName>
+    <RootNamespace>SlickQA.SlickSharp</RootNamespace>
+    <AssemblyName>SlickQA.SlickSharp</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -50,6 +50,12 @@
     <Compile Include="ComponentReference.cs" />
     <Compile Include="LogEntry.cs" />
     <Compile Include="LogLevel.cs" />
+    <Compile Include="IHttpWebRequest.cs" />
+    <Compile Include="IHttpWebResponse.cs" />
+    <Compile Include="JsonRequest.cs" />
+    <Compile Include="JsonResponse.cs" />
+    <Compile Include="NotFoundException.cs" />
+    <Compile Include="RequestFactory.cs" />
     <Compile Include="TestPlan.cs" />
     <Compile Include="ResultReference.cs" />
     <Compile Include="StoredFile.cs" />
@@ -73,7 +79,9 @@
     <Compile Include="ServerConfig.cs" />
     <Compile Include="Status.cs" />
     <Compile Include="TestCase.cs" />
+    <Compile Include="Utility\JsonStreamConverter.cs" />
     <Compile Include="Utility\LinkedHashMap.cs" />
+    <Compile Include="Utility\UriBuilder.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

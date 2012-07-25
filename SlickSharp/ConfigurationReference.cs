@@ -16,20 +16,19 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace SlickSharp
+namespace SlickQA.SlickSharp
 {
 	[DataContract]
-	public class ConfigurationReference : JsonObject<ConfigurationReference>, IJsonObject
+	public sealed class ConfigurationReference : JsonObject<ConfigurationReference>, IJsonObject
 	{
-
 		[DataMember(Name = "configId")]
 		public String ConfigId;
 
-		[DataMember(Name = "name")]
-		public String Name;
-
 		[DataMember(Name = "filename")]
 		public String FileName;
+
+		[DataMember(Name = "name")]
+		public String Name;
 
 		public ConfigurationReference()
 		{
