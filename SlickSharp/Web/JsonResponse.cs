@@ -1,4 +1,4 @@
-﻿/* Copyright 2012 AccessData Group, LLC.
+/* Copyright 2012 AccessData Group, LLC.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,37 @@
  * limitations under the License.
  */
 
-using System;
+using System.IO;
+using System.Net;
 
-namespace SlickQA.SlickSharp.Attributes
+namespace SlickQA.SlickSharp
 {
-	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
-	internal sealed class GetAttribute : Attribute
+	public sealed class JsonResponse : IHttpWebResponse
 	{
-		public GetAttribute(string apiPath, string propertyName, int index)
+		private readonly HttpWebResponse _response;
+
+		public JsonResponse(HttpWebResponse webResponse)
 		{
-			ApiPath = apiPath;
-			PropertyName = propertyName;
-			Index = index;
+			_response = webResponse;
 		}
 
-		public string ApiPath { get; private set; }
-		public string PropertyName { get; private set; }
-		public int Index { get; private set; }
+		#region IHttpWebResponse Members
+
+		public void Dispose()
+		{
+			_response.Close();
+		}
+
+		public Stream GetResponseStream()
+		{
+			return _response.GetResponseStream();
+		}
+
+		public WebResponse InnerResponse
+		{
+			get { return _response; }
+		}
+
+		#endregion
 	}
 }

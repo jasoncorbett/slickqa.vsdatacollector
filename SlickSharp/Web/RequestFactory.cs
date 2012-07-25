@@ -14,21 +14,26 @@
  */
 
 using System;
+using System.Net;
 
-namespace SlickQA.SlickSharp.Attributes
+namespace SlickQA.SlickSharp
 {
-	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
-	internal sealed class GetAttribute : Attribute
+	public static class RequestFactory
 	{
-		public GetAttribute(string apiPath, string propertyName, int index)
+		static RequestFactory()
 		{
-			ApiPath = apiPath;
-			PropertyName = propertyName;
-			Index = index;
+			Factory = uri =>
+			          {
+			          	var request = WebRequest.Create(uri);
+			          	return new JsonRequest(request);
+			          };
 		}
 
-		public string ApiPath { get; private set; }
-		public string PropertyName { get; private set; }
-		public int Index { get; private set; }
+		public static Func<Uri, IHttpWebRequest> Factory { private get; set; }
+
+		public static IHttpWebRequest Create(Uri uri)
+		{
+			return Factory(uri);
+		}
 	}
 }

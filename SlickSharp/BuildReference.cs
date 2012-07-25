@@ -43,5 +43,15 @@ namespace SlickQA.SlickSharp
 		{
 			return new BuildReference(build);
 		}
+
+		public static implicit operator Build(BuildReference buildRef)
+		{
+			var b = new Build
+			        {
+			        	Id = buildRef.Id,
+						Name = buildRef.Name
+			        };
+			return b.Get();
+		}
 	}
 }

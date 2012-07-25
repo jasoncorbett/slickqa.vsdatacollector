@@ -1,4 +1,19 @@
-﻿using System;
+﻿/* Copyright 2012 AccessData Group, LLC.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+using System;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
@@ -8,8 +23,12 @@ using SlickQA.SlickSharp.Utility;
 
 namespace SlickQA.SlickSharp.Test
 {
+	#region ReSharper Directives
+	// ReSharper disable InconsistentNaming
+	#endregion
+
 	[TestClass]
-	public sealed class JsonObjectGetTests
+	public sealed class JsonObject_Get
 	{
 		private Mock<IHttpWebRequest> _mockRequest;
 		private Mock<IHttpWebResponse> _mockResponse;
@@ -110,7 +129,7 @@ namespace SlickQA.SlickSharp.Test
 		}
 
 		[TestMethod]
-		public void GetList()
+		public void List()
 		{
 			var project1 = JsonStreamConverter<Project>.ReadFromStream(ConvertStringToStream(PROJECT_1));
 			var project2 = JsonStreamConverter<Project>.ReadFromStream(ConvertStringToStream(PROJECT_2));
@@ -128,7 +147,7 @@ namespace SlickQA.SlickSharp.Test
 		}
 
 		[TestMethod]
-		public void GetExistingItem()
+		public void Existing_Item()
 		{
 			var project1Stream = ConvertStringToStream(PROJECT_1);
 			var expectedProject = JsonStreamConverter<Project>.ReadFromStream(project1Stream);
@@ -145,7 +164,8 @@ namespace SlickQA.SlickSharp.Test
 		}
 
 		[TestMethod]
-		public void GetItemThatDoesNotExistWithCreateIfNotFoundFalse()
+
+		public void Item_that_does_not_exist_with_createIfNotFound_false()
 		{
 			_mockRequest.Setup(request => request.GetResponse()).Throws<NotFoundException>();
 
@@ -158,7 +178,7 @@ namespace SlickQA.SlickSharp.Test
 
 
 		[TestMethod]
-		public void GetItemThatDoesNotExistWithCreateIfNotFoundTrue()
+		public void Item_that_does_not_exist_with_createIfNotFound_true()
 		{
 			var project1Stream = ConvertStringToStream(PROJECT_1);
 			var expectedProject = JsonStreamConverter<Project>.ReadFromStream(project1Stream);
@@ -188,6 +208,9 @@ namespace SlickQA.SlickSharp.Test
 
 			Assert.AreEqual(expectedProject, returnedProject);
 		}
+		#region ReSharper Directives
+		// ReSharper restore InconsistentNaming
+		#endregion
 
 		private static MemoryStream ConvertStringToStream(string stringToConvert)
 		{

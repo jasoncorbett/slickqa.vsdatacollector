@@ -1,4 +1,4 @@
-﻿/* Copyright 2012 AccessData Group, LLC.
+/* Copyright 2012 AccessData Group, LLC.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,16 @@
  * limitations under the License.
  */
 
-using System;
+using System.IO;
 
-namespace SlickQA.SlickSharp.Attributes
+namespace SlickQA.SlickSharp
 {
-	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
-	internal sealed class GetAttribute : Attribute
+	public interface IHttpWebRequest
 	{
-		public GetAttribute(string apiPath, string propertyName, int index)
-		{
-			ApiPath = apiPath;
-			PropertyName = propertyName;
-			Index = index;
-		}
+		string Method { get; set; }
+		long ContentLength { get; set; }
+		IHttpWebResponse GetResponse();
 
-		public string ApiPath { get; private set; }
-		public string PropertyName { get; private set; }
-		public int Index { get; private set; }
+		Stream GetRequestStream();
 	}
 }
