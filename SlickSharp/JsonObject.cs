@@ -18,6 +18,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.Serialization;
 using SlickQA.SlickSharp.Utility;
+using SlickQA.SlickSharp.Utility.Json;
+using SlickQA.SlickSharp.Web;
 using UriBuilder = SlickQA.SlickSharp.Utility.UriBuilder;
 
 namespace SlickQA.SlickSharp
@@ -39,7 +41,7 @@ namespace SlickQA.SlickSharp
 			{
 				try
 				{
-					return JsonStreamConverter<T>.ReadResponse(httpWebRequest);
+					return StreamConverter<T>.ReadResponse(httpWebRequest);
 				}
 				catch (NotFoundException)
 				{
@@ -86,7 +88,7 @@ namespace SlickQA.SlickSharp
 			IHttpWebRequest httpWebRequest = RequestFactory.Create(uri);
 			httpWebRequest.Method = "GET";
 
-			return JsonStreamConverter<T>.ReadListResponse(httpWebRequest);
+			return StreamConverter<T>.ReadListResponse(httpWebRequest);
 		}
 
 		public T Post()
@@ -94,16 +96,16 @@ namespace SlickQA.SlickSharp
 			string listPath = UriBuilder.GetListPath(this);
 			if (String.IsNullOrWhiteSpace(listPath))
 			{
-				return null;
+				throw new MissingPostUriException();
 			}
 
 			var uri = new Uri(string.Format("{0}/{1}", ServerConfig.BaseUri, listPath));
 			IHttpWebRequest httpWebRequest = RequestFactory.Create(uri);
 			httpWebRequest.Method = "POST";
 
-			JsonStreamConverter<T>.WriteRequestStream(httpWebRequest, this);
+			StreamConverter<T>.WriteRequestStream(httpWebRequest, this);
 
-			return JsonStreamConverter<T>.ReadResponse(httpWebRequest);
+			return StreamConverter<T>.ReadResponse(httpWebRequest);
 		}
 
 		public void Put()

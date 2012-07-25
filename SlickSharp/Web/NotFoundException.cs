@@ -17,6 +17,7 @@ using System;
 
 namespace SlickQA.SlickSharp
 {
+	[Serializable]
 	public sealed class NotFoundException : Exception
 	{
 	}

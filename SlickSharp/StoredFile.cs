@@ -18,7 +18,7 @@ using System.IO;
 using System.Net;
 using System.Runtime.Serialization;
 using SlickQA.SlickSharp.Attributes;
-using SlickQA.SlickSharp.Utility;
+using SlickQA.SlickSharp.Utility.Json;
 
 namespace SlickQA.SlickSharp
 {
@@ -50,7 +50,7 @@ namespace SlickQA.SlickSharp
 			{
 				using (Stream stream = response.GetResponseStream())
 				{
-					return JsonStreamConverter<StoredFile>.ReadFromStream(stream);
+					return StreamConverter<StoredFile>.ReadFromStream(stream);
 				}
 			}
 		}

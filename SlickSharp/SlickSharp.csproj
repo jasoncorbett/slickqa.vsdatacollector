@@ -54,6 +54,7 @@
     <Compile Include="Web\IHttpWebResponse.cs" />
     <Compile Include="Web\JsonRequest.cs" />
     <Compile Include="Web\JsonResponse.cs" />
+    <Compile Include="Web\MissingPostUriException.cs" />
     <Compile Include="Web\NotFoundException.cs" />
     <Compile Include="Web\RequestFactory.cs" />
     <Compile Include="TestPlan.cs" />
@@ -79,7 +80,7 @@
     <Compile Include="Web\ServerConfig.cs" />
     <Compile Include="Status.cs" />
     <Compile Include="TestCase.cs" />
-    <Compile Include="Utility\JsonStreamConverter.cs" />
+    <Compile Include="Utility\Json\StreamConverter.cs" />
     <Compile Include="Utility\LinkedHashMap.cs" />
     <Compile Include="Utility\UriBuilder.cs" />
   </ItemGroup>

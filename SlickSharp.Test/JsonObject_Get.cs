@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using SlickQA.SlickSharp.Utility;
+using SlickQA.SlickSharp.Utility.Json;
 
 namespace SlickQA.SlickSharp.Test
 {
@@ -131,11 +132,11 @@ namespace SlickQA.SlickSharp.Test
 		[TestMethod]
 		public void List()
 		{
-			var project1 = JsonStreamConverter<Project>.ReadFromStream(ConvertStringToStream(PROJECT_1));
-			var project2 = JsonStreamConverter<Project>.ReadFromStream(ConvertStringToStream(PROJECT_2));
+			var project1 = StreamConverter<Project>.ReadFromStream(StreamConversion.FromString(PROJECT_1));
+			var project2 = StreamConverter<Project>.ReadFromStream(StreamConversion.FromString(PROJECT_2));
 			
 			const string PROJECT_LIST = "[" + PROJECT_1 + "," + PROJECT_2 + "]";			
-			var listStream = ConvertStringToStream(PROJECT_LIST);
+			var listStream = StreamConversion.FromString(PROJECT_LIST);
 
 			_mockRequest.Setup(request => request.GetResponse()).Returns(_mockResponse.Object);
 			_mockResponse.Setup(response => response.GetResponseStream()).Returns(listStream);
@@ -149,8 +150,8 @@ namespace SlickQA.SlickSharp.Test
 		[TestMethod]
 		public void Existing_Item()
 		{
-			var project1Stream = ConvertStringToStream(PROJECT_1);
-			var expectedProject = JsonStreamConverter<Project>.ReadFromStream(project1Stream);
+			var project1Stream = StreamConversion.FromString(PROJECT_1);
+			var expectedProject = StreamConverter<Project>.ReadFromStream(project1Stream);
 			project1Stream.Position = 0;
 
 			_mockRequest.Setup(request => request.GetResponse()).Returns(_mockResponse.Object);
@@ -180,45 +181,39 @@ namespace SlickQA.SlickSharp.Test
 		[TestMethod]
 		public void Item_that_does_not_exist_with_createIfNotFound_true()
 		{
-			var project1Stream = ConvertStringToStream(PROJECT_1);
-			var expectedProject = JsonStreamConverter<Project>.ReadFromStream(project1Stream);
+			var project1Stream = StreamConversion.FromString(PROJECT_1);
+			var expectedProject = StreamConverter<Project>.ReadFromStream(project1Stream);
 			project1Stream.Position = 0;
 
 
-			var requestStream = new MemoryStream();
-			_mockRequest.Setup(request => request.GetRequestStream()).Returns(requestStream);
+			Project returnedProject;
+			using (var requestStream = new MemoryStream())
+			{
+				_mockRequest.Setup(request => request.GetRequestStream()).Returns(requestStream);
 
-			bool firstTimeCalled = true;
-			_mockRequest.Setup(request => request.GetResponse())
-				.Returns(() => _mockResponse.Object)
-				.Callback(() =>
-				{
-					if (firstTimeCalled)
+				bool firstTimeCalled = true;
+				_mockRequest.Setup(request => request.GetResponse())
+					.Returns(() => _mockResponse.Object)
+					.Callback(() =>
 					{
-						firstTimeCalled = false;
-						throw new NotFoundException();
-					}
-				});
-			_mockResponse.Setup(response => response.GetResponseStream()).Returns(project1Stream);
+						if (firstTimeCalled)
+						{
+							firstTimeCalled = false;
+							throw new NotFoundException();
+						}
+					});
+				_mockResponse.Setup(response => response.GetResponseStream()).Returns(project1Stream);
 
 
-			var project = new Project { Name = "Slickij Developer Project" };
+				var project = new Project { Name = "Slickij Developer Project" };
 
-			var returnedProject = project.Get(true);
-
+				returnedProject = project.Get(true);
+				
+			}
 			Assert.AreEqual(expectedProject, returnedProject);
 		}
 		#region ReSharper Directives
 		// ReSharper restore InconsistentNaming
 		#endregion
-
-		private static MemoryStream ConvertStringToStream(string stringToConvert)
-		{
-			var listStream = new MemoryStream();
-			byte[] data = Encoding.Unicode.GetBytes(stringToConvert);
-			listStream.Write(data, 0, data.Length);
-			listStream.Position = 0;
-			return listStream;
-		}
 	}
 }

@@ -15,13 +15,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Text;
 
-namespace SlickQA.SlickSharp.Utility
+namespace SlickQA.SlickSharp.Utility.Json
 {
-	public static class JsonStreamConverter<T> where T : class, IJsonObject
+	public static class StreamConverter<T> where T : class, IJsonObject
 	{
 		public static T ReadFromStream(Stream stream)
 		{
@@ -39,6 +40,17 @@ namespace SlickQA.SlickSharp.Utility
 		public static void WriteRequestStream(IHttpWebRequest httpWebRequest, JsonObject<T> jsonObject)
 		{
 			byte[] body = ConvertToByteBuffer(jsonObject);
+			httpWebRequest.ContentLength = body.Length;
+
+			using (Stream stream = httpWebRequest.GetRequestStream())
+			{
+				stream.Write(body, 0, body.Length);
+			}
+		}
+
+		public static void WriteRequestStream(IHttpWebRequest httpWebRequest, List<T> jsonObjects)
+		{
+			byte[] body = ConvertToByteBuffer(jsonObjects);
 			httpWebRequest.ContentLength = body.Length;
 
 			using (Stream stream = httpWebRequest.GetRequestStream())
@@ -75,7 +87,21 @@ namespace SlickQA.SlickSharp.Utility
 			{
 				var ser = new DataContractJsonSerializer(typeof(T));
 				ser.WriteObject(tempStream, jsonObject);
-				Console.WriteLine(Encoding.UTF8.GetString(tempStream.GetBuffer()));
+				Debug.Write(Encoding.UTF8.GetString(tempStream.GetBuffer()));
+				Console.WriteLine();
+				Console.WriteLine();
+				return tempStream.GetBuffer();
+			}
+		}
+
+		private static byte[] ConvertToByteBuffer(List<T> jsonObjects)
+		{
+			using (var tempStream = new MemoryStream())
+			{
+				var ser = new DataContractJsonSerializer(typeof(List<T>));
+				ser.WriteObject(tempStream, jsonObjects);
+				Debug.Write(Encoding.UTF8.GetString(tempStream.GetBuffer()));
+				Console.WriteLine();
 				Console.WriteLine();
 				return tempStream.GetBuffer();
 			}

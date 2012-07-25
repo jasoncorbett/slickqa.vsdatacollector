@@ -54,7 +54,7 @@ namespace SlickQA.SlickSharp
 		[DataMember(Name = "extensions")]
 		public List<DataExtension<Project>> Extensions;
 
-		[DataMember(Name = "id")]
+		[DataMember(Name = "id", EmitDefaultValue = false)]
 		public String Id; //TODO: Possibly org.bson.types.ObjectId compatible
 
 		[DataMember(Name = "lastUpdated")]

@@ -21,7 +21,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using SlickQA.SlickSharp.Attributes;
-using SlickQA.SlickSharp.Utility;
+using SlickQA.SlickSharp.Utility.Json;
 
 namespace SlickQA.SlickSharp
 {
@@ -92,28 +92,16 @@ namespace SlickQA.SlickSharp
 		public static void AddToLog(String resultId, List<LogEntry> logaddon)
 		{
 			var uri = new Uri(string.Format("{0}/{1}/{2}/{3}", ServerConfig.BaseUri, "results", resultId, "log"));
-			var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
-			httpWebRequest.ContentType = "application/json";
+			var httpWebRequest = RequestFactory.Create(uri);
 			httpWebRequest.Method = "POST";
-			using (var tempStream = new MemoryStream())
-			{
-				var ser = new DataContractJsonSerializer(typeof(List<LogEntry>));
-				ser.WriteObject(tempStream, logaddon);
-				Console.WriteLine(Encoding.UTF8.GetString(tempStream.GetBuffer()));
-				Console.WriteLine();
-				byte[] body = tempStream.GetBuffer();
-				httpWebRequest.ContentLength = body.Length;
-				using (Stream stream = httpWebRequest.GetRequestStream())
-				{
-					stream.Write(body, 0, body.Length);
-				}
-			}
 
-			using (var response = (HttpWebResponse)httpWebRequest.GetResponse())
+			StreamConverter<LogEntry>.WriteRequestStream(httpWebRequest, logaddon);
+
+			using (var response = httpWebRequest.GetResponse())
 			{
 				using (Stream stream = response.GetResponseStream())
 				{
-					//return JsonStreamConverter<Result>.ReadFromStream(stream);
+					//return StreamConverter<Result>.ReadFromStream(stream);
 				}
 			}
 		}

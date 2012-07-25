@@ -13,12 +13,14 @@
  * limitations under the License.
  */
 
+using System;
 using System.IO;
 using System.Net;
 
 namespace SlickQA.SlickSharp
 {
-	public sealed class JsonResponse : IHttpWebResponse
+	[Serializable]
+	public sealed class JsonResponse : WebResponse, IHttpWebResponse
 	{
 		private readonly HttpWebResponse _response;
 
@@ -34,7 +36,7 @@ namespace SlickQA.SlickSharp
 			_response.Close();
 		}
 
-		public Stream GetResponseStream()
+		public override Stream GetResponseStream()
 		{
 			return _response.GetResponseStream();
 		}

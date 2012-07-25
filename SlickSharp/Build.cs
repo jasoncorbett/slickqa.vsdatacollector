@@ -46,8 +46,7 @@ namespace SlickQA.SlickSharp
 				new Uri(String.Format("{0}/projects/{1}/releases/{2}/setdefaultbuild/{3}", ServerConfig.BaseUri, ProjectId,
 				                      ReleaseId, Id));
 
-			var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
-			httpWebRequest.ContentType = "application/json";
+			var httpWebRequest = RequestFactory.Create(uri);
 			httpWebRequest.Method = "GET";
 			using (httpWebRequest.GetResponse())
 			{

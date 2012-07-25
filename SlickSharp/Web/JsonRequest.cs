@@ -13,11 +13,13 @@
  * limitations under the License.
  */
 
+using System;
 using System.IO;
 using System.Net;
 
 namespace SlickQA.SlickSharp
 {
+	[Serializable]
 	public sealed class JsonRequest : WebRequest, IHttpWebRequest
 	{
 		private readonly WebRequest _request;

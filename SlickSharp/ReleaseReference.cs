@@ -43,5 +43,15 @@ namespace SlickQA.SlickSharp
 		{
 			return new ReleaseReference(release);
 		}
+
+		public static implicit operator Release(ReleaseReference releaseReference)
+		{
+			var r = new Release
+			        {
+			        	Id = releaseReference.Id,
+						Name = releaseReference.Name
+			        };
+			return r.Get();
+		}
 	}
 }

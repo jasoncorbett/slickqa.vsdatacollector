@@ -14,6 +14,7 @@
  */
 
 using System;
+using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace SlickQA.SlickSharp
@@ -52,6 +53,18 @@ namespace SlickQA.SlickSharp
 		public static implicit operator ResultReference(Result result)
 		{
 			return new ResultReference(result);
+		}
+
+		public static implicit operator Result(ResultReference resultReference)
+		{
+			var r = new Result
+			        {
+			        	Id = resultReference.Id,
+			        	Status = resultReference.ResultStatus,
+			        	Recorded = resultReference.DateRecorded.ToString(CultureInfo.InvariantCulture),
+			        	BuildReference = resultReference.Build
+			        };
+			return r.Get();
 		}
 	}
 }

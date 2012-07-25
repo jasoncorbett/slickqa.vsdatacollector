@@ -43,5 +43,15 @@ namespace SlickQA.SlickSharp
 		{
 			return new TestRunReference(testRun);
 		}
+
+		public static implicit operator TestRun(TestRunReference testRunReference)
+		{
+			var t = new TestRun
+			        {
+			        	Id = testRunReference.TestRunId,
+						Name = testRunReference.Name
+			        };
+			return t.Get();
+		}
 	}
 }

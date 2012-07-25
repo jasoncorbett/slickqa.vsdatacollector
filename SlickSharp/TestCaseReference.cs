@@ -59,5 +59,18 @@ namespace SlickQA.SlickSharp
 		{
 			return new TestCaseReference(testcase);
 		}
+
+		public static implicit operator Testcase(TestCaseReference testCaseReference)
+		{
+			var t = new Testcase
+			        {
+			        	Id = testCaseReference.Id,
+			        	Name = testCaseReference.Name,
+			        	AutomationId = testCaseReference.AutomationId,
+			        	AutomationKey = testCaseReference.AutomationKey,
+			        	AutomationTool = testCaseReference.AutomationTool
+			        };
+			return t.Get();
+		}
 	}
 }
