@@ -21,8 +21,8 @@ using SlickQA.SlickSharp.Attributes;
 namespace SlickQA.SlickSharp
 {
 	[DataContract]
-	[ListApi("configurations")]
-	[Get("", "Id", 0)]
+	[CollectionApiPath("configurations")]
+	[ItemApiPath("", "Id", 0)]
 	public sealed class Configuration : JsonObject<Configuration>, IJsonObject
 	{
 		[DataMember(Name = "configurationData")]

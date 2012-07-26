@@ -21,7 +21,7 @@ using SlickQA.SlickSharp.ObjectReferences;
 namespace SlickQA.SlickSharp
 {
 	[DataContract]
-	[ListApi("testruns")]
+	[CollectionApiPath("testruns")]
 	public sealed class TestRun : JsonObject<TestRun>, IJsonObject
 	{
 		[DataMember(Name = "build")]

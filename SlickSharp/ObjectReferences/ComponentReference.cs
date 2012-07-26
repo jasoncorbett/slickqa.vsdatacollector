@@ -57,7 +57,8 @@ namespace SlickQA.SlickSharp.ObjectReferences
 						Name = componentReference.Name,
 						Code = componentReference.Code
 			        };
-			return c.Get();
+			c.Get();
+			return c;
 		}
 	}
 }

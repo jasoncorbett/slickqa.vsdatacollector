@@ -45,7 +45,8 @@ namespace SlickQA.SlickSharp.ObjectReferences
 			        	Id = projectReference.Id,
 						Name = projectReference.Name
 			        };
-			return p.Get();
+			p.Get();
+			return p;
 		}
 	}
 }

@@ -51,7 +51,8 @@ namespace SlickQA.SlickSharp.ObjectReferences
 			        	Id = testRunReference.TestRunId,
 						Name = testRunReference.Name
 			        };
-			return t.Get();
+			t.Get();
+			return t;
 		}
 	}
 }

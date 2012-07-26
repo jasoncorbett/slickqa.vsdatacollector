@@ -56,7 +56,8 @@ namespace SlickQA.SlickSharp.ObjectReferences
 			        	Recorded = resultReference.DateRecorded,
 			        	BuildReference = resultReference.Build
 			        };
-			return r.Get();
+			r.Get();
+			return r;
 		}
 	}
 }

@@ -51,7 +51,8 @@ namespace SlickQA.SlickSharp.ObjectReferences
 			        	Id = buildRef.Id,
 						Name = buildRef.Name
 			        };
-			return b.Get();
+			b.Get();
+			return b;
 		}
 	}
 }

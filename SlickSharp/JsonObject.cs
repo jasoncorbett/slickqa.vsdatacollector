@@ -16,6 +16,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net;
+using System.Reflection;
 using System.Runtime.Serialization;
 using SlickQA.SlickSharp.Utility.Json;
 using SlickQA.SlickSharp.Web;
@@ -26,11 +28,11 @@ namespace SlickQA.SlickSharp
 	[DataContract]
 	public abstract class JsonObject<T> where T : class, IJsonObject
 	{
-		public T Get(bool createIfNotFound = false)
+		public void Get(bool createIfNotFound = false)
 		{
 			var uri = UriBuilder.RetrieveGetUri(this);
 			IHttpWebRequest httpWebRequest = RequestFactory.Create(uri);
-			httpWebRequest.Method = "GET";
+			httpWebRequest.Method = WebRequestMethods.Http.Get;
 
 			// at times we don't get a good response back from slick when the GET should succeed
 			//  because of this we try 3 times, just to be sure
@@ -40,11 +42,17 @@ namespace SlickQA.SlickSharp
 			{
 				try
 				{
-					return StreamConverter<T>.ReadResponse(httpWebRequest);
+					var temp = StreamConverter<T>.ReadResponse(httpWebRequest);
+					ApplyChanges(temp);
+					return;
 				}
 				catch (NotFoundException)
 				{
-					return createIfNotFound ? Post() : null;
+					if (createIfNotFound)
+					{
+						Post();
+					}
+					return;
 				}
 				catch (Exception e)
 				{
@@ -58,14 +66,8 @@ namespace SlickQA.SlickSharp
 
 		public static List<T> GetList()
 		{
-			var listPath = UriBuilder.GetListPath<T>(null);
+			var uri = UriBuilder.FullUri(UriBuilder.GetListPath<T>(null));
 
-			if (String.IsNullOrWhiteSpace(listPath))
-			{
-				return new List<T>();
-			}
-
-			var uri = new Uri(string.Format("{0}/{1}", ServerConfig.BaseUri, listPath));
 			return RetrieiveList(uri);
 		}
 
@@ -85,29 +87,52 @@ namespace SlickQA.SlickSharp
 		private static List<T> RetrieiveList(Uri uri)
 		{
 			IHttpWebRequest httpWebRequest = RequestFactory.Create(uri);
-			httpWebRequest.Method = "GET";
+			httpWebRequest.Method = WebRequestMethods.Http.Get;
 
 			return StreamConverter<T>.ReadListResponse(httpWebRequest);
 		}
 
-		public T Post()
+		public void Post()
 		{
 			var uri = UriBuilder.FullUri(UriBuilder.GetListPath(this));
 
 			IHttpWebRequest httpWebRequest = RequestFactory.Create(uri);
-			httpWebRequest.Method = "POST";
+			httpWebRequest.Method = WebRequestMethods.Http.Post;
 
 			StreamConverter<T>.WriteRequestStream(httpWebRequest, this);
 
-			return StreamConverter<T>.ReadResponse(httpWebRequest);
+			T temp = StreamConverter<T>.ReadResponse(httpWebRequest);
+			ApplyChanges(temp);
 		}
 
 		public void Put()
 		{
+			var uri = UriBuilder.RetrieveGetUri(this);
+			IHttpWebRequest httpWebRequest = RequestFactory.Create(uri);
+			httpWebRequest.Method = WebRequestMethods.Http.Put;
+
+			StreamConverter<T>.WriteRequestStream(httpWebRequest, this);
+			T temp = StreamConverter<T>.ReadResponse(httpWebRequest);
+
+			ApplyChanges(temp);
+		}
+
+		private void ApplyChanges(T temp)
+		{
+			var type = typeof(T);
+
+			var fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public);
+
+			foreach (FieldInfo field in fields)
+			{
+				var val = field.GetValue(temp);
+				field.SetValue(this, val);
+			}
 		}
 
 		public void Delete()
 		{
+			throw new NotImplementedException("This is included for future rest completeness, we currently have no use for delete.");
 		}
 	}
 }

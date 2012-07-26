@@ -36,7 +36,7 @@ namespace SlickQA.SlickSharp.Test.Web
 			UriBuilder.GetListPath(new Test());
 		}
 
-		[ListApi("foo_bar_baz")]
+		[CollectionApiPath("foo_bar_baz")]
 		private sealed class ListTest : JsonObject<ListTest>, IJsonObject {}
 
 		[TestMethod]

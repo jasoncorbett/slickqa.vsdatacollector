@@ -158,22 +158,21 @@ namespace SlickQA.SlickSharp.Test
 
 			var project = new Project { Name = "Slickij Developer Project" };
 
-			var returnedProject = project.Get();
+			project.Get();
 
-			Assert.AreEqual(expectedProject, returnedProject);
+			Assert.AreEqual(expectedProject.Id, project.Id);
 		}
 
 		[TestMethod]
-
 		public void Item_that_does_not_exist_with_createIfNotFound_false()
 		{
 			_mockRequest.Setup(request => request.GetResponse()).Throws<NotFoundException>();
 
 			var project = new Project { Name = "Slickij Developer Project" };
 
-			var returnedProject = project.Get();
+			project.Get();
 
-			Assert.IsNull(returnedProject);
+			Assert.IsNull(project.Id);
 		}
 
 
@@ -184,8 +183,7 @@ namespace SlickQA.SlickSharp.Test
 			var expectedProject = StreamConverter<Project>.ReadFromStream(project1Stream);
 			project1Stream.Position = 0;
 
-
-			Project returnedProject;
+			Project project;
 			using (var requestStream = new MemoryStream())
 			{
 				_mockRequest.Setup(request => request.GetRequestStream()).Returns(requestStream);
@@ -204,12 +202,15 @@ namespace SlickQA.SlickSharp.Test
 				_mockResponse.Setup(response => response.GetResponseStream()).Returns(project1Stream);
 
 
-				var project = new Project { Name = "Slickij Developer Project" };
+				project = new Project { Name = "Slickij Developer Project" };
 
-				returnedProject = project.Get(true);
+				project.Get(true);
 				
 			}
-			Assert.AreEqual(expectedProject, returnedProject);
+
+			Assert.AreEqual(expectedProject.Id, project.Id);
+			Assert.AreEqual(expectedProject.Name, project.Name);
+			Assert.AreEqual(expectedProject.LastUpdated, project.LastUpdated);
 		}
 		#region ReSharper Directives
 		// ReSharper restore InconsistentNaming

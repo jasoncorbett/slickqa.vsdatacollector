@@ -22,8 +22,8 @@ using UriBuilder = SlickQA.SlickSharp.Web.UriBuilder;
 namespace SlickQA.SlickSharp
 {
 	[DataContract]
-	[ListApi("projects/{ProjectId}/releases/{ReleaseId}/builds")]
-	[Get("", "Id", 0)]
+	[CollectionApiPath("projects/{ProjectId}/releases/{ReleaseId}/builds")]
+	[ItemApiPath("", "Id", 0)]
 	public sealed class Build : JsonObject<Build>, IJsonObject
 	{
 		[DataMember(Name = "built")]

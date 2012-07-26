@@ -28,15 +28,8 @@ namespace SlickQA.SlickSharp.Test
 	#endregion
 
 	[TestClass]
-	public sealed class JsonObject_Post
+	public sealed class JsonObject_Put
 	{
-		[DataContract]
-		private sealed class DummyJsonObject : JsonObject<DummyJsonObject>, IJsonObject
-		{
-			[DataMember(Name = "name")]
-			public String Name;
-		}
-
 		private Mock<IHttpWebRequest> _mockRequest;
 		private Mock<IHttpWebResponse> _mockResponse;
 
@@ -51,35 +44,29 @@ namespace SlickQA.SlickSharp.Test
 			_mockRequest = new Mock<IHttpWebRequest>();
 			_mockResponse = new Mock<IHttpWebResponse>();
 
-			RequestFactory.Factory = uri => uri == new Uri(ServerConfig.BaseUri + "/projects") ? _mockRequest.Object : null;
-		}
-
-		[TestMethod]
-		[ExpectedException(typeof(MissingPostUriException))]
-		public void With_no_list_api()
-		{
-			var d = new DummyJsonObject {Name = "Foo Bar Baz"};
-			d.Post();
+			RequestFactory.Factory = uri => _mockRequest.Object;
 		}
 
 		const string PROJECT_JSON = "  {"
-										+ "    \"name\":\"Foo Bar Baz\","
-										+ "    \"id\":\"4ffc9e3ee4b097a5f43e5d27\","
-										+ "    \"attributes\":{},"
-										+ "    \"description\":null,"
-										+ "    \"configuration\":{},"
-										+ "    \"releases\":[],"
-										+ "    \"lastUpdated\":1343081801244,"
-										+ "    \"automationTools\":[],"
-										+ "    \"defaultRelease\":\"\","
-										+ "    \"tags\":[],"
-										+ "    \"components\":[],"
-										+ "    \"datadrivenProperties\":[],"
-										+ "    \"extensions\":[],"
-										+ "    \"defaultBuildName\":\"\""
-										+ "  }";
+								+ "    \"name\":\"Foo Bar Baz\","
+								+ "    \"id\":\"4ffc9e3ee4b097a5f43e5d27\","
+								+ "    \"attributes\":{},"
+								+ "    \"description\":null,"
+								+ "    \"configuration\":{},"
+								+ "    \"releases\":[],"
+								+ "    \"lastUpdated\":1343081801244,"
+								+ "    \"automationTools\":[],"
+								+ "    \"defaultRelease\":\"\","
+								+ "    \"tags\":[],"
+								+ "    \"components\":[],"
+								+ "    \"datadrivenProperties\":[],"
+								+ "    \"extensions\":[],"
+								+ "    \"defaultBuildName\":\"\""
+								+ "  }";
+
+
 		[TestMethod]
-		public void Updates_instance_correctly()
+		public void Updates_instance_with_any_server_side_changes()
 		{
 			var responseStream = StreamConversion.FromString(PROJECT_JSON);
 			var expectedProject = StreamConverter<Project>.ReadFromStream(responseStream);
@@ -92,14 +79,20 @@ namespace SlickQA.SlickSharp.Test
 				_mockRequest.Setup(request => request.GetResponse()).Returns(() => _mockResponse.Object);
 				_mockResponse.Setup(response => response.GetResponseStream()).Returns(responseStream);
 
-				p = new Project { Name = "Foo Bar Baz" };
-				p.Post(); 
+				p = new Project
+				    {
+				    	Name = "Foo Bar Baz",
+						Id = "4ffc9e3ee4b097a5f43e5d27",
+						LastUpdated = 1343081352
+				    };
+
+				p.Put();
 			}
 
-			Assert.AreEqual(expectedProject.Id, p.Id);
 			Assert.AreEqual(expectedProject.LastUpdated, p.LastUpdated);
 		}
 	}
+
 	#region ReSharper Directives
 	// ReSharper restore InconsistentNaming
 	#endregion

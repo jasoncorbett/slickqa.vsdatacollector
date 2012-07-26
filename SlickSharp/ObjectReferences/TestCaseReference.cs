@@ -70,7 +70,8 @@ namespace SlickQA.SlickSharp.ObjectReferences
 			        	AutomationKey = testCaseReference.AutomationKey,
 			        	AutomationTool = testCaseReference.AutomationTool
 			        };
-			return t.Get();
+			t.Get();
+			return t;
 		}
 	}
 }

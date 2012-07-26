@@ -27,7 +27,7 @@ using UriBuilder = SlickQA.SlickSharp.Web.UriBuilder;
 namespace SlickQA.SlickSharp
 {
 	[DataContract]
-	[ListApi("results")]
+	[CollectionApiPath("results")]
 	public sealed class Result : JsonObject<Result>, IJsonObject
 	{
 		[DataMember(Name = "attributes")]

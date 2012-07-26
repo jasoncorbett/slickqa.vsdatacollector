@@ -20,8 +20,8 @@ using SlickQA.SlickSharp.Attributes;
 namespace SlickQA.SlickSharp
 {
 	[DataContract]
-	[ListApi("projects/{ProjectId}/components")]
-	[Get("", "Id", 0)]
+	[CollectionApiPath("projects/{ProjectId}/components")]
+	[ItemApiPath("", "Id", 0)]
 	public sealed class Component : JsonObject<Component>, IJsonObject
 	{
 		[DataMember(Name = "code")]

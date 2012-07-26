@@ -30,9 +30,9 @@ namespace SlickQA.SlickSharp.Test.Web
 	public sealed class SelectGetApi
 	{
 		[DataContract]
-		[ListApi("projects")]
-		[Get("", "Id", 0)]
-		[Get("byname", "Name", 1)]
+		[CollectionApiPath("projects")]
+		[ItemApiPath("", "Id", 0)]
+		[ItemApiPath("byname", "Name", 1)]
 		private sealed class DummyObjectWithFields
 		{
 			[DataMember(Name = "id")]
@@ -75,9 +75,9 @@ namespace SlickQA.SlickSharp.Test.Web
 		}
 
 		[DataContract]
-		[ListApi("projects")]
-		[Get("", "Id", 0)]
-		[Get("byname", "Name", 1)]
+		[CollectionApiPath("projects")]
+		[ItemApiPath("", "Id", 0)]
+		[ItemApiPath("byname", "Name", 1)]
 		private sealed class DummyObjectWithProperties
 		{
 			[DataMember(Name = "id")]

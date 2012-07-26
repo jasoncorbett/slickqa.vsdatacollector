@@ -58,9 +58,9 @@ namespace SlickQA.SlickSharp.Web
 		{
 			string getPath = null;
 			var type = searchObject.GetType();
-			object[] apiList = type.GetCustomAttributes(typeof(GetAttribute), true);
-			List<GetAttribute> getApis = apiList.OrderBy(a => ((GetAttribute)a).Index).Select(b => (GetAttribute)b).ToList();
-			foreach (GetAttribute item in getApis)
+			object[] apiList = type.GetCustomAttributes(typeof(ItemApiPathAttribute), true);
+			List<ItemApiPathAttribute> getApis = apiList.OrderBy(a => ((ItemApiPathAttribute)a).Index).Select(b => (ItemApiPathAttribute)b).ToList();
+			foreach (ItemApiPathAttribute item in getApis)
 			{
 				PropertyInfo property = type.GetProperty(item.PropertyName);
 				object value;
@@ -113,13 +113,13 @@ namespace SlickQA.SlickSharp.Web
 
 		public static string GetListPath<T>(JsonObject<T> searchObject) where T : class, IJsonObject
 		{
-			object[] listAttributes = typeof(T).GetCustomAttributes(typeof(ListApiAttribute), true);
+			object[] listAttributes = typeof(T).GetCustomAttributes(typeof(CollectionApiPathAttribute), true);
 			if (listAttributes.Length == 0)
 			{
 				throw new MissingPostUriException();
 			}
 
-			string listPath = ((ListApiAttribute)listAttributes[0]).Uri;
+			string listPath = ((CollectionApiPathAttribute)listAttributes[0]).Uri;
 			return NormalizePath(searchObject, listPath);
 		}
 

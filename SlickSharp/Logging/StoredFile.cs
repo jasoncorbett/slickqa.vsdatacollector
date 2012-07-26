@@ -24,7 +24,7 @@ using UriBuilder = SlickQA.SlickSharp.Web.UriBuilder;
 namespace SlickQA.SlickSharp.Logging
 {
 	[DataContract]
-	[ListApi("files")]
+	[CollectionApiPath("files")]
 	public abstract class StoredFile : JsonObject<StoredFile>, IJsonObject
 	{
 		[DataMember(Name = "filename")]

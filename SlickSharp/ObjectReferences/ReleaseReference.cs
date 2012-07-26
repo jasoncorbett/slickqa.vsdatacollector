@@ -51,7 +51,8 @@ namespace SlickQA.SlickSharp.ObjectReferences
 			        	Id = releaseReference.Id,
 						Name = releaseReference.Name
 			        };
-			return r.Get();
+			r.Get();
+			return r;
 		}
 	}
 }
