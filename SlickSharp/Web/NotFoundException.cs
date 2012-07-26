@@ -15,7 +15,7 @@
 
 using System;
 
-namespace SlickQA.SlickSharp
+namespace SlickQA.SlickSharp.Web
 {
 	[Serializable]
 	public sealed class NotFoundException : Exception

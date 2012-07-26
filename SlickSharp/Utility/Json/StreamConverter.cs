@@ -19,6 +19,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using SlickQA.SlickSharp.Web;
 
 namespace SlickQA.SlickSharp.Utility.Json
 {

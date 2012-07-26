@@ -16,42 +16,42 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace SlickQA.SlickSharp
+namespace SlickQA.SlickSharp.ObjectReferences
 {
 	[DataContract]
-	public sealed class BuildReference : JsonObject<BuildReference>, IJsonObject
+	public sealed class ReleaseReference : JsonObject<ReleaseReference>, IJsonObject
 	{
-		[DataMember(Name = "buildId")]
+		[DataMember(Name = "releaseId")]
 		public String Id;
 
 		[DataMember(Name = "name")]
 		public String Name;
 
-		public BuildReference()
+		public ReleaseReference()
 		{
 			Id = default(String);
 			Name = default(String);
 		}
 
-		public BuildReference(Build build)
+		private ReleaseReference(Release release)
 		{
-			Id = build.Id;
-			Name = build.Name;
+			Id = release.Id;
+			Name = release.Name;
 		}
 
-		public static implicit operator BuildReference(Build build)
+		public static implicit operator ReleaseReference(Release release)
 		{
-			return new BuildReference(build);
+			return new ReleaseReference(release);
 		}
 
-		public static implicit operator Build(BuildReference buildRef)
+		public static implicit operator Release(ReleaseReference releaseReference)
 		{
-			var b = new Build
+			var r = new Release
 			        {
-			        	Id = buildRef.Id,
-						Name = buildRef.Name
+			        	Id = releaseReference.Id,
+						Name = releaseReference.Name
 			        };
-			return b.Get();
+			return r.Get();
 		}
 	}
 }

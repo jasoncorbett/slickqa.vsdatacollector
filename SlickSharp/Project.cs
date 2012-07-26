@@ -25,7 +25,7 @@ namespace SlickQA.SlickSharp
 	[ListApi("projects")]
 	[Get("", "Id", 0)]
 	[Get("byname", "Name", 1)]
-	public class Project : JsonObject<Project>, IJsonObject
+	public sealed class Project : JsonObject<Project>, IJsonObject
 	{
 		[DataMember(Name = "attributes")]
 		public LinkedHashMap<String> Attributes;

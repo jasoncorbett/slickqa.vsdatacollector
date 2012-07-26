@@ -16,7 +16,7 @@
 using System;
 using System.Net;
 
-namespace SlickQA.SlickSharp
+namespace SlickQA.SlickSharp.Web
 {
 	public static class RequestFactory
 	{

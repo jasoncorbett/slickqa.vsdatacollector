@@ -16,42 +16,37 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace SlickQA.SlickSharp
+namespace SlickQA.SlickSharp.ObjectReferences
 {
 	[DataContract]
-	public sealed class ProjectReference : JsonObject<ProjectReference>, IJsonObject
+	public sealed class ConfigurationReference : JsonObject<ConfigurationReference>, IJsonObject
 	{
-		[DataMember(Name = "id")]
-		public String Id;
+		[DataMember(Name = "configId")]
+		public String ConfigId;
+
+		[DataMember(Name = "filename")]
+		public String FileName;
 
 		[DataMember(Name = "name")]
 		public String Name;
 
-		public ProjectReference()
+		public ConfigurationReference()
 		{
-			Id = default(String);
+			ConfigId = default(String);
 			Name = default(String);
+			FileName = default(String);
 		}
 
-		public ProjectReference(Project project)
+		private ConfigurationReference(Configuration configuration)
 		{
-			Id = project.Id;
-			Name = project.Name;
+			ConfigId = configuration.Id;
+			Name = configuration.Name;
+			FileName = configuration.Filename;
 		}
 
-		public static implicit operator ProjectReference(Project project)
+		public static implicit operator ConfigurationReference(Configuration configuration)
 		{
-			return new ProjectReference(project);
-		}
-
-		public static implicit operator Project(ProjectReference projectReference)
-		{
-			var p = new Project
-			        {
-			        	Id = projectReference.Id,
-						Name = projectReference.Name
-			        };
-			return p.Get();
+			return new ConfigurationReference(configuration);
 		}
 	}
 }

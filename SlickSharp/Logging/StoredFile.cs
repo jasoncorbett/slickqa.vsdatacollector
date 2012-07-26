@@ -19,12 +19,13 @@ using System.Net;
 using System.Runtime.Serialization;
 using SlickQA.SlickSharp.Attributes;
 using SlickQA.SlickSharp.Utility.Json;
+using UriBuilder = SlickQA.SlickSharp.Web.UriBuilder;
 
-namespace SlickQA.SlickSharp
+namespace SlickQA.SlickSharp.Logging
 {
 	[DataContract]
 	[ListApi("files")]
-	public class StoredFile : JsonObject<StoredFile>, IJsonObject
+	public abstract class StoredFile : JsonObject<StoredFile>, IJsonObject
 	{
 		[DataMember(Name = "filename")]
 		public String FileName;
@@ -37,7 +38,7 @@ namespace SlickQA.SlickSharp
 
 		public StoredFile PostContent(byte[] file)
 		{
-			var uri = new Uri(string.Format("{0}/{1}/{2}/{3}", ServerConfig.BaseUri, "files", Id, "content"));
+			var uri = UriBuilder.FullUri(UriBuilder.NormalizePath(this, "files/{Id}/content"));
 			var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
 			httpWebRequest.ContentType = "application/octet-stream";
 			httpWebRequest.Method = "POST";

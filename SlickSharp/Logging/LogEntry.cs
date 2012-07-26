@@ -17,7 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace SlickQA.SlickSharp
+namespace SlickQA.SlickSharp.Logging
 {
 	[DataContract]
 	public class LogEntry : JsonObject<LogEntry>, IJsonObject

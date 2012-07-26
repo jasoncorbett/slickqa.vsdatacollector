@@ -45,11 +45,12 @@
     <Compile Include="Component.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="ConfigurationType.cs" />
-    <Compile Include="BuildReference.cs" />
-    <Compile Include="ConfigurationReference.cs" />
-    <Compile Include="ComponentReference.cs" />
-    <Compile Include="LogEntry.cs" />
-    <Compile Include="LogLevel.cs" />
+    <Compile Include="ObjectReferences\BuildReference.cs" />
+    <Compile Include="ObjectReferences\ConfigurationReference.cs" />
+    <Compile Include="ObjectReferences\ComponentReference.cs" />
+    <Compile Include="Logging\LogEntry.cs" />
+    <Compile Include="Logging\LogLevel.cs" />
+    <Compile Include="Queries\TestPlanQuery.cs" />
     <Compile Include="Web\IHttpWebRequest.cs" />
     <Compile Include="Web\IHttpWebResponse.cs" />
     <Compile Include="Web\JsonRequest.cs" />
@@ -58,13 +59,13 @@
     <Compile Include="Web\NotFoundException.cs" />
     <Compile Include="Web\RequestFactory.cs" />
     <Compile Include="TestPlan.cs" />
-    <Compile Include="ResultReference.cs" />
-    <Compile Include="StoredFile.cs" />
-    <Compile Include="TestRunReference.cs" />
-    <Compile Include="TestCaseQuery.cs" />
-    <Compile Include="TestCaseReference.cs" />
-    <Compile Include="ReleaseReference.cs" />
-    <Compile Include="ProjectReference.cs" />
+    <Compile Include="ObjectReferences\ResultReference.cs" />
+    <Compile Include="Logging\StoredFile.cs" />
+    <Compile Include="ObjectReferences\TestRunReference.cs" />
+    <Compile Include="Queries\TestCaseQuery.cs" />
+    <Compile Include="ObjectReferences\TestCaseReference.cs" />
+    <Compile Include="ObjectReferences\ReleaseReference.cs" />
+    <Compile Include="ObjectReferences\ProjectReference.cs" />
     <Compile Include="TestRun.cs" />
     <Compile Include="DataDrivenProperty.cs" />
     <Compile Include="DataExtension.cs" />
@@ -82,8 +83,9 @@
     <Compile Include="TestCase.cs" />
     <Compile Include="Utility\Json\StreamConverter.cs" />
     <Compile Include="Utility\LinkedHashMap.cs" />
-    <Compile Include="Utility\UriBuilder.cs" />
+    <Compile Include="Web\UriBuilder.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

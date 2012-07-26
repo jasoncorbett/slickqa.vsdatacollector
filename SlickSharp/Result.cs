@@ -16,18 +16,19 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
-using System.Text;
 using SlickQA.SlickSharp.Attributes;
+using SlickQA.SlickSharp.Logging;
+using SlickQA.SlickSharp.ObjectReferences;
 using SlickQA.SlickSharp.Utility.Json;
+using SlickQA.SlickSharp.Web;
+using UriBuilder = SlickQA.SlickSharp.Web.UriBuilder;
 
 namespace SlickQA.SlickSharp
 {
 	[DataContract]
 	[ListApi("results")]
-	public class Result : JsonObject<Result>, IJsonObject
+	public sealed class Result : JsonObject<Result>, IJsonObject
 	{
 		[DataMember(Name = "attributes")]
 		public Dictionary<String, String> Attributes;
@@ -69,7 +70,7 @@ namespace SlickQA.SlickSharp
 		public String Reason;
 
 		[DataMember(Name = "recorded")]
-		public String Recorded;
+		public long Recorded;
 
 		[DataMember(Name = "release")]
 		public ReleaseReference ReleaseReference;
@@ -89,9 +90,9 @@ namespace SlickQA.SlickSharp
 		[DataMember(Name = "testrun")]
 		public TestRunReference TestRunReference;
 
-		public static void AddToLog(String resultId, List<LogEntry> logaddon)
+		public void AddToLog(List<LogEntry> logaddon)
 		{
-			var uri = new Uri(string.Format("{0}/{1}/{2}/{3}", ServerConfig.BaseUri, "results", resultId, "log"));
+			var uri = UriBuilder.FullUri(UriBuilder.NormalizePath(this, "results/{Id}/log"));
 			var httpWebRequest = RequestFactory.Create(uri);
 			httpWebRequest.Method = "POST";
 

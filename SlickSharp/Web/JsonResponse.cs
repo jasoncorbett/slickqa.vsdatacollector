@@ -17,7 +17,7 @@ using System;
 using System.IO;
 using System.Net;
 
-namespace SlickQA.SlickSharp
+namespace SlickQA.SlickSharp.Web
 {
 	[Serializable]
 	public sealed class JsonResponse : WebResponse, IHttpWebResponse

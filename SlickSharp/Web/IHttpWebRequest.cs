@@ -15,7 +15,7 @@
 
 using System.IO;
 
-namespace SlickQA.SlickSharp
+namespace SlickQA.SlickSharp.Web
 {
 	public interface IHttpWebRequest
 	{

@@ -17,10 +17,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.Serialization;
-using SlickQA.SlickSharp.Utility;
 using SlickQA.SlickSharp.Utility.Json;
 using SlickQA.SlickSharp.Web;
-using UriBuilder = SlickQA.SlickSharp.Utility.UriBuilder;
+using UriBuilder = SlickQA.SlickSharp.Web.UriBuilder;
 
 namespace SlickQA.SlickSharp
 {
@@ -70,11 +69,11 @@ namespace SlickQA.SlickSharp
 			return RetrieiveList(uri);
 		}
 
-		protected static List<T> GetList(string relUrl)
+		public static List<T> GetList(string relUrl)
 		{
 			try
 			{
-				var uri = UriBuilder.RelativeGetUrl(relUrl);
+				var uri = UriBuilder.FullUri(relUrl);
 				return RetrieiveList(uri);
 			}
 			catch
@@ -93,13 +92,8 @@ namespace SlickQA.SlickSharp
 
 		public T Post()
 		{
-			string listPath = UriBuilder.GetListPath(this);
-			if (String.IsNullOrWhiteSpace(listPath))
-			{
-				throw new MissingPostUriException();
-			}
+			var uri = UriBuilder.FullUri(UriBuilder.GetListPath(this));
 
-			var uri = new Uri(string.Format("{0}/{1}", ServerConfig.BaseUri, listPath));
 			IHttpWebRequest httpWebRequest = RequestFactory.Create(uri);
 			httpWebRequest.Method = "POST";
 

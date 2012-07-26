@@ -1,10 +1,21 @@
-﻿using System;
+﻿/* Copyright 2012 AccessData Group, LLC.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+using System;
 using System.IO;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using SlickQA.SlickSharp.Utility.Json;
@@ -20,7 +31,7 @@ namespace SlickQA.SlickSharp.Test
 	public sealed class JsonObject_Post
 	{
 		[DataContract]
-		private class DummyJsonObject : JsonObject<DummyJsonObject>, IJsonObject
+		private sealed class DummyJsonObject : JsonObject<DummyJsonObject>, IJsonObject
 		{
 			[DataMember(Name = "name")]
 			public String Name;
@@ -42,6 +53,7 @@ namespace SlickQA.SlickSharp.Test
 
 			RequestFactory.Factory = uri => uri == new Uri(ServerConfig.BaseUri + "/projects") ? _mockRequest.Object : null;
 		}
+
 		[TestMethod]
 		[ExpectedException(typeof(MissingPostUriException))]
 		public void With_no_list_api()
@@ -49,6 +61,7 @@ namespace SlickQA.SlickSharp.Test
 			var d = new DummyJsonObject {Name = "Foo Bar Baz"};
 			d.Post();
 		}
+
 		const string PROJECT_JSON = "  {"
 										+ "    \"name\":\"Foo Bar Baz\","
 										+ "    \"id\":\"4ffc9e3ee4b097a5f43e5d27\","
@@ -85,20 +98,8 @@ namespace SlickQA.SlickSharp.Test
 
 			Assert.AreEqual(expectedProject, retrievedProject);
 		}
-
-
-		//public T Post()
-		//{
-		//    var uri = new Uri(string.Format("{0}/{1}", ServerConfig.BaseUri, listPath));
-		//    IHttpWebRequest httpWebRequest = RequestFactory.Create(uri);
-		//    httpWebRequest.Method = "POST";
-
-		//    StreamConverter<T>.WriteRequestStream(httpWebRequest, this);
-
-		//    return StreamConverter<T>.ReadResponse(httpWebRequest);
-		//}
-		#region ReSharper Directives
-		// ReSharper restore InconsistentNaming
-		#endregion
 	}
+	#region ReSharper Directives
+	// ReSharper restore InconsistentNaming
+	#endregion
 }

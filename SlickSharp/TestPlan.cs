@@ -14,15 +14,15 @@
  */
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 using SlickQA.SlickSharp.Attributes;
+using SlickQA.SlickSharp.ObjectReferences;
 
 namespace SlickQA.SlickSharp
 {
 	[DataContract]
 	[ListApi("testplans")]
-	public class TestPlan : JsonObject<TestPlan>, IJsonObject
+	public sealed class TestPlan : JsonObject<TestPlan>, IJsonObject
 	{
 		[DataMember(Name = "createdBy")]
 		public String CreatedBy;
@@ -35,17 +35,5 @@ namespace SlickQA.SlickSharp
 
 		[DataMember(Name = "project")]
 		public ProjectReference ProjectReference;
-
-		public static List<TestPlan> GetTestPlans(string projectId)
-		{
-			try
-			{
-				return GetList("testplans?projectid=" + projectId);
-			}
-			catch
-			{
-				return null;
-			}
-		}
 	}
 }

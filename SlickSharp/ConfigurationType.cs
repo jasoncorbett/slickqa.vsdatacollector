@@ -22,5 +22,6 @@ namespace SlickQA.SlickSharp
 	{
 		[EnumMember]
 		PROJECT,
+		ENVIRONMENT
 	}
 }

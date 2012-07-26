@@ -17,7 +17,7 @@ using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace SlickQA.SlickSharp
+namespace SlickQA.SlickSharp.ObjectReferences
 {
 	[DataContract]
 	public sealed class ResultReference : JsonObject<ResultReference>, IJsonObject
@@ -34,15 +34,7 @@ namespace SlickQA.SlickSharp
 		[DataMember(Name = "status")]
 		public String ResultStatus;
 
-		public ResultReference()
-		{
-			Id = default(String);
-			ResultStatus = default(String);
-			DateRecorded = default(long);
-			Build = default(BuildReference);
-		}
-
-		public ResultReference(Result result)
+		private ResultReference(Result result)
 		{
 			Id = result.Id;
 			ResultStatus = result.Status;
@@ -61,7 +53,7 @@ namespace SlickQA.SlickSharp
 			        {
 			        	Id = resultReference.Id,
 			        	Status = resultReference.ResultStatus,
-			        	Recorded = resultReference.DateRecorded.ToString(CultureInfo.InvariantCulture),
+			        	Recorded = resultReference.DateRecorded,
 			        	BuildReference = resultReference.Build
 			        };
 			return r.Get();

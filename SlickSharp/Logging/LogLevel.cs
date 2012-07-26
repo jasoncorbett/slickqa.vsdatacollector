@@ -15,7 +15,7 @@
 
 using System.Runtime.Serialization;
 
-namespace SlickQA.SlickSharp
+namespace SlickQA.SlickSharp.Logging
 {
 	[DataContract]
 	public enum LogLevel

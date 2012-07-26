@@ -17,11 +17,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using SlickQA.SlickSharp.Attributes;
 
-namespace SlickQA.SlickSharp.Utility
+namespace SlickQA.SlickSharp.Web
 {
 	static class UriBuilder
 	{
@@ -43,7 +42,7 @@ namespace SlickQA.SlickSharp.Utility
 			return listPath;
 		}
 
-		private static string GetMemberValue(object searchObject, string memberName)
+		public static string GetMemberValue(object searchObject, string memberName)
 		{
 			FieldInfo field = searchObject.GetType().GetField(memberName);
 			PropertyInfo prop = searchObject.GetType().GetProperty(memberName);
@@ -55,7 +54,7 @@ namespace SlickQA.SlickSharp.Utility
 			return prop != null ? prop.GetValue(searchObject, null).ToString() : String.Empty;
 		}
 
-		public static string SelectRelativeGetPath(object searchObject)
+		public static string SelectGetApi(object searchObject)
 		{
 			string getPath = null;
 			var type = searchObject.GetType();
@@ -64,22 +63,18 @@ namespace SlickQA.SlickSharp.Utility
 			foreach (GetAttribute item in getApis)
 			{
 				PropertyInfo property = type.GetProperty(item.PropertyName);
-				ConstructorInfo constructor;
 				object value;
 				if (property != null)
 				{
-					constructor = property.PropertyType.GetConstructor(Type.EmptyTypes);
 					value = property.GetValue(searchObject, null);
 				}
 				else
 				{
 					FieldInfo field = type.GetField(item.PropertyName);
-					constructor = field.FieldType.GetConstructor(Type.EmptyTypes);
-
 					value = field.GetValue(searchObject);
 				}
 
-				if (IsNonDefaultValue(value, constructor))
+				if (IsNonDefaultValue(value))
 				{
 					getPath = item.ApiPath + "/" + value;
 					break;
@@ -88,15 +83,18 @@ namespace SlickQA.SlickSharp.Utility
 			return getPath;
 		}
 
-		private static bool IsNonDefaultValue(object propVal, ConstructorInfo constructor)
+		internal static bool IsNonDefaultValue(object propVal)
 		{
 			if (propVal != null)
 			{
-				if (constructor == null)
+				var type = propVal.GetType();
+				if (!type.IsValueType)
 				{
 					return true;
 				}
-				if (propVal != constructor.Invoke(new Object[0]))
+
+				var defaultInstance = Activator.CreateInstance(type);
+				if (!propVal.Equals(defaultInstance))
 				{
 					return true;
 				}
@@ -108,31 +106,26 @@ namespace SlickQA.SlickSharp.Utility
 		{
 			var listPath = GetListPath(searchObject);
 
-			string getPath = SelectRelativeGetPath(searchObject);
+			string getPath = SelectGetApi(searchObject);
 
-			string fullGetPath = listPath + "/" + getPath;
-
-			var uri = new Uri(String.Format("{0}/{1}", ServerConfig.BaseUri, fullGetPath));
-			return uri;
+			return FullUri(listPath + "/" + getPath);
 		}
 
 		public static string GetListPath<T>(JsonObject<T> searchObject) where T : class, IJsonObject
 		{
 			object[] listAttributes = typeof(T).GetCustomAttributes(typeof(ListApiAttribute), true);
-			string listPath = null;
-
-			if (listAttributes.Length != 0)
+			if (listAttributes.Length == 0)
 			{
-				listPath = ((ListApiAttribute)listAttributes[0]).Uri;
-				listPath = NormalizePath(searchObject, listPath);
+				throw new MissingPostUriException();
 			}
-			return listPath;
+
+			string listPath = ((ListApiAttribute)listAttributes[0]).Uri;
+			return NormalizePath(searchObject, listPath);
 		}
 
-		public static Uri RelativeGetUrl(string relUrl)
+		public static Uri FullUri(string relUrl)
 		{
-			var uri = new Uri(String.Format("{0}/{1}", ServerConfig.BaseUri, relUrl));
-			return uri;
+			return new Uri(String.Format("{0}/{1}", ServerConfig.BaseUri, relUrl));
 		}
 	}
 }

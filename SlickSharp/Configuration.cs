@@ -29,7 +29,7 @@ namespace SlickQA.SlickSharp
 		public Dictionary<String, String> ConfigurationData;
 
 		[DataMember(Name = "configurationType")]
-		public string ConfigurationType;
+		public String ConfigurationType;
 
 		[DataMember(Name = "filename")]
 		public String Filename;

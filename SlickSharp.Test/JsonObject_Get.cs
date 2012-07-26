@@ -15,12 +15,11 @@
 
 using System;
 using System.IO;
-using System.Text;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using SlickQA.SlickSharp.Utility;
 using SlickQA.SlickSharp.Utility.Json;
+using SlickQA.SlickSharp.Web;
 
 namespace SlickQA.SlickSharp.Test
 {

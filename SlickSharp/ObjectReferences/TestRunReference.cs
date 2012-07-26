@@ -16,37 +16,42 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace SlickQA.SlickSharp
+namespace SlickQA.SlickSharp.ObjectReferences
 {
 	[DataContract]
-	public sealed class ConfigurationReference : JsonObject<ConfigurationReference>, IJsonObject
+	public sealed class TestRunReference : JsonObject<TestRunReference>, IJsonObject
 	{
-		[DataMember(Name = "configId")]
-		public String ConfigId;
-
-		[DataMember(Name = "filename")]
-		public String FileName;
-
 		[DataMember(Name = "name")]
 		public String Name;
 
-		public ConfigurationReference()
+		[DataMember(Name = "testrunId")]
+		public String TestRunId;
+
+		public TestRunReference()
 		{
-			ConfigId = default(String);
+			TestRunId = default(String);
 			Name = default(String);
-			FileName = default(String);
 		}
 
-		public ConfigurationReference(Configuration configuration)
+		private TestRunReference(TestRun testRun)
 		{
-			ConfigId = configuration.Id;
-			Name = configuration.Name;
-			FileName = configuration.Filename;
+			TestRunId = testRun.Id;
+			Name = testRun.Name;
 		}
 
-		public static implicit operator ConfigurationReference(Configuration configuration)
+		public static implicit operator TestRunReference(TestRun testRun)
 		{
-			return new ConfigurationReference(configuration);
+			return new TestRunReference(testRun);
+		}
+
+		public static implicit operator TestRun(TestRunReference testRunReference)
+		{
+			var t = new TestRun
+			        {
+			        	Id = testRunReference.TestRunId,
+						Name = testRunReference.Name
+			        };
+			return t.Get();
 		}
 	}
 }

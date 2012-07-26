@@ -16,12 +16,13 @@
 using System;
 using System.Runtime.Serialization;
 using SlickQA.SlickSharp.Attributes;
+using SlickQA.SlickSharp.ObjectReferences;
 
 namespace SlickQA.SlickSharp
 {
 	[DataContract]
 	[ListApi("testcases")]
-	public class Testcase : JsonObject<Testcase>, IJsonObject
+	public sealed class Testcase : JsonObject<Testcase>, IJsonObject
 	{
 		[DataMember(Name = "automationId")]
 		public String AutomationId;

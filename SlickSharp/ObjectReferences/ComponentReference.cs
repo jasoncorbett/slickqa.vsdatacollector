@@ -16,7 +16,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace SlickQA.SlickSharp
+namespace SlickQA.SlickSharp.ObjectReferences
 {
 	[DataContract]
 	public sealed class ComponentReference : JsonObject<ComponentReference>, IJsonObject
@@ -37,7 +37,7 @@ namespace SlickQA.SlickSharp
 			Code = default(String);
 		}
 
-		public ComponentReference(Component component)
+		private ComponentReference(Component component)
 		{
 			Id = component.Id;
 			Name = component.Name;

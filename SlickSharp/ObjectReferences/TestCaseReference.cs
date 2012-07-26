@@ -16,10 +16,10 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace SlickQA.SlickSharp
+namespace SlickQA.SlickSharp.ObjectReferences
 {
 	[DataContract]
-	public class TestCaseReference : JsonObject<TestCaseReference>, IJsonObject
+	public sealed class TestCaseReference : JsonObject<TestCaseReference>, IJsonObject
 	{
 		[DataMember(Name = "automationId")]
 		public String AutomationId;
@@ -46,7 +46,7 @@ namespace SlickQA.SlickSharp
 			AutomationTool = default(String);
 		}
 
-		public TestCaseReference(Testcase testcase)
+		private TestCaseReference(Testcase testcase)
 		{
 			Id = testcase.Id;
 			Name = testcase.Name;

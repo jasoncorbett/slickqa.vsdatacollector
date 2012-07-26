@@ -22,7 +22,7 @@ namespace SlickQA.SlickSharp
 	[DataContract]
 	[ListApi("projects/{ProjectId}/components")]
 	[Get("", "Id", 0)]
-	public class Component : JsonObject<Component>, IJsonObject
+	public sealed class Component : JsonObject<Component>, IJsonObject
 	{
 		[DataMember(Name = "code")]
 		public String Code;
