@@ -46,12 +46,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigurationController.cs" />
     <Compile Include="ConfigurationEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ConfigurationEditor.Designer.cs">
       <DependentUpon>ConfigurationEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="IConfigurationController.cs" />
+    <Compile Include="IConfigurationView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -22,8 +22,6 @@ namespace SlickQA.DataCollector.Configuration
 		{
 			ServiceProvider = serviceProvider;
 			_collectorSettings = settings;
-
-			UpdateUI();
 		}
 
 		public void ResetToAgentDefaults()
@@ -42,9 +40,5 @@ namespace SlickQA.DataCollector.Configuration
 		}
 
 		#endregion
-
-		private void UpdateUI()
-		{
-		}
 	}
 }
