@@ -23,8 +23,8 @@ namespace SlickQA.DataCollector.Configuration
 		private IConfigurationView _view;
 
 		public ConfigurationController()
-			:this(null)
 		{
+			_view = null;
 		}
 
 		public ConfigurationController(IConfigurationView configurationEditor)
@@ -39,5 +39,22 @@ namespace SlickQA.DataCollector.Configuration
 			ServerConfig.Port = port;
 			ServerConfig.SitePath = sitePath;
 		}
+
+		public void GetProjectsClicked()
+		{
+			var projects = Project.GetList();
+
+			_view.PopulateProjects(projects);
+		}
+
+		#region IConfigurationController Members
+
+
+		public IConfigurationView View
+		{
+			set { _view = value; }
+		}
+
+		#endregion
 	}
 }
