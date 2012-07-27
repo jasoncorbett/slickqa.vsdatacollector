@@ -16,6 +16,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataCollector.Test", "DataCollector.Test\DataCollector.Test.csproj", "{57A02DE3-F8E8-4714-9681-A0F45379E4F3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlickSharp", "..\slickqa.slicksharp\SlickSharp\SlickSharp.csproj", "{4DB0F133-F095-4C10-BF62-0939195F26FB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{6A8DDE96-9BD1-4B3F-B146-53A8E5C6FB97}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\nuget.exe = .nuget\nuget.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Configuration.vsmdi

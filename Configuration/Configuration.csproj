@@ -62,6 +62,12 @@
       <DependentUpon>ConfigurationEditor.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\slickqa.slicksharp\SlickSharp\SlickSharp.csproj">
+      <Project>{4DB0F133-F095-4C10-BF62-0939195F26FB}</Project>
+      <Name>SlickSharp</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
