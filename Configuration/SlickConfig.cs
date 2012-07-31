@@ -12,15 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Microsoft.VisualStudio.TestTools.Execution;
-
 namespace SlickQA.DataCollector.Configuration
 {
-	public interface IConfigurationController
+	public sealed class SlickConfig
 	{
-		IConfigurationView View { set; }
-		void GetProjectsClicked();
-		void InitializeSettings(DataCollectorSettings collectorSettings);
-		void ApplyDefaultSettings();
+		public ProjectType Project = new ProjectType();
+		public SlickUrlType Url = new SlickUrlType();
 	}
 }

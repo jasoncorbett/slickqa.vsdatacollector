@@ -1,18 +1,21 @@
-﻿/* Copyright 2012 AccessData Group, LLC.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+﻿// Copyright 2012 AccessData Group, LLC.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//  http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
+using System;
+using System.Collections.Generic;
+using System.Xml;
+using Microsoft.VisualStudio.TestTools.Execution;
 using SlickQA.SlickSharp;
 using SlickQA.SlickSharp.Web;
 
@@ -20,6 +23,8 @@ namespace SlickQA.DataCollector.Configuration
 {
 	public sealed class ConfigurationController : IConfigurationController
 	{
+		private SlickConfig _currentConfig;
+		private SlickConfig _defaultConfig;
 		private IConfigurationView _view;
 
 		public ConfigurationController()
@@ -32,6 +37,42 @@ namespace SlickQA.DataCollector.Configuration
 			_view = configurationEditor;
 		}
 
+		#region IConfigurationController Members
+
+		public void GetProjectsClicked()
+		{
+			List<Project> projects = JsonObject<Project>.GetList();
+
+			_view.PopulateProjects(projects);
+		}
+
+		public IConfigurationView View
+		{
+			set { _view = value; }
+		}
+
+		public void InitializeSettings(DataCollectorSettings dataCollectorSettings)
+		{
+			_defaultConfig = LoadConfig(dataCollectorSettings.DefaultConfiguration);
+			_currentConfig = LoadConfig(dataCollectorSettings.Configuration);
+
+			if (IsValid(_currentConfig.Url))
+			{
+				SetServerConfig(_currentConfig.Url);
+				GetProjectsClicked();
+			}
+
+			SetValues(_currentConfig);
+		}
+
+		public void ApplyDefaultSettings()
+		{
+			_view.PopulateProjects(new List<Project>());
+			SetValues(_defaultConfig);
+		}
+
+		#endregion
+
 		public static void SetServerConfig(string scheme, string host, int port, string sitePath)
 		{
 			ServerConfig.Scheme = scheme;
@@ -40,21 +81,46 @@ namespace SlickQA.DataCollector.Configuration
 			ServerConfig.SitePath = sitePath;
 		}
 
-		public void GetProjectsClicked()
+		private static bool IsValid(SlickUrlType url)
 		{
-			var projects = Project.GetList();
-
-			_view.PopulateProjects(projects);
+			return Uri.CheckSchemeName(url.Scheme) && !String.IsNullOrWhiteSpace(url.Host);
 		}
 
-		#region IConfigurationController Members
-
-
-		public IConfigurationView View
+		private static void SetServerConfig(SlickUrlType url)
 		{
-			set { _view = value; }
+			SetServerConfig(url.Scheme, url.Host, url.Port, url.SitePath);
 		}
 
-		#endregion
+		public static SlickConfig LoadConfig(XmlElement configuration)
+		{
+			var retVal = new SlickConfig();
+			XmlNodeList elements = configuration.GetElementsByTagName("Project");
+			if (elements.Count != 0)
+			{
+				XmlNode projectElem = elements[0];
+				retVal.Project = new ProjectType(projectElem);
+			}
+			elements = configuration.GetElementsByTagName("Url");
+			if (elements.Count != 0)
+			{
+				XmlNode urlElem = elements[0];
+				retVal.Url = new SlickUrlType(urlElem);
+			}
+			return retVal;
+		}
+
+		private void SetValues(SlickConfig config)
+		{
+			SlickUrlType slickUrl = config.Url;
+			if (slickUrl != null)
+			{
+				_view.SetUrl(slickUrl);
+			}
+			ProjectType slickProject = config.Project;
+			if (slickProject != null)
+			{
+				_view.SelectProject(slickProject);
+			}
+		}
 	}
 }

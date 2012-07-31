@@ -1,20 +1,20 @@
-﻿/* Copyright 2012 AccessData Group, LLC.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+﻿// Copyright 2012 AccessData Group, LLC.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//  http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 namespace SlickQA.DataCollector.Configuration
 {
-	partial class ConfigurationEditor 
+	sealed partial class ConfigurationEditor 
 	{
 		/// <summary> 
 		/// Required designer variable.
@@ -60,8 +60,9 @@ namespace SlickQA.DataCollector.Configuration
 			// 
 			// protocol
 			// 
-			this.protocol.AccessibleName = "protocol";
+			this.protocol.AccessibleName = "scheme";
 			this.protocol.AccessibleRole = System.Windows.Forms.AccessibleRole.ComboBox;
+			this.protocol.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.protocol.FormattingEnabled = true;
 			this.protocol.Location = new System.Drawing.Point(80, 15);
 			this.protocol.Name = "protocol";
@@ -120,23 +121,23 @@ namespace SlickQA.DataCollector.Configuration
 			// 
 			// port
 			// 
-			this.port.AccessibleName = "port";
+			this.port.AccessibleName = "Port";
 			this.port.AccessibleRole = System.Windows.Forms.AccessibleRole.Dial;
 			this.port.AutoSize = true;
 			this.port.Location = new System.Drawing.Point(299, 15);
 			this.port.Maximum = new decimal(new int[] {
-            65535,
-            0,
-            0,
-            0});
+			65535,
+			0,
+			0,
+			0});
 			this.port.Name = "port";
 			this.port.Size = new System.Drawing.Size(120, 20);
 			this.port.TabIndex = 5;
 			this.port.Value = new decimal(new int[] {
-            8080,
-            0,
-            0,
-            0});
+			8080,
+			0,
+			0,
+			0});
 			// 
 			// projectLabel
 			// 
@@ -186,12 +187,14 @@ namespace SlickQA.DataCollector.Configuration
 			// 
 			this.addProject.AccessibleName = "addProject";
 			this.addProject.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
+			this.addProject.Enabled = false;
 			this.addProject.Location = new System.Drawing.Point(355, 67);
 			this.addProject.Name = "addProject";
 			this.addProject.Size = new System.Drawing.Size(109, 20);
 			this.addProject.TabIndex = 12;
 			this.addProject.Text = "Add Project";
 			this.addProject.UseVisualStyleBackColor = true;
+			this.addProject.Visible = false;
 			// 
 			// getProjects
 			// 
