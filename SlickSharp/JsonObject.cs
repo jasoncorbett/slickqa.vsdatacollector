@@ -1,17 +1,16 @@
-﻿/* Copyright 2012 AccessData Group, LLC.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+﻿// Copyright 2012 AccessData Group, LLC.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//  http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 using System;
 using System.Collections.Generic;
@@ -30,7 +29,7 @@ namespace SlickQA.SlickSharp
 	{
 		public void Get(bool createIfNotFound = false)
 		{
-			var uri = UriBuilder.RetrieveGetUri(this);
+			Uri uri = UriBuilder.RetrieveGetUri(this);
 			IHttpWebRequest httpWebRequest = RequestFactory.Create(uri);
 			httpWebRequest.Method = WebRequestMethods.Http.Get;
 
@@ -42,7 +41,7 @@ namespace SlickQA.SlickSharp
 			{
 				try
 				{
-					var temp = StreamConverter<T>.ReadResponse(httpWebRequest);
+					T temp = StreamConverter<T>.ReadResponse(httpWebRequest);
 					ApplyChanges(temp);
 					return;
 				}
@@ -66,7 +65,7 @@ namespace SlickQA.SlickSharp
 
 		public static List<T> GetList()
 		{
-			var uri = UriBuilder.FullUri(UriBuilder.GetListPath<T>(null));
+			Uri uri = UriBuilder.FullUri(UriBuilder.GetListPath<T>(null));
 
 			return RetrieiveList(uri);
 		}
@@ -75,7 +74,7 @@ namespace SlickQA.SlickSharp
 		{
 			try
 			{
-				var uri = UriBuilder.FullUri(relUrl);
+				Uri uri = UriBuilder.FullUri(relUrl);
 				return RetrieiveList(uri);
 			}
 			catch
@@ -94,7 +93,7 @@ namespace SlickQA.SlickSharp
 
 		public void Post()
 		{
-			var uri = UriBuilder.FullUri(UriBuilder.GetListPath(this));
+			Uri uri = UriBuilder.FullUri(UriBuilder.GetListPath(this));
 
 			IHttpWebRequest httpWebRequest = RequestFactory.Create(uri);
 			httpWebRequest.Method = WebRequestMethods.Http.Post;
@@ -107,7 +106,7 @@ namespace SlickQA.SlickSharp
 
 		public void Put()
 		{
-			var uri = UriBuilder.RetrieveGetUri(this);
+			Uri uri = UriBuilder.RetrieveGetUri(this);
 			IHttpWebRequest httpWebRequest = RequestFactory.Create(uri);
 			httpWebRequest.Method = WebRequestMethods.Http.Put;
 
@@ -119,20 +118,21 @@ namespace SlickQA.SlickSharp
 
 		private void ApplyChanges(T temp)
 		{
-			var type = typeof(T);
+			Type type = typeof(T);
 
-			var fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public);
+			FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public);
 
 			foreach (FieldInfo field in fields)
 			{
-				var val = field.GetValue(temp);
+				object val = field.GetValue(temp);
 				field.SetValue(this, val);
 			}
 		}
 
 		public void Delete()
 		{
-			throw new NotImplementedException("This is included for future rest completeness, we currently have no use for delete.");
+			throw new NotImplementedException(
+				"This is included for future rest completeness, we currently have no use for delete.");
 		}
 	}
 }

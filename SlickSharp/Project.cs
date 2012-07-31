@@ -22,9 +22,9 @@ using SlickQA.SlickSharp.Utility;
 namespace SlickQA.SlickSharp
 {
 	[DataContract]
-	[CollectionApiPath("projects")]
-	[ItemApiPath("", "Id", 0)]
-	[ItemApiPath("byname", "Name", 1)]
+	[ListApi("projects")]
+	[Get("", "Id", 0)]
+	[Get("byname", "Name", 1)]
 	public sealed class Project : JsonObject<Project>, IJsonObject
 	{
 		[DataMember(Name = "attributes")]

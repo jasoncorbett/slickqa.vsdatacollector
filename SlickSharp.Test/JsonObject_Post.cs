@@ -1,17 +1,16 @@
-﻿/* Copyright 2012 AccessData Group, LLC.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+﻿// Copyright 2012 AccessData Group, LLC.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//  http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 using System;
 using System.IO;
@@ -23,19 +22,22 @@ using SlickQA.SlickSharp.Web;
 
 namespace SlickQA.SlickSharp.Test
 {
+
 	#region ReSharper Directives
+
 	// ReSharper disable InconsistentNaming
+
 	#endregion
 
 	[TestClass]
 	public sealed class JsonObject_Post
 	{
-		[DataContract]
-		private sealed class DummyJsonObject : JsonObject<DummyJsonObject>, IJsonObject
-		{
-			[DataMember(Name = "name")]
-			public String Name;
-		}
+		private const string PROJECT_JSON =
+			"  {" + "    \"name\":\"Foo Bar Baz\"," + "    \"id\":\"4ffc9e3ee4b097a5f43e5d27\"," + "    \"attributes\":{},"
+			+ "    \"description\":null," + "    \"configuration\":{}," + "    \"releases\":[],"
+			+ "    \"lastUpdated\":1343081801244," + "    \"automationTools\":[]," + "    \"defaultRelease\":\"\","
+			+ "    \"tags\":[]," + "    \"components\":[]," + "    \"datadrivenProperties\":[]," + "    \"extensions\":[],"
+			+ "    \"defaultBuildName\":\"\"" + "  }";
 
 		private Mock<IHttpWebRequest> _mockRequest;
 		private Mock<IHttpWebResponse> _mockResponse;
@@ -62,27 +64,11 @@ namespace SlickQA.SlickSharp.Test
 			d.Post();
 		}
 
-		const string PROJECT_JSON = "  {"
-										+ "    \"name\":\"Foo Bar Baz\","
-										+ "    \"id\":\"4ffc9e3ee4b097a5f43e5d27\","
-										+ "    \"attributes\":{},"
-										+ "    \"description\":null,"
-										+ "    \"configuration\":{},"
-										+ "    \"releases\":[],"
-										+ "    \"lastUpdated\":1343081801244,"
-										+ "    \"automationTools\":[],"
-										+ "    \"defaultRelease\":\"\","
-										+ "    \"tags\":[],"
-										+ "    \"components\":[],"
-										+ "    \"datadrivenProperties\":[],"
-										+ "    \"extensions\":[],"
-										+ "    \"defaultBuildName\":\"\""
-										+ "  }";
 		[TestMethod]
 		public void Updates_instance_correctly()
 		{
-			var responseStream = StreamConversion.FromString(PROJECT_JSON);
-			var expectedProject = StreamConverter<Project>.ReadFromStream(responseStream);
+			MemoryStream responseStream = StreamConversion.FromString(PROJECT_JSON);
+			Project expectedProject = StreamConverter<Project>.ReadFromStream(responseStream);
 			responseStream.Position = 0;
 
 			Project p;
@@ -92,15 +78,29 @@ namespace SlickQA.SlickSharp.Test
 				_mockRequest.Setup(request => request.GetResponse()).Returns(() => _mockResponse.Object);
 				_mockResponse.Setup(response => response.GetResponseStream()).Returns(responseStream);
 
-				p = new Project { Name = "Foo Bar Baz" };
-				p.Post(); 
+				p = new Project {Name = "Foo Bar Baz"};
+				p.Post();
 			}
 
 			Assert.AreEqual(expectedProject.Id, p.Id);
 			Assert.AreEqual(expectedProject.LastUpdated, p.LastUpdated);
 		}
+
+		#region Nested type: DummyJsonObject
+
+		[DataContract]
+		private sealed class DummyJsonObject : JsonObject<DummyJsonObject>, IJsonObject
+		{
+			[DataMember(Name = "name")]
+			public String Name;
+		}
+
+		#endregion
 	}
+
 	#region ReSharper Directives
+
 	// ReSharper restore InconsistentNaming
+
 	#endregion
 }

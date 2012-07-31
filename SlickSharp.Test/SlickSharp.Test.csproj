@@ -56,7 +56,6 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="JsonObject_Put.cs" />
     <Compile Include="ReferenceConverts.cs" />
     <Compile Include="Web\GetListPath.cs" />
     <Compile Include="Web\GetMemberValue.cs" />

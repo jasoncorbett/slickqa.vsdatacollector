@@ -1,17 +1,16 @@
-﻿/* Copyright 2012 AccessData Group, LLC.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+﻿// Copyright 2012 AccessData Group, LLC.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//  http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 using System;
 using System.Collections.Generic;
@@ -22,7 +21,7 @@ using SlickQA.SlickSharp.Attributes;
 
 namespace SlickQA.SlickSharp.Web
 {
-	static class UriBuilder
+	internal static class UriBuilder
 	{
 		public static string NormalizePath(object searchObject, string listPath)
 		{
@@ -32,7 +31,7 @@ namespace SlickQA.SlickSharp.Web
 			}
 
 			var r = new Regex("{([^/]+)}");
-			var matches = r.Matches(listPath);
+			MatchCollection matches = r.Matches(listPath);
 			foreach (Match m in matches)
 			{
 				string memberName = m.Groups[1].Captures[0].Value;
@@ -57,9 +56,10 @@ namespace SlickQA.SlickSharp.Web
 		public static string SelectGetApi(object searchObject)
 		{
 			string getPath = null;
-			var type = searchObject.GetType();
+			Type type = searchObject.GetType();
 			object[] apiList = type.GetCustomAttributes(typeof(ItemApiPathAttribute), true);
-			List<ItemApiPathAttribute> getApis = apiList.OrderBy(a => ((ItemApiPathAttribute)a).Index).Select(b => (ItemApiPathAttribute)b).ToList();
+			List<ItemApiPathAttribute> getApis =
+				apiList.OrderBy(a => ((ItemApiPathAttribute)a).Index).Select(b => (ItemApiPathAttribute)b).ToList();
 			foreach (ItemApiPathAttribute item in getApis)
 			{
 				PropertyInfo property = type.GetProperty(item.PropertyName);
@@ -87,13 +87,13 @@ namespace SlickQA.SlickSharp.Web
 		{
 			if (propVal != null)
 			{
-				var type = propVal.GetType();
+				Type type = propVal.GetType();
 				if (!type.IsValueType)
 				{
 					return true;
 				}
 
-				var defaultInstance = Activator.CreateInstance(type);
+				object defaultInstance = Activator.CreateInstance(type);
 				if (!propVal.Equals(defaultInstance))
 				{
 					return true;
@@ -104,7 +104,7 @@ namespace SlickQA.SlickSharp.Web
 
 		public static Uri RetrieveGetUri<T>(JsonObject<T> searchObject) where T : class, IJsonObject
 		{
-			var listPath = GetListPath(searchObject);
+			string listPath = GetListPath(searchObject);
 
 			string getPath = SelectGetApi(searchObject);
 
