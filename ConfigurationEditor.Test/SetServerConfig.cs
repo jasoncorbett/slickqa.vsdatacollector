@@ -14,6 +14,7 @@
 
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SlickQA.DataCollector.Configuration;
 using SlickQA.SlickSharp.Web;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.Test
@@ -24,21 +25,21 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Test
 		[TestMethod]
 		public void With_empty_site_path()
 		{
-			ConfigurationController.SetServerConfig("http", "example.com", 8080, String.Empty);
+			SlickConfig.SetServerConfig("http", "example.com", 8080, String.Empty);
 			Assert.AreEqual(new Uri("http://example.com:8080/api"), ServerConfig.BaseUri);
 		}
 
 		[TestMethod]
 		public void With_port_80_leaves_port_out_of_url()
 		{
-			ConfigurationController.SetServerConfig("http", "example.com", 80, String.Empty);
+			SlickConfig.SetServerConfig("http", "example.com", 80, String.Empty);
 			Assert.AreEqual(new Uri("http://example.com/api"), ServerConfig.BaseUri);
 		}
 
 		[TestMethod]
 		public void With_site_path()
 		{
-			ConfigurationController.SetServerConfig("http", "example.com", 8080, "baz");
+			SlickConfig.SetServerConfig("http", "example.com", 8080, "baz");
 			Assert.AreEqual(new Uri("http://example.com:8080/baz/api"), ServerConfig.BaseUri);
 		}
 	}

@@ -19,6 +19,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using SlickQA.DataCollector.Configuration;
 using SlickQA.SlickSharp;
 using SlickQA.SlickSharp.Utility.Json;
 using SlickQA.SlickSharp.Web;
@@ -84,7 +85,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Test
 
 			IConfigurationController controller = new ConfigurationController(mockView.Object);
 
-			ConfigurationController.SetServerConfig("test", "example.com", 8080, "slick");
+			SlickConfig.SetServerConfig("test", "example.com", 8080, "slick");
 			controller.GetProjectsClicked();
 
 			List<Project> projList = projects.ToList();

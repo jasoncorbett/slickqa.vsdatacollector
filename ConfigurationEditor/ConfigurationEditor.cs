@@ -58,7 +58,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 
 		public void GetProjects(object sender, EventArgs e)
 		{
-			ConfigurationController.SetServerConfig(protocol.Text, host.Text, (int)port.Value, sitePath.Text);
+			SlickConfig.SetServerConfig(protocol.Text, host.Text, (int)port.Value, sitePath.Text);
 			_controller.GetProjectsClicked();
 		}
 

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Xml;
+using SlickQA.SlickSharp.Web;
 
 namespace SlickQA.DataCollector.Configuration
 {
@@ -37,6 +38,19 @@ namespace SlickQA.DataCollector.Configuration
 				retVal.Url = new SlickUrlType(urlElem);
 			}
 			return retVal;
+		}
+
+		public static void SetServerConfig(string scheme, string host, int port, string sitePath)
+		{
+			ServerConfig.Scheme = scheme;
+			ServerConfig.SlickHost = host;
+			ServerConfig.Port = port;
+			ServerConfig.SitePath = sitePath;
+		}
+
+		public static void SetServerConfig(SlickUrlType url)
+		{
+			SetServerConfig(url.Scheme, url.Host, url.Port, url.SitePath);
 		}
 	}
 }

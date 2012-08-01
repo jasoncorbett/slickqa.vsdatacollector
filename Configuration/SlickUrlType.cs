@@ -104,5 +104,10 @@ namespace SlickQA.DataCollector.Configuration
 
 			return node;
 		}
+
+		public static bool IsValid(SlickUrlType url)
+		{
+			return Uri.CheckSchemeName(url.Scheme) && !String.IsNullOrWhiteSpace(url.Host);
+		}
 	}
 }

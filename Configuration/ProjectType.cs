@@ -76,5 +76,10 @@ namespace SlickQA.DataCollector.Configuration
 
 			return node;
 		}
+
+		public bool IsValid()
+		{
+			return !String.IsNullOrWhiteSpace(Name);
+		}
 	}
 }

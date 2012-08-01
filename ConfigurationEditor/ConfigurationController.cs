@@ -56,9 +56,9 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			_defaultConfig = SlickConfig.LoadConfig(dataCollectorSettings.DefaultConfiguration);
 			_currentConfig = SlickConfig.LoadConfig(dataCollectorSettings.Configuration);
 
-			if (IsValid(_currentConfig.Url))
+			if (SlickUrlType.IsValid(_currentConfig.Url))
 			{
-				SetServerConfig(_currentConfig.Url);
+				SlickConfig.SetServerConfig(_currentConfig.Url);
 				GetProjectsClicked();
 			}
 
@@ -73,24 +73,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 
 		#endregion
 
-		public static void SetServerConfig(string scheme, string host, int port, string sitePath)
-		{
-			ServerConfig.Scheme = scheme;
-			ServerConfig.SlickHost = host;
-			ServerConfig.Port = port;
-			ServerConfig.SitePath = sitePath;
-		}
-
-		private static bool IsValid(SlickUrlType url)
-		{
-			return Uri.CheckSchemeName(url.Scheme) && !String.IsNullOrWhiteSpace(url.Host);
-		}
-
-		private static void SetServerConfig(SlickUrlType url)
-		{
-			SetServerConfig(url.Scheme, url.Host, url.Port, url.SitePath);
-		}
-
 		private void SetValues(SlickConfig config)
 		{
 			SlickUrlType slickUrl = config.Url;
@@ -99,7 +81,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 				_view.SetUrl(slickUrl);
 			}
 			ProjectType slickProject = config.Project;
-			if (slickProject != null)
+			if (slickProject.IsValid())
 			{
 				_view.SelectProject(slickProject);
 			}
