@@ -13,8 +13,9 @@
 // limitations under the License.
 
 using Microsoft.VisualStudio.TestTools.Execution;
+using SlickQA.DataCollector.Configuration;
 
-namespace SlickQA.DataCollector.Configuration
+namespace SlickQA.DataCollector.ConfigurationEditor
 {
 	public interface IConfigurationController
 	{

@@ -16,7 +16,7 @@ using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SlickQA.SlickSharp.Web;
 
-namespace SlickQA.DataCollector.Configuration.Test
+namespace SlickQA.DataCollector.ConfigurationEditor.Test
 {
 	[TestClass]
 	public sealed class SetServerConfig

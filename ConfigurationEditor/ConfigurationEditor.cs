@@ -17,9 +17,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using Microsoft.VisualStudio.TestTools.Execution;
+using SlickQA.DataCollector.Configuration;
 using SlickQA.SlickSharp;
 
-namespace SlickQA.DataCollector.Configuration
+namespace SlickQA.DataCollector.ConfigurationEditor
 {
 	[DataCollectorConfigurationEditorTypeUri("configurationeditor://slickqa/SlickDataCollectorConfigurationEditor/0.0.1")]
 	public sealed partial class ConfigurationEditor : UserControl, IDataCollectorConfigurationEditor, IConfigurationView

@@ -14,9 +14,10 @@
 
 using System;
 using System.Collections.Generic;
+using SlickQA.DataCollector.Configuration;
 using SlickQA.SlickSharp;
 
-namespace SlickQA.DataCollector.Configuration
+namespace SlickQA.DataCollector.ConfigurationEditor
 {
 	public interface IConfigurationView
 	{

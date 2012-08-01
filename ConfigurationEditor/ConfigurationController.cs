@@ -16,10 +16,11 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using Microsoft.VisualStudio.TestTools.Execution;
+using SlickQA.DataCollector.Configuration;
 using SlickQA.SlickSharp;
 using SlickQA.SlickSharp.Web;
 
-namespace SlickQA.DataCollector.Configuration
+namespace SlickQA.DataCollector.ConfigurationEditor
 {
 	public sealed class ConfigurationController : IConfigurationController
 	{

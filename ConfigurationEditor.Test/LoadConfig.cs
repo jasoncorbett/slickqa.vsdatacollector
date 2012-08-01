@@ -15,7 +15,7 @@
 using System.Xml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace SlickQA.DataCollector.Configuration.Test
+namespace SlickQA.DataCollector.ConfigurationEditor.Test
 {
 	[TestClass]
 	public sealed class LoadConfig
