@@ -42,6 +42,8 @@
   <ItemGroup>
     <Compile Include="ProjectType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SlickConfig.cs" />
+    <Compile Include="SlickUrlType.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\slickqa.slicksharp\SlickSharp\SlickSharp.csproj">

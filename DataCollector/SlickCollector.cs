@@ -15,6 +15,7 @@
 using System;
 using System.Xml;
 using Microsoft.VisualStudio.TestTools.Execution;
+using SlickQA.DataCollector.Configuration;
 
 namespace SlickQA.DataCollector
 {
@@ -23,19 +24,20 @@ namespace SlickQA.DataCollector
 	[DataCollectorConfigurationEditor("configurationeditor://slickqa/SlickDataCollectorConfigurationEditor/0.0.1")]
 	public class SlickCollector : Microsoft.VisualStudio.TestTools.Execution.DataCollector
 	{
-		private XmlElement _configurationSettings;
 		private DataCollectionEnvironmentContext _dataCollectionEnvironmentContext;
 
 		private DataCollectionEvents _dataEvents;
 
 		private DataCollectionLogger _dataLogger;
 		private DataCollectionSink _dataSink;
+		private SlickConfig _config;
 
 		public override void Initialize(XmlElement configurationElement, DataCollectionEvents events,
 		                                DataCollectionSink dataSink, DataCollectionLogger logger,
 		                                DataCollectionEnvironmentContext environmentContext)
 		{
-			_configurationSettings = configurationElement;
+			_config = SlickConfig.LoadConfig(configurationElement);
+
 			_dataEvents = events;
 			_dataSink = dataSink;
 			_dataLogger = logger;
