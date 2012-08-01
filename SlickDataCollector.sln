@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Configuration", "Configuration\Configuration.csproj", "{954CC12A-6B97-4602-BC95-6BD5A57487C9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigurationEditor", "ConfigurationEditor\ConfigurationEditor.csproj", "{954CC12A-6B97-4602-BC95-6BD5A57487C9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataCollector", "DataCollector\DataCollector.csproj", "{02F32DB5-01F2-446A-A84E-FE862137E5F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Configuration.Test", "Configuration.Test\Configuration.Test.csproj", "{0643E17D-3404-406B-B0BF-DC2EF3278B93}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigurationEditor.Test", "ConfigurationEditor.Test\ConfigurationEditor.Test.csproj", "{0643E17D-3404-406B-B0BF-DC2EF3278B93}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4BAD5388-A2CC-4E78-9FB4-A779D7E4F0E1}"
 	ProjectSection(SolutionItems) = preProject

@@ -66,7 +66,7 @@
       <Project>{4DB0F133-F095-4C10-BF62-0939195F26FB}</Project>
       <Name>SlickSharp</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Configuration\Configuration.csproj">
+    <ProjectReference Include="..\ConfigurationEditor\ConfigurationEditor.csproj">
       <Project>{954CC12A-6B97-4602-BC95-6BD5A57487C9}</Project>
       <Name>Configuration</Name>
     </ProjectReference>
