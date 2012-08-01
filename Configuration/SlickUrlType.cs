@@ -17,7 +17,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Xml;
 
-namespace SlickQA.DataCollector.ConfigurationEditor
+namespace SlickQA.DataCollector.Configuration
 {
 	public sealed class SlickUrlType
 	{

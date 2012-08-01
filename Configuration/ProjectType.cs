@@ -17,7 +17,7 @@ using System.Diagnostics;
 using System.Xml;
 using SlickQA.SlickSharp;
 
-namespace SlickQA.DataCollector.ConfigurationEditor
+namespace SlickQA.DataCollector.Configuration
 {
 	public sealed class ProjectType
 	{

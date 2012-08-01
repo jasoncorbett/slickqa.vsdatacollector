@@ -14,7 +14,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Xml;
 using Microsoft.VisualStudio.TestTools.Execution;
 using SlickQA.DataCollector.Configuration;
 using SlickQA.SlickSharp;
@@ -54,8 +53,8 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 
 		public void InitializeSettings(DataCollectorSettings dataCollectorSettings)
 		{
-			_defaultConfig = LoadConfig(dataCollectorSettings.DefaultConfiguration);
-			_currentConfig = LoadConfig(dataCollectorSettings.Configuration);
+			_defaultConfig = SlickConfig.LoadConfig(dataCollectorSettings.DefaultConfiguration);
+			_currentConfig = SlickConfig.LoadConfig(dataCollectorSettings.Configuration);
 
 			if (IsValid(_currentConfig.Url))
 			{
@@ -90,24 +89,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 		private static void SetServerConfig(SlickUrlType url)
 		{
 			SetServerConfig(url.Scheme, url.Host, url.Port, url.SitePath);
-		}
-
-		public static SlickConfig LoadConfig(XmlElement configuration)
-		{
-			var retVal = new SlickConfig();
-			XmlNodeList elements = configuration.GetElementsByTagName("Project");
-			if (elements.Count != 0)
-			{
-				XmlNode projectElem = elements[0];
-				retVal.Project = new ProjectType(projectElem);
-			}
-			elements = configuration.GetElementsByTagName("Url");
-			if (elements.Count != 0)
-			{
-				XmlNode urlElem = elements[0];
-				retVal.Url = new SlickUrlType(urlElem);
-			}
-			return retVal;
 		}
 
 		private void SetValues(SlickConfig config)

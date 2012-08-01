@@ -68,6 +68,10 @@
     </ProjectReference>
     <ProjectReference Include="..\ConfigurationEditor\ConfigurationEditor.csproj">
       <Project>{954CC12A-6B97-4602-BC95-6BD5A57487C9}</Project>
+      <Name>ConfigurationEditor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Configuration\Configuration.csproj">
+      <Project>{5A741FFF-6FFA-4319-B031-EF8F8F7FA307}</Project>
       <Name>Configuration</Name>
     </ProjectReference>
   </ItemGroup>

@@ -1,4 +1,4 @@
-﻿// Copyright 2012 AccessData Group, LLC.
+// Copyright 2012 AccessData Group, LLC.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 using System.Xml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace SlickQA.DataCollector.ConfigurationEditor.Test
+namespace SlickQA.DataCollector.Configuration.Test
 {
 	[TestClass]
 	public sealed class LoadConfig
@@ -37,7 +37,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Test
 			var expectedProject = new ProjectType();
 			var expectedUrl = new SlickUrlType();
 
-			SlickConfig config = ConfigurationController.LoadConfig(defaultConfigElement);
+			SlickConfig config = SlickConfig.LoadConfig(defaultConfigElement);
 
 			Assert.AreEqual(expectedProject, config.Project);
 			Assert.AreEqual(expectedUrl, config.Url);
@@ -60,7 +60,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Test
 			var expectedProject = new ProjectType();
 			var expectedUrl = new SlickUrlType();
 
-			SlickConfig config = ConfigurationController.LoadConfig(defaultConfigElement);
+			SlickConfig config = SlickConfig.LoadConfig(defaultConfigElement);
 
 			Assert.AreEqual(expectedProject, config.Project);
 			Assert.AreEqual(expectedUrl, config.Url);
@@ -83,7 +83,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Test
 			var expectedProject = new ProjectType("Bar");
 			var expectedUrl = new SlickUrlType("http", "foo.baz.com", 80, "slickij");
 
-			SlickConfig config = ConfigurationController.LoadConfig(defaultConfigElement);
+			SlickConfig config = SlickConfig.LoadConfig(defaultConfigElement);
 
 			Assert.AreEqual(expectedProject, config.Project);
 			Assert.AreEqual(expectedUrl, config.Url);

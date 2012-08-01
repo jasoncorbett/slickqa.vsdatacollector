@@ -12,13 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using SlickQA.DataCollector.Configuration;
+using System.Xml;
 
-namespace SlickQA.DataCollector.ConfigurationEditor
+namespace SlickQA.DataCollector.Configuration
 {
 	public sealed class SlickConfig
 	{
 		public ProjectType Project = new ProjectType();
 		public SlickUrlType Url = new SlickUrlType();
+
+		public static SlickConfig LoadConfig(XmlElement configuration)
+		{
+			var retVal = new SlickConfig();
+			XmlNodeList elements = configuration.GetElementsByTagName("Project");
+			if (elements.Count != 0)
+			{
+				XmlNode projectElem = elements[0];
+				retVal.Project = new ProjectType(projectElem);
+			}
+			elements = configuration.GetElementsByTagName("Url");
+			if (elements.Count != 0)
+			{
+				XmlNode urlElem = elements[0];
+				retVal.Url = new SlickUrlType(urlElem);
+			}
+			return retVal;
+		}
 	}
 }
