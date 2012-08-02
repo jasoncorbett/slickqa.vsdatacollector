@@ -59,5 +59,10 @@ namespace SlickQA.SlickSharp
 			{
 			}
 		}
+
+		public override string ToString()
+		{
+			return Name;
+		}
 	}
 }
