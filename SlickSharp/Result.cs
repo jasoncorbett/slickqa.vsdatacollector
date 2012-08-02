@@ -26,6 +26,7 @@ namespace SlickQA.SlickSharp
 {
 	[DataContract]
 	[CollectionApiPath("results")]
+	[ItemApiPath("", "Id", 0)]
 	public sealed class Result : JsonObject<Result>, IJsonObject
 	{
 		[DataMember(Name = "attributes")]
