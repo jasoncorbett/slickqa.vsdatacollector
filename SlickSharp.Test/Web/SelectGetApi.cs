@@ -36,7 +36,7 @@ namespace SlickQA.SlickSharp.Test.Web
 		{
 			var d = new DummyObjectWithFields {Id = "0123456789abcdefABCDEF", Name = "Dummy Object"};
 
-			string expectedPath = "/0123456789abcdefABCDEF";
+			string expectedPath = "0123456789abcdefABCDEF";
 
 			string actualPath = UriBuilder.SelectGetApi(d);
 
@@ -60,7 +60,7 @@ namespace SlickQA.SlickSharp.Test.Web
 		{
 			var d = new DummyObjectWithProperties {Id = "0123456789abcdefABCDEF", Name = "Dummy Object"};
 
-			string expectedPath = "/0123456789abcdefABCDEF";
+			string expectedPath = "0123456789abcdefABCDEF";
 
 			string actualPath = UriBuilder.SelectGetApi(d);
 

@@ -76,7 +76,14 @@ namespace SlickQA.SlickSharp.Web
 
 				if (IsNonDefaultValue(value))
 				{
-					getPath = item.ApiPath + "/" + value;
+					if (String.IsNullOrWhiteSpace(item.ApiPath))
+					{
+						getPath = value.ToString();
+					}
+					else
+					{
+						getPath = item.ApiPath + "/" + value;
+					}
 					break;
 				}
 			}

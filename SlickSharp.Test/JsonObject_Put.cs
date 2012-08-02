@@ -52,7 +52,7 @@ namespace SlickQA.SlickSharp.Test
 			_mockRequest = new Mock<IHttpWebRequest>();
 			_mockResponse = new Mock<IHttpWebResponse>();
 
-			RequestFactory.Factory = uri => _mockRequest.Object;
+			RequestFactory.Factory = uri => uri == new Uri(ServerConfig.BaseUri + "/projects/4ffc9e3ee4b097a5f43e5d27") ? _mockRequest.Object : null;
 		}
 
 
