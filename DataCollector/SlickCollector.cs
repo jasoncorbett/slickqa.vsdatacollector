@@ -13,9 +13,14 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
 using System.Xml;
 using Microsoft.VisualStudio.TestTools.Execution;
 using SlickQA.DataCollector.Configuration;
+using SlickQA.SlickSharp;
+using TestRun = SlickQA.SlickSharp.TestRun;
 
 namespace SlickQA.DataCollector
 {
@@ -31,6 +36,8 @@ namespace SlickQA.DataCollector
 		private DataCollectionLogger _dataLogger;
 		private DataCollectionSink _dataSink;
 		private SlickConfig _config;
+		private TestRun _slickRun;
+		private Stack<Result> _results;
 
 		public override void Initialize(XmlElement configurationElement, DataCollectionEvents events,
 		                                DataCollectionSink dataSink, DataCollectionLogger logger,
@@ -38,123 +45,162 @@ namespace SlickQA.DataCollector
 		{
 			_config = SlickConfig.LoadConfig(configurationElement);
 
+			SlickConfig.SetServerConfig(_config.Url);
+
 			_dataEvents = events;
 			_dataSink = dataSink;
 			_dataLogger = logger;
 			_dataCollectionEnvironmentContext = environmentContext;
 
-			_dataEvents.CustomNotification += OnCustomNotification;
-			_dataEvents.DataRequest += OnDataRequest;
-
-			_dataEvents.SessionStart += OnSessionStart;
-			_dataEvents.SessionPause += OnSessionPause;
-			_dataEvents.SessionResume += OnSessionResume;
-			_dataEvents.SessionEnd += OnSessionEnd;
+			_results = new Stack<Result>();
 
 			_dataEvents.TestCaseStart += OnTestCaseStart;
-			_dataEvents.TestCasePause += OnTestCasePause;
-			_dataEvents.TestCaseResume += OnTestCaseResume;
 			_dataEvents.TestCaseEnd += OnTestCaseEnd;
 			_dataEvents.TestCaseFailed += OnTestCaseFailed;
-			_dataEvents.TestCaseReset += OnTestCaseReset;
 
-			_dataEvents.TestStepStart += OnTestStepStart;
-			_dataEvents.TestStepEnd += OnTestStepEnd;
+			_dataEvents.SessionStart += OnSessionStart;
+			_dataEvents.SessionEnd += OnSessionEnd;
+
+			//_dataEvents.CustomNotification += OnCustomNotification;
+			//_dataEvents.DataRequest += OnDataRequest;
+			//_dataEvents.SessionPause += OnSessionPause;
+			//_dataEvents.SessionResume += OnSessionResume;
+			//_dataEvents.TestCasePause += OnTestCasePause;
+			//_dataEvents.TestCaseResume += OnTestCaseResume;
+			//_dataEvents.TestCaseReset += OnTestCaseReset;
+			//_dataEvents.TestStepStart += OnTestStepStart;
+			//_dataEvents.TestStepEnd += OnTestStepEnd;
 		}
 
 		protected override void Dispose(bool disposing)
 		{
+			_dataLogger.LogWarning(_dataCollectionEnvironmentContext.SessionDataCollectionContext, "Slick Data Collector: Dispose");
 			if (!disposing)
 			{
 				return;
 			}
-			_dataEvents.CustomNotification -= OnCustomNotification;
-			_dataEvents.DataRequest -= OnDataRequest;
-
-			_dataEvents.SessionStart -= OnSessionStart;
-			_dataEvents.SessionPause -= OnSessionPause;
-			_dataEvents.SessionResume -= OnSessionResume;
-			_dataEvents.SessionEnd -= OnSessionEnd;
-
 			_dataEvents.TestCaseStart -= OnTestCaseStart;
-			_dataEvents.TestCasePause -= OnTestCasePause;
-			_dataEvents.TestCaseResume -= OnTestCaseResume;
 			_dataEvents.TestCaseEnd -= OnTestCaseEnd;
 			_dataEvents.TestCaseFailed -= OnTestCaseFailed;
-			_dataEvents.TestCaseReset -= OnTestCaseReset;
 
-			_dataEvents.TestStepStart -= OnTestStepStart;
-			_dataEvents.TestStepEnd -= OnTestStepEnd;
+
+			_dataEvents.SessionStart -= OnSessionStart;
+
+			_dataEvents.SessionEnd -= OnSessionEnd;
+
+			//_dataEvents.TestCasePause -= OnTestCasePause;
+			//_dataEvents.CustomNotification -= OnCustomNotification;
+			//_dataEvents.DataRequest -= OnDataRequest;
+			//_dataEvents.SessionPause -= OnSessionPause;
+			//_dataEvents.SessionResume -= OnSessionResume;
+			//_dataEvents.TestCaseResume -= OnTestCaseResume;
+			//_dataEvents.TestCaseReset -= OnTestCaseReset;
+			//_dataEvents.TestStepStart -= OnTestStepStart;
+			//_dataEvents.TestStepEnd -= OnTestStepEnd;
 		}
 
-		private void OnCustomNotification(object sender, CustomNotificationEventArgs customNotificationEventArgs)
+		private void OnSessionStart(object sender, SessionStartEventArgs eventArgs)
 		{
-			throw new NotImplementedException();
+			var project = new Project { Name = _config.ResultDestination.ProjectName };
+			project.Get();
+			var release = project.Releases.FirstOrDefault(r => r.Name == _config.ResultDestination.ReleaseName);
+			if (release == null)
+			{
+				throw new ConfigurationErrorsException(String.Format(
+					"Specified release name is not valid for the \"{0}\" project.", project));
 		}
 
-		private void OnDataRequest(object sender, DataRequestEventArgs dataRequestEventArgs)
+			_slickRun = new TestRun
 		{
-			throw new NotImplementedException();
-		}
-
-		private void OnSessionStart(object sender, SessionStartEventArgs sessionStartEventArgs)
-		{
-			throw new NotImplementedException();
-		}
-
-		private void OnSessionPause(object sender, SessionPauseEventArgs sessionPauseEventArgs)
-		{
-			throw new NotImplementedException();
-		}
-
-		private void OnSessionResume(object sender, SessionResumeEventArgs sessionResumeEventArgs)
-		{
-			throw new NotImplementedException();
+							ProjectReference = project,
+							ReleaseReference = release,
+							Name = DateTime.Now.ToString("f")
+						};
+			_slickRun.Post();
 		}
 
 		private void OnSessionEnd(object sender, SessionEndEventArgs sessionEndEventArgs)
 		{
-			throw new NotImplementedException();
+			_slickRun = null;
 		}
 
-		private void OnTestCaseStart(object sender, TestCaseStartEventArgs testCaseStartEventArgs)
+		private void OnTestCaseStart(object sender, TestCaseStartEventArgs eventArgs)
 		{
-			throw new NotImplementedException();
+			var automationKey = eventArgs.TestElement.HumanReadableId;
+			var testcase = Testcase.GetTestCaseByAutomationKey(automationKey);
+			if (testcase == null)
+			{
+				testcase = new Testcase
+						   {
+							   
+							   AutomationKey = automationKey,
+							   IsAutomated = true,
+							   Name = automationKey,
+							   ProjectReference = _slickRun.ProjectReference,
+						   };
+				testcase.Post();
+			}
+			if (_config.ScreenshotSettings.PreTest)
+			{
+				ScreenShot.CaptureScreenShot(String.Format("PreTest: {0}.png", automationKey));
+			}
+
+			var testResult = new Result
+			                     {
+			                     	Hostname = Environment.MachineName,
+									ProjectReference = _slickRun.ProjectReference,
+									ReleaseReference = _slickRun.ReleaseReference,
+									TestRunReference = _slickRun,
+									TestCaseReference = testcase,
+									Status = Status.NO_RESULT.ToString(),
+									RunStatus = RunStatus.RUNNING.ToString(),
+			                     };
+			testResult.Post();
+			_results.Push(testResult);
 		}
 
-		private void OnTestCasePause(object sender, TestCasePauseEventArgs testCasePauseEventArgs)
+		private void OnTestCaseEnd(object sender, TestCaseEndEventArgs eventArgs)
 		{
-			throw new NotImplementedException();
+			var testResult = _results.Pop();
+
+			if (_config.ScreenshotSettings.PostTest)
+			{
+				ScreenShot.CaptureScreenShot(String.Format("Post Test {0}.png", eventArgs.TestElement.HumanReadableId));
+			}
+			testResult.Status = OutcomeTranslator.Convert(eventArgs.TestOutcome).ToString();
+			testResult.RunStatus = RunStatus.FINISHED.ToString();
+			testResult.Put();
 		}
 
-		private void OnTestCaseResume(object sender, TestCaseResumeEventArgs testCaseResumeEventArgs)
+		private void OnTestCaseFailed(object sender, TestCaseFailedEventArgs eventArgs)
 		{
-			throw new NotImplementedException();
+			if (_config.ScreenshotSettings.OnFailure)
+			{
+				ScreenShot.CaptureScreenShot(String.Format("Test Failure {0}.png", eventArgs.TestElement.HumanReadableId));
+			}
 		}
 
-		private void OnTestCaseEnd(object sender, TestCaseEndEventArgs testCaseEndEventArgs)
-		{
-			throw new NotImplementedException();
-		}
+		//private void OnTestCasePause(object sender, TestCasePauseEventArgs testCasePauseEventArgs)
+		//{
+		//}
 
-		private void OnTestCaseFailed(object sender, TestCaseFailedEventArgs testCaseFailedEventArgs)
-		{
-			throw new NotImplementedException();
-		}
+		//private void OnTestCaseResume(object sender, TestCaseResumeEventArgs testCaseResumeEventArgs)
+		//{
+		//}
 
-		private void OnTestCaseReset(object sender, TestCaseResetEventArgs testCaseResetEventArgs)
-		{
-			throw new NotImplementedException();
-		}
+		//private void OnCustomNotification(object sender, CustomNotificationEventArgs customNotificationEventArgs)
+		//{
+		//}
 
-		private void OnTestStepStart(object sender, TestStepStartEventArgs testStepStartEventArgs)
-		{
-			throw new NotImplementedException();
-		}
+		//private void OnDataRequest(object sender, DataRequestEventArgs dataRequestEventArgs)
+		//{
+		//}
+		//private void OnSessionPause(object sender, SessionPauseEventArgs sessionPauseEventArgs)
+		//{
+		//}
 
-		private void OnTestStepEnd(object sender, TestStepEndEventArgs testStepEndEventArgs)
-		{
-			throw new NotImplementedException();
-		}
+		//private void OnSessionResume(object sender, SessionResumeEventArgs sessionResumeEventArgs)
+		//{
+		//}
 	}
 }

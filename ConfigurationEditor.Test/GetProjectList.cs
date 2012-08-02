@@ -63,9 +63,9 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Test
 		[TestMethod]
 		public void With_no_errors()
 		{
-			MemoryStream listStream = ConvertStringToStream(PROJECT_LIST);
-			MemoryStream project1Stream = ConvertStringToStream(PROJECT_1);
-			MemoryStream project2Stream = ConvertStringToStream(PROJECT_2);
+			MemoryStream listStream = StreamUtils.ConvertStringToStream(PROJECT_LIST);
+			MemoryStream project1Stream = StreamUtils.ConvertStringToStream(PROJECT_1);
+			MemoryStream project2Stream = StreamUtils.ConvertStringToStream(PROJECT_2);
 			Project project1 = StreamConverter<Project>.ReadFromStream(project1Stream);
 			Project project2 = StreamConverter<Project>.ReadFromStream(project2Stream);
 
@@ -86,7 +86,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Test
 			IConfigurationController controller = new ConfigurationController(mockView.Object);
 
 			SlickConfig.SetServerConfig("test", "example.com", 8080, "slick");
-			controller.GetProjectsClicked();
+			controller.GetProjects();
 
 			List<Project> projList = projects.ToList();
 			CollectionAssert.Contains(projList, project1);
@@ -103,16 +103,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Test
 
 			view.GetProjects(null, new EventArgs());
 
-			mockController.Verify(c => c.GetProjectsClicked());
-		}
-
-		private static MemoryStream ConvertStringToStream(string stringToConvert)
-		{
-			var listStream = new MemoryStream();
-			byte[] data = Encoding.Unicode.GetBytes(stringToConvert);
-			listStream.Write(data, 0, data.Length);
-			listStream.Position = 0;
-			return listStream;
+			mockController.Verify(c => c.GetProjects());
 		}
 	}
 }

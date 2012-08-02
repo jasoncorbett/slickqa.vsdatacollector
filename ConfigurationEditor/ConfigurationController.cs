@@ -17,7 +17,6 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.Execution;
 using SlickQA.DataCollector.Configuration;
 using SlickQA.SlickSharp;
-using SlickQA.SlickSharp.Web;
 
 namespace SlickQA.DataCollector.ConfigurationEditor
 {
@@ -39,7 +38,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 
 		#region IConfigurationController Members
 
-		public void GetProjectsClicked()
+		public void GetProjects()
 		{
 			List<Project> projects = JsonObject<Project>.GetList();
 
@@ -59,7 +58,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			if (SlickUrlType.IsValid(_currentConfig.Url))
 			{
 				SlickConfig.SetServerConfig(_currentConfig.Url);
-				GetProjectsClicked();
+				GetProjects();
 			}
 
 			SetValues(_currentConfig);
@@ -83,7 +82,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			ResultDestination slickProject = config.ResultDestination;
 			if (slickProject.IsValid())
 			{
-				_view.SelectProject(slickProject);
+				_view.SelectProjectAndRelease(slickProject);
 			}
 		}
 	}

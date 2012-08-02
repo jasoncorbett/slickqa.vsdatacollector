@@ -25,10 +25,11 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 	[DataCollectorConfigurationEditorTypeUri("configurationeditor://slickqa/SlickDataCollectorConfigurationEditor/0.0.1")]
 	public sealed partial class ConfigurationEditor : UserControl, IDataCollectorConfigurationEditor, IConfigurationView
 	{
-		private readonly IConfigurationController _controller;
-		private readonly BindingList<Project> _projects;
-		private readonly BindingList<String> _schemes;
 		private DataCollectorSettings _collectorSettings;
+		private readonly IConfigurationController _controller;
+		private readonly BindingList<String> _schemes;
+		private readonly BindingList<Project> _projects;
+		private BindingList<Release> _releases;
 
 		public ConfigurationEditor() : this(new ConfigurationController())
 		{
@@ -41,30 +42,37 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 
 			_schemes = new BindingList<string> {Uri.UriSchemeHttp, Uri.UriSchemeHttps};
 			_projects = new BindingList<Project> {AllowNew = true, AllowEdit = false, AllowRemove = false};
+			_releases = new BindingList<Release> {AllowNew = true, AllowEdit = false, AllowRemove = false};
 
 			InitializeComponent();
 
-			project.ValueMember = null;
-			project.DisplayMember = null;
-			project.DataSource = _projects;
-			project.SelectedItem = null;
+			_scheme.ValueMember = null;
+			_scheme.DisplayMember = null;
+			_scheme.DataSource = _schemes;
 
-			protocol.ValueMember = null;
-			protocol.DisplayMember = null;
-			protocol.DataSource = _schemes;
+			_project.ValueMember = null;
+			_project.DisplayMember = null;
+			_project.DataSource = _projects;
+			_project.SelectedItem = null;
+
+			_release.ValueMember = null;
+			_release.DisplayMember = null;
+			_release.DataSource = _releases;
+			_release.SelectedItem = null;
 		}
 
 		private IServiceProvider ServiceProvider { get; set; }
 
 		public void GetProjects(object sender, EventArgs e)
 		{
-			SlickConfig.SetServerConfig(protocol.Text, host.Text, (int)port.Value, sitePath.Text);
-			_controller.GetProjectsClicked();
+			SlickConfig.SetServerConfig(_scheme.Text, _host.Text, (int)_port.Value, _sitePath.Text);
+			_controller.GetProjects();
 		}
 
 		public void PopulateProjects(IEnumerable<Project> projects)
 		{
 			_projects.Clear();
+			_projects.Add(new NullProject());
 			foreach (Project proj in projects)
 			{
 				_projects.Add(proj);
@@ -74,19 +82,30 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 		public void SetUrl(SlickUrlType slickUrl)
 		{
 			SuspendLayout();
-			protocol.SelectedItem = slickUrl.Scheme;
-			host.Text = slickUrl.Host;
-			port.Value = slickUrl.Port;
-			sitePath.Text = slickUrl.SitePath;
+			_scheme.SelectedItem = slickUrl.Scheme;
+			_host.Text = slickUrl.Host;
+			_port.Value = slickUrl.Port;
+			_sitePath.Text = slickUrl.SitePath;
 			ResumeLayout();
 		}
 
-		public void SelectProject(ResultDestination slickProject)
+		public void SelectProjectAndRelease(ResultDestination destination)
 		{
 			SuspendLayout();
-			var searchProject = new Project {Name = slickProject.ProjectName};
+			//Handle the releases on our own because we are loading from the config.
+			_project.SelectedIndexChanged -= GetReleases;
+
+			var searchProject = new Project {Name = destination.ProjectName};
 			searchProject.Get();
-			project.SelectedItem = searchProject;
+			var searchRelease = new Release {ProjectId = searchProject.Id, Name = destination.ReleaseName};
+			searchRelease.Get();
+
+			_project.SelectedItem = searchProject;
+			GetReleases(this, null);
+
+			_release.SelectedItem = searchRelease;
+
+			_project.SelectedIndexChanged += GetReleases;
 			ResumeLayout();
 		}
 
@@ -105,8 +124,8 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 
 		public DataCollectorSettings SaveData()
 		{
-			var projectType = new ResultDestination(project.SelectedItem as Project, null);
-			var url = new SlickUrlType(protocol.SelectedItem.ToString(), host.Text, (int)port.Value, sitePath.Text);
+			var projectType = new ResultDestination(_project.SelectedItem as Project, _release.SelectedItem as Release);
+			var url = new SlickUrlType(_scheme.SelectedItem.ToString(), _host.Text, (int)_port.Value, _sitePath.Text);
 			_collectorSettings.Configuration.InnerText = String.Empty;
 
 			_collectorSettings.Configuration.AppendChild(projectType.ToXml(_collectorSettings.Configuration.OwnerDocument));
@@ -116,7 +135,23 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 
 		public bool VerifyData()
 		{
-			return protocol.SelectedItem != null && !String.IsNullOrWhiteSpace(host.Text) && project.SelectedItem != null;
+			return _scheme.SelectedItem != null && !String.IsNullOrWhiteSpace(_host.Text) 
+				&& _project.SelectedItem != null && _release.SelectedItem != null;
+		}
+
+		private void GetReleases(object sender, EventArgs e)
+		{
+			_releases.Clear();
+			var project = _project.SelectedItem as Project;
+			if (project == null)
+			{
+				return;
+			}
+
+			foreach (Release rel in project.Releases)
+			{
+				_releases.Add(rel);
+			}
 		}
 	}
 }
