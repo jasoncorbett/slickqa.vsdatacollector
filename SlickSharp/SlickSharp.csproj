@@ -45,6 +45,7 @@
     <Compile Include="Component.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="ConfigurationType.cs" />
+    <Compile Include="NullProject.cs" />
     <Compile Include="ObjectReferences\BuildReference.cs" />
     <Compile Include="ObjectReferences\ConfigurationReference.cs" />
     <Compile Include="ObjectReferences\ComponentReference.cs" />

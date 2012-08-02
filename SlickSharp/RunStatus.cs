@@ -21,5 +21,7 @@ namespace SlickQA.SlickSharp
 	{
 		[EnumMember]
 		TO_BE_RUN,
+		RUNNING,
+		FINISHED,
 	}
 }

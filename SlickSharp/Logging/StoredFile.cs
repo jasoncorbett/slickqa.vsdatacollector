@@ -24,7 +24,7 @@ namespace SlickQA.SlickSharp.Logging
 {
 	[DataContract]
 	[CollectionApiPath("files")]
-	public abstract class StoredFile : JsonObject<StoredFile>, IJsonObject
+	public sealed class StoredFile : JsonObject<StoredFile>, IJsonObject
 	{
 		[DataMember(Name = "filename")]
 		public String FileName;
