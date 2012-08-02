@@ -19,23 +19,30 @@ namespace SlickQA.DataCollector.Configuration
 {
 	public sealed class SlickConfig
 	{
-		public ProjectType Project = new ProjectType();
+		public ResultDestination ResultDestination = new ResultDestination();
 		public SlickUrlType Url = new SlickUrlType();
+		public ScreenShotSettings ScreenshotSettings = new ScreenShotSettings();
 
 		public static SlickConfig LoadConfig(XmlElement configuration)
 		{
 			var retVal = new SlickConfig();
-			XmlNodeList elements = configuration.GetElementsByTagName("Project");
+			XmlNodeList elements = configuration.GetElementsByTagName("ResultDestination");
 			if (elements.Count != 0)
 			{
-				XmlNode projectElem = elements[0];
-				retVal.Project = new ProjectType(projectElem);
+				var projectElem = elements[0];
+				retVal.ResultDestination = new ResultDestination(projectElem);
 			}
 			elements = configuration.GetElementsByTagName("Url");
 			if (elements.Count != 0)
 			{
-				XmlNode urlElem = elements[0];
+				var urlElem = elements[0];
 				retVal.Url = new SlickUrlType(urlElem);
+			}
+			elements = configuration.GetElementsByTagName("Screenshot");
+			if (elements.Count != 0)
+			{
+				var screenshotElem = elements[0];
+				retVal.ScreenshotSettings = new ScreenShotSettings(screenshotElem);
 			}
 			return retVal;
 		}

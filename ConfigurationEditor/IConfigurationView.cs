@@ -24,6 +24,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 		void PopulateProjects(IEnumerable<Project> projects);
 		void GetProjects(object sender, EventArgs e);
 		void SetUrl(SlickUrlType slickUrl);
-		void SelectProject(ProjectType slickProject);
+		void SelectProject(ResultDestination slickProject);
 	}
 }

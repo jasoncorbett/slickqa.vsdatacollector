@@ -81,10 +81,10 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			ResumeLayout();
 		}
 
-		public void SelectProject(ProjectType slickProject)
+		public void SelectProject(ResultDestination slickProject)
 		{
 			SuspendLayout();
-			var searchProject = new Project {Name = slickProject.Name};
+			var searchProject = new Project {Name = slickProject.ProjectName};
 			searchProject.Get();
 			project.SelectedItem = searchProject;
 			ResumeLayout();
@@ -105,7 +105,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 
 		public DataCollectorSettings SaveData()
 		{
-			var projectType = new ProjectType(project.SelectedItem as Project);
+			var projectType = new ResultDestination(project.SelectedItem as Project, null);
 			var url = new SlickUrlType(protocol.SelectedItem.ToString(), host.Text, (int)port.Value, sitePath.Text);
 			_collectorSettings.Configuration.InnerText = String.Empty;
 

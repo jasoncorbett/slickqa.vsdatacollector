@@ -80,7 +80,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			{
 				_view.SetUrl(slickUrl);
 			}
-			ProjectType slickProject = config.Project;
+			ResultDestination slickProject = config.ResultDestination;
 			if (slickProject.IsValid())
 			{
 				_view.SelectProject(slickProject);
