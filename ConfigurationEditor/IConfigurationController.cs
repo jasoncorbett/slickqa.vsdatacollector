@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Xml;
 using Microsoft.VisualStudio.TestTools.Execution;
+using SlickQA.SlickSharp;
 
 namespace SlickQA.DataCollector.ConfigurationEditor
 {
@@ -22,5 +24,9 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 		void GetProjects();
 		void InitializeSettings(DataCollectorSettings collectorSettings);
 		void ApplyDefaultSettings();
+		void SetUrl(string scheme, string host, int port, string sitePath);
+		void SetResultDestination(Project project, Release release);
+		void SaveSettings(XmlElement configuration);
+		void SetScreenshotSettings(bool takePreTestScreenshot, bool takePostTestScreenshot, bool takeScreenshotOnFailure);
 	}
 }

@@ -22,14 +22,15 @@ using SlickQA.SlickSharp;
 
 namespace SlickQA.DataCollector.ConfigurationEditor
 {
+	//TODO: Need Unit Test Coverage Here
 	[DataCollectorConfigurationEditorTypeUri("configurationeditor://slickqa/SlickDataCollectorConfigurationEditor/0.0.1")]
 	public sealed partial class ConfigurationEditor : UserControl, IDataCollectorConfigurationEditor, IConfigurationView
 	{
-		private DataCollectorSettings _collectorSettings;
 		private readonly IConfigurationController _controller;
-		private readonly BindingList<String> _schemes;
 		private readonly BindingList<Project> _projects;
-		private BindingList<Release> _releases;
+		private readonly BindingList<Release> _releases;
+		private readonly BindingList<String> _schemes;
+		private DataCollectorSettings _collectorSettings;
 
 		public ConfigurationEditor() : this(new ConfigurationController())
 		{
@@ -63,9 +64,11 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 
 		private IServiceProvider ServiceProvider { get; set; }
 
+		#region IConfigurationView Members
+
 		public void GetProjects(object sender, EventArgs e)
 		{
-			SlickConfig.SetServerConfig(_scheme.Text, _host.Text, (int)_port.Value, _sitePath.Text);
+			_controller.SetUrl(_scheme.Text, _host.Text, (int)_port.Value, _sitePath.Text);
 			_controller.GetProjects();
 		}
 
@@ -109,6 +112,17 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			ResumeLayout();
 		}
 
+		public void SetScreenshotSettings(ScreenShotSettings screenshotSettings)
+		{
+			_pretestScreenshot.Checked = screenshotSettings.PreTest;
+			_posttestScreenshot.Checked = screenshotSettings.PostTest;
+			_failScreenshot.Checked = screenshotSettings.OnFailure;
+		}
+
+		#endregion
+
+		#region IDataCollectorConfigurationEditor Members
+
 		public void Initialize(IServiceProvider serviceProvider, DataCollectorSettings settings)
 		{
 			ServiceProvider = serviceProvider;
@@ -124,12 +138,11 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 
 		public DataCollectorSettings SaveData()
 		{
-			var projectType = new ResultDestination(_project.SelectedItem as Project, _release.SelectedItem as Release);
-			var url = new SlickUrlType(_scheme.SelectedItem.ToString(), _host.Text, (int)_port.Value, _sitePath.Text);
-			_collectorSettings.Configuration.InnerText = String.Empty;
-
-			_collectorSettings.Configuration.AppendChild(projectType.ToXml(_collectorSettings.Configuration.OwnerDocument));
-			_collectorSettings.Configuration.AppendChild(url.ToXml(_collectorSettings.Configuration.OwnerDocument));
+			_controller.SetUrl(_scheme.Text, _host.Text, (int)_port.Value, _sitePath.Text);
+			_controller.SetResultDestination(_project.SelectedItem as Project, _release.SelectedItem as Release);
+			_controller.SetScreenshotSettings(_pretestScreenshot.Checked, _posttestScreenshot.Checked, _failScreenshot.Checked);
+			
+			_controller.SaveSettings(_collectorSettings.Configuration);
 			return _collectorSettings;
 		}
 
@@ -138,6 +151,8 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			return _scheme.SelectedItem != null && !String.IsNullOrWhiteSpace(_host.Text) 
 				&& _project.SelectedItem != null && _release.SelectedItem != null;
 		}
+
+		#endregion
 
 		private void GetReleases(object sender, EventArgs e)
 		{
@@ -152,6 +167,11 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			{
 				_releases.Add(rel);
 			}
+		}
+
+		private void CheckedChanged(object sender, EventArgs e)
+		{
+			_controller.SetScreenshotSettings(_pretestScreenshot.Checked, _posttestScreenshot.Checked, _failScreenshot.Checked);
 		}
 	}
 }

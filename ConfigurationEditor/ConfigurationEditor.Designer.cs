@@ -137,18 +137,18 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			this._port.AutoSize = true;
 			this._port.Location = new System.Drawing.Point(299, 15);
 			this._port.Maximum = new decimal(new int[] {
-			65535,
-			0,
-			0,
-			0});
+            65535,
+            0,
+            0,
+            0});
 			this._port.Name = "_port";
 			this._port.Size = new System.Drawing.Size(120, 20);
 			this._port.TabIndex = 5;
 			this._port.Value = new decimal(new int[] {
-			8080,
-			0,
-			0,
-			0});
+            8080,
+            0,
+            0,
+            0});
 			// 
 			// _projectLabel
 			// 
@@ -282,6 +282,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			this._posttestScreenshot.TabIndex = 2;
 			this._posttestScreenshot.Text = "after each test";
 			this._posttestScreenshot.UseVisualStyleBackColor = true;
+			this._posttestScreenshot.CheckedChanged += new System.EventHandler(this.CheckedChanged);
 			// 
 			// _failScreenshot
 			// 
@@ -296,6 +297,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			this._failScreenshot.TabIndex = 1;
 			this._failScreenshot.Text = "on test failure";
 			this._failScreenshot.UseVisualStyleBackColor = true;
+			this._failScreenshot.CheckedChanged += new System.EventHandler(this.CheckedChanged);
 			// 
 			// _pretestScreenshot
 			// 
@@ -308,6 +310,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			this._pretestScreenshot.TabIndex = 0;
 			this._pretestScreenshot.Text = "before each test";
 			this._pretestScreenshot.UseVisualStyleBackColor = true;
+			this._pretestScreenshot.CheckedChanged += new System.EventHandler(this.CheckedChanged);
 			// 
 			// errorProvider1
 			// 

@@ -20,24 +20,25 @@ using System.Xml;
 using Microsoft.VisualStudio.TestTools.Execution;
 using SlickQA.DataCollector.Configuration;
 using SlickQA.SlickSharp;
-using TestRun = SlickQA.SlickSharp.TestRun;
+using SlickQA.SlickSharp.Logging;
 
 namespace SlickQA.DataCollector
 {
+	//TODO: Need Unit Test Coverage Here
 	[DataCollectorTypeUri("datacollector://slickqa/SlickDataCollector/0.0.1")]
 	[DataCollectorFriendlyName("Slick", false)]
 	[DataCollectorConfigurationEditor("configurationeditor://slickqa/SlickDataCollectorConfigurationEditor/0.0.1")]
 	public class SlickCollector : Microsoft.VisualStudio.TestTools.Execution.DataCollector
 	{
+		private SlickConfig _config;
 		private DataCollectionEnvironmentContext _dataCollectionEnvironmentContext;
 
 		private DataCollectionEvents _dataEvents;
 
 		private DataCollectionLogger _dataLogger;
 		private DataCollectionSink _dataSink;
-		private SlickConfig _config;
-		private TestRun _slickRun;
 		private Stack<Result> _results;
+		private TestRun _slickRun;
 
 		public override void Initialize(XmlElement configurationElement, DataCollectionEvents events,
 		                                DataCollectionSink dataSink, DataCollectionLogger logger,
@@ -103,7 +104,7 @@ namespace SlickQA.DataCollector
 		{
 			var project = new Project { Name = _config.ResultDestination.ProjectName };
 			project.Get();
-			var release = project.Releases.FirstOrDefault(r => r.Name == _config.ResultDestination.ReleaseName);
+			Release release = project.Releases.FirstOrDefault(r => r.Name == _config.ResultDestination.ReleaseName);
 			if (release == null)
 			{
 				throw new ConfigurationErrorsException(String.Format(
@@ -126,8 +127,8 @@ namespace SlickQA.DataCollector
 
 		private void OnTestCaseStart(object sender, TestCaseStartEventArgs eventArgs)
 		{
-			var automationKey = eventArgs.TestElement.HumanReadableId;
-			var testcase = Testcase.GetTestCaseByAutomationKey(automationKey);
+			string automationKey = eventArgs.TestElement.HumanReadableId;
+			Testcase testcase = Testcase.GetTestCaseByAutomationKey(automationKey);
 			if (testcase == null)
 			{
 				testcase = new Testcase
@@ -140,10 +141,6 @@ namespace SlickQA.DataCollector
 						   };
 				testcase.Post();
 			}
-			if (_config.ScreenshotSettings.PreTest)
-			{
-				ScreenShot.CaptureScreenShot(String.Format("PreTest: {0}.png", automationKey));
-			}
 
 			var testResult = new Result
 			                     {
@@ -151,22 +148,31 @@ namespace SlickQA.DataCollector
 									ProjectReference = _slickRun.ProjectReference,
 									ReleaseReference = _slickRun.ReleaseReference,
 									TestRunReference = _slickRun,
-									TestCaseReference = testcase,
+									TestcaseReference = testcase,
 									Status = Status.NO_RESULT.ToString(),
 									RunStatus = RunStatus.RUNNING.ToString(),
+									Files = new List<StoredFile>(),
 			                     };
+			if (_config.ScreenshotSettings.PreTest)
+			{
+				StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Pre Test {0}.png", automationKey));
+				testResult.Files.Add(file);
+			}
+
 			testResult.Post();
 			_results.Push(testResult);
 		}
 
 		private void OnTestCaseEnd(object sender, TestCaseEndEventArgs eventArgs)
 		{
-			var testResult = _results.Pop();
+			Result testResult = _results.Pop();
 
 			if (_config.ScreenshotSettings.PostTest)
 			{
-				ScreenShot.CaptureScreenShot(String.Format("Post Test {0}.png", eventArgs.TestElement.HumanReadableId));
+				StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Post Test {0}.png", eventArgs.TestElement.HumanReadableId));
+				testResult.Files.Add(file);
 			}
+
 			testResult.Status = OutcomeTranslator.Convert(eventArgs.TestOutcome).ToString();
 			testResult.RunStatus = RunStatus.FINISHED.ToString();
 			testResult.Put();
@@ -174,9 +180,12 @@ namespace SlickQA.DataCollector
 
 		private void OnTestCaseFailed(object sender, TestCaseFailedEventArgs eventArgs)
 		{
+			Result testResult = _results.Peek();
+
 			if (_config.ScreenshotSettings.OnFailure)
 			{
-				ScreenShot.CaptureScreenShot(String.Format("Test Failure {0}.png", eventArgs.TestElement.HumanReadableId));
+				StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Test Failure {0}.png", eventArgs.TestElement.HumanReadableId));
+				testResult.Files.Add(file);
 			}
 		}
 

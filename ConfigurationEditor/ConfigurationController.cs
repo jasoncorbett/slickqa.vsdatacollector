@@ -14,15 +14,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Xml;
 using Microsoft.VisualStudio.TestTools.Execution;
 using SlickQA.DataCollector.Configuration;
 using SlickQA.SlickSharp;
 
 namespace SlickQA.DataCollector.ConfigurationEditor
 {
+	//TODO: Need Unit Test Coverage Here
 	public sealed class ConfigurationController : IConfigurationController
 	{
 		private SlickConfig _currentConfig;
+		private DataCollectorSettings _dataCollectorSettings;
 		private SlickConfig _defaultConfig;
 		private IConfigurationView _view;
 
@@ -52,6 +55,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 
 		public void InitializeSettings(DataCollectorSettings dataCollectorSettings)
 		{
+			_dataCollectorSettings = dataCollectorSettings;
 			_defaultConfig = SlickConfig.LoadConfig(dataCollectorSettings.DefaultConfiguration);
 			_currentConfig = SlickConfig.LoadConfig(dataCollectorSettings.Configuration);
 
@@ -70,6 +74,29 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			SetValues(_defaultConfig);
 		}
 
+		public void SetUrl(string scheme, string host, int port, string sitePath)
+		{
+			_currentConfig.Url = new SlickUrlType(scheme, host, port, sitePath);
+			SlickConfig.SetServerConfig(_currentConfig.Url);
+		}
+
+		public void SetResultDestination(Project project, Release release)
+		{
+			_currentConfig.ResultDestination = new ResultDestination(project, release);
+		}
+
+		public void SaveSettings(XmlElement configuration)
+		{
+			configuration.InnerText = String.Empty;
+
+			_currentConfig.ConfigToXml(configuration);
+		}
+
+		public void SetScreenshotSettings(bool takePreTestScreenshot, bool takePostTestScreenshot, bool takeScreenshotOnFailure)
+		{
+			_currentConfig.ScreenshotSettings = new ScreenShotSettings(takePreTestScreenshot, takePostTestScreenshot, takeScreenshotOnFailure);
+		}
+
 		#endregion
 
 		private void SetValues(SlickConfig config)
@@ -84,6 +111,8 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			{
 				_view.SelectProjectAndRelease(slickProject);
 			}
+
+			_view.SetScreenshotSettings(_currentConfig.ScreenshotSettings);
 		}
 	}
 }

@@ -25,5 +25,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 		void GetProjects(object sender, EventArgs e);
 		void SetUrl(SlickUrlType slickUrl);
 		void SelectProjectAndRelease(ResultDestination destination);
+		void SetScreenshotSettings(ScreenShotSettings screenshotSettings);
 	}
 }

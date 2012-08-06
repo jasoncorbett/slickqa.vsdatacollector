@@ -20,8 +20,8 @@ namespace SlickQA.DataCollector.Configuration
 	public sealed class SlickConfig
 	{
 		public ResultDestination ResultDestination = new ResultDestination();
-		public SlickUrlType Url = new SlickUrlType();
 		public ScreenShotSettings ScreenshotSettings = new ScreenShotSettings();
+		public SlickUrlType Url = new SlickUrlType();
 
 		public static SlickConfig LoadConfig(XmlElement configuration)
 		{
@@ -29,19 +29,19 @@ namespace SlickQA.DataCollector.Configuration
 			XmlNodeList elements = configuration.GetElementsByTagName("ResultDestination");
 			if (elements.Count != 0)
 			{
-				var projectElem = elements[0];
+				XmlNode projectElem = elements[0];
 				retVal.ResultDestination = new ResultDestination(projectElem);
 			}
 			elements = configuration.GetElementsByTagName("Url");
 			if (elements.Count != 0)
 			{
-				var urlElem = elements[0];
+				XmlNode urlElem = elements[0];
 				retVal.Url = new SlickUrlType(urlElem);
 			}
 			elements = configuration.GetElementsByTagName("Screenshot");
 			if (elements.Count != 0)
 			{
-				var screenshotElem = elements[0];
+				XmlNode screenshotElem = elements[0];
 				retVal.ScreenshotSettings = new ScreenShotSettings(screenshotElem);
 			}
 			return retVal;
@@ -55,9 +55,18 @@ namespace SlickQA.DataCollector.Configuration
 			ServerConfig.SitePath = sitePath;
 		}
 
+		//TODO: Need Unit Test Coverage Here
 		public static void SetServerConfig(SlickUrlType url)
 		{
 			SetServerConfig(url.Scheme, url.Host, url.Port, url.SitePath);
+		}
+
+		//TODO: Need Unit Test Coverage Here
+		public void ConfigToXml(XmlElement configuration)
+		{
+			configuration.AppendChild(ResultDestination.ToXml(configuration.OwnerDocument));
+			configuration.AppendChild(Url.ToXml(configuration.OwnerDocument));
+			configuration.AppendChild(ScreenshotSettings.ToXml(configuration.OwnerDocument));
 		}
 	}
 }
