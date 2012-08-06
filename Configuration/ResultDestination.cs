@@ -36,6 +36,7 @@ namespace SlickQA.DataCollector.Configuration
 
 		public ResultDestination(XmlNode projectElem)
 		{
+			//TODO: Need Unit Test Coverage Here
 			if (projectElem.Attributes == null)
 			{
 				return;
@@ -46,17 +47,20 @@ namespace SlickQA.DataCollector.Configuration
 			ReleaseName = releaseAttr.Value;
 		}
 
+		//TODO: Need Unit Test Coverage Here
 		public ResultDestination(Project selectedProject, Release selectedRelease)
 		{
 			ProjectName = selectedProject.Name;
 			ReleaseName = selectedRelease.Name;
 		}
 
+		//TODO: Need Unit Test Coverage Here
 		public override string ToString()
 		{
 			return !String.IsNullOrWhiteSpace(ProjectName) ? ProjectName : String.Format("No Project Name {0}", GetHashCode());
 		}
 
+		//TODO: Need Unit Test Coverage Here
 		public override int GetHashCode()
 		{
 			return ProjectName.GetHashCode() + ReleaseName.GetHashCode();
@@ -65,6 +69,7 @@ namespace SlickQA.DataCollector.Configuration
 		public override bool Equals(object obj)
 		{
 			var other = obj as ResultDestination;
+			//TODO: Need Unit Test Coverage Here
 			if (other == null)
 			{
 				return false;
@@ -72,6 +77,7 @@ namespace SlickQA.DataCollector.Configuration
 			return ProjectName.Equals(other.ProjectName) && ReleaseName.Equals(other.ReleaseName);
 		}
 
+		//TODO: Need Unit Test Coverage Here
 		public XmlNode ToXml(XmlDocument doc)
 		{
 			XmlNode node = doc.CreateNode(XmlNodeType.Element, "ResultDestination", String.Empty);
@@ -89,6 +95,7 @@ namespace SlickQA.DataCollector.Configuration
 			return node;
 		}
 
+		//TODO: Need Unit Test Coverage Here
 		public bool IsValid()
 		{
 			return !String.IsNullOrWhiteSpace(ProjectName);

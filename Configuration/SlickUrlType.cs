@@ -42,6 +42,7 @@ namespace SlickQA.DataCollector.Configuration
 		{
 			if (urlElem.Attributes == null)
 			{
+				//TODO: Need Unit Test Coverage Here
 				return;
 			}
 			XmlAttribute schemeAttr = urlElem.Attributes["Scheme"];
@@ -55,12 +56,13 @@ namespace SlickQA.DataCollector.Configuration
 			SitePath = sitePathAttr.Value;
 		}
 
-
+		//TODO: Need Unit Test Coverage Here
 		public override string ToString()
 		{
 			return String.Format("{0}://{1}:{2}/{3}", Scheme, Host, Port, SitePath);
 		}
 
+		//TODO: Need Unit Test Coverage Here
 		public override int GetHashCode()
 		{
 			return Scheme.GetHashCode() + Host.GetHashCode() + Port.GetHashCode() + SitePath.GetHashCode();
@@ -71,6 +73,7 @@ namespace SlickQA.DataCollector.Configuration
 			var other = obj as SlickUrlType;
 			if (other == null)
 			{
+				//TODO: Need Unit Test Coverage Here
 				return false;
 			}
 
@@ -78,6 +81,7 @@ namespace SlickQA.DataCollector.Configuration
 			       && SitePath.Equals(other.SitePath);
 		}
 
+		//TODO: Need Unit Test Coverage Here
 		public XmlNode ToXml(XmlDocument doc)
 		{
 			XmlNode node = doc.CreateNode(XmlNodeType.Element, "Url", String.Empty);
