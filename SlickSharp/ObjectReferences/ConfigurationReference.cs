@@ -29,6 +29,10 @@ namespace SlickQA.SlickSharp.ObjectReferences
 		[DataMember(Name = "name")]
 		public String Name;
 
+		public ConfigurationReference()
+		{
+		}
+
 		private ConfigurationReference(Configuration configuration)
 		{
 			ConfigId = configuration.Id;
@@ -39,6 +43,16 @@ namespace SlickQA.SlickSharp.ObjectReferences
 		public static implicit operator ConfigurationReference(Configuration configuration)
 		{
 			return new ConfigurationReference(configuration);
+		}
+
+		public static implicit operator Configuration(ConfigurationReference reference)
+		{
+			var conf = new Configuration();
+			conf.Id = reference.ConfigId;
+			conf.Filename = reference.FileName;
+			conf.Name = reference.Name;
+			conf.Get();
+			return conf;
 		}
 	}
 }

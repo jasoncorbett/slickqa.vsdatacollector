@@ -81,7 +81,7 @@
     <Compile Include="RunStatus.cs" />
     <Compile Include="Web\ServerConfig.cs" />
     <Compile Include="Status.cs" />
-    <Compile Include="TestCase.cs" />
+    <Compile Include="Testcase.cs" />
     <Compile Include="Utility\Json\StreamConverter.cs" />
     <Compile Include="Utility\LinkedHashMap.cs" />
     <Compile Include="Web\UriBuilder.cs" />

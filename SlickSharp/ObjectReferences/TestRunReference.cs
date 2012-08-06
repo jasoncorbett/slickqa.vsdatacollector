@@ -26,6 +26,10 @@ namespace SlickQA.SlickSharp.ObjectReferences
 		[DataMember(Name = "testrunId")]
 		public String TestRunId;
 
+		public TestRunReference()
+		{
+		}
+
 		private TestRunReference(TestRun testRun)
 		{
 			TestRunId = testRun.Id;

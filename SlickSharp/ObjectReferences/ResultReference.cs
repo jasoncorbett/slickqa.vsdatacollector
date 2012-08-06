@@ -32,6 +32,10 @@ namespace SlickQA.SlickSharp.ObjectReferences
 		[DataMember(Name = "status")]
 		public String ResultStatus;
 
+		public ResultReference()
+		{
+		}
+
 		private ResultReference(Result result)
 		{
 			Id = result.Id;

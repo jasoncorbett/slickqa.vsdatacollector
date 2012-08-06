@@ -42,12 +42,5 @@ namespace SlickQA.SlickSharp.ObjectReferences
 		{
 			return new BuildReference(build);
 		}
-
-		public static implicit operator Build(BuildReference buildRef)
-		{
-			var b = new Build {Id = buildRef.Id, Name = buildRef.Name};
-			b.Get();
-			return b;
-		}
 	}
 }

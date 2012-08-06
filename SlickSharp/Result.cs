@@ -27,7 +27,7 @@ namespace SlickQA.SlickSharp
 	[DataContract]
 	[CollectionApiPath("results")]
 	[ItemApiPath("", "Id", 0)]
-	public sealed class Result : JsonObject<Result>, IJsonObject
+	public sealed class Result : JsonObject<Result>, IJsonObject, IEquatable<Result>
 	{
 		[DataMember(Name = "attributes")]
 		public Dictionary<String, String> Attributes;
@@ -83,12 +83,30 @@ namespace SlickQA.SlickSharp
 		[DataMember(Name = "status")]
 		public String Status;
 
-		[DataMember(Name = "testcase")]
-		public TestCaseReference TestCaseReference;
-
 		[DataMember(Name = "testrun")]
 		public TestRunReference TestRunReference;
 
+		[DataMember(Name = "testcase")]
+		public TestcaseReference TestcaseReference;
+
+		#region IEquatable<Result> Members
+
+		public bool Equals(Result other)
+		{
+			if (other == null)
+			{
+				return false;
+			}
+			if (Id != null && other.Id != null)
+			{
+				return other.Id == Id;
+			}
+			return false;
+		}
+
+		#endregion
+
+		//TODO: Need Unit Test Coverage Here
 		public void AddToLog(List<LogEntry> logaddon)
 		{
 			Uri uri = UriBuilder.FullUri(UriBuilder.NormalizePath(this, "results/{Id}/log"));
@@ -104,6 +122,34 @@ namespace SlickQA.SlickSharp
 					//return StreamConverter<Result>.ReadFromStream(stream);
 				}
 			}
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj == null)
+			{
+				return false;
+			}
+			var other = obj as Result;
+			return other != null && Equals(other);
+		}
+
+		public static bool operator ==(Result left, Result right)
+		{
+			if ((object)left == null || (object)right == null)
+			{
+				return Equals(left, right);
+			}
+			return left.Equals(right);
+		}
+
+		public static bool operator !=(Result left, Result right)
+		{
+			if (left == null || right == null)
+			{
+				return !Equals(left, right);
+			}
+			return !left.Equals(right);
 		}
 	}
 }

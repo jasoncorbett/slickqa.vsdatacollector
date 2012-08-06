@@ -18,7 +18,7 @@ using System.Runtime.Serialization;
 namespace SlickQA.SlickSharp.ObjectReferences
 {
 	[DataContract]
-	public sealed class TestCaseReference : JsonObject<TestCaseReference>, IJsonObject
+	public sealed class TestcaseReference : JsonObject<TestcaseReference>, IJsonObject
 	{
 		[DataMember(Name = "automationId")]
 		public String AutomationId;
@@ -36,7 +36,11 @@ namespace SlickQA.SlickSharp.ObjectReferences
 		public String Name;
 
 
-		private TestCaseReference(Testcase testcase)
+		public TestcaseReference()
+		{
+		}
+
+		private TestcaseReference(Testcase testcase)
 		{
 			Id = testcase.Id;
 			Name = testcase.Name;
@@ -45,20 +49,20 @@ namespace SlickQA.SlickSharp.ObjectReferences
 			AutomationTool = testcase.AutomationTool;
 		}
 
-		public static implicit operator TestCaseReference(Testcase testcase)
+		public static implicit operator TestcaseReference(Testcase testcase)
 		{
-			return new TestCaseReference(testcase);
+			return new TestcaseReference(testcase);
 		}
 
-		public static implicit operator Testcase(TestCaseReference testCaseReference)
+		public static implicit operator Testcase(TestcaseReference testcaseReference)
 		{
 			var t = new Testcase
 			        {
-			        	Id = testCaseReference.Id,
-			        	Name = testCaseReference.Name,
-			        	AutomationId = testCaseReference.AutomationId,
-			        	AutomationKey = testCaseReference.AutomationKey,
-			        	AutomationTool = testCaseReference.AutomationTool
+			        	Id = testcaseReference.Id,
+			        	Name = testcaseReference.Name,
+			        	AutomationId = testcaseReference.AutomationId,
+			        	AutomationKey = testcaseReference.AutomationKey,
+			        	AutomationTool = testcaseReference.AutomationTool
 			        };
 			t.Get();
 			return t;

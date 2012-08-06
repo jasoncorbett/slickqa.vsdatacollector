@@ -24,7 +24,7 @@ namespace SlickQA.SlickSharp
 	[DataContract]
 	[CollectionApiPath("projects/{ProjectId}/releases")]
 	[ItemApiPath("", "Id", 0)]
-	public sealed class Release : JsonObject<Release>, IJsonObject
+	public sealed class Release : JsonObject<Release>, IJsonObject, IEquatable<Release>
 	{
 		[DataMember(Name = "builds")]
 		public List<Build> Builds;
@@ -49,6 +49,24 @@ namespace SlickQA.SlickSharp
 		[IgnoreDataMember]
 		public string ProjectId { get; set; }
 
+		#region IEquatable<Release> Members
+
+		public bool Equals(Release other)
+		{
+			if (other == null)
+			{
+				return false;
+			}
+			if (Id != null && other.Id != null)
+			{
+				return other.Id == Id;
+			}
+			return Name != null && other.Name != null && other.Name == Name;
+		}
+
+		#endregion
+
+		//TODO: Need Unit Test Coverage Here
 		public void SetAsDefault()
 		{
 			Uri uri = UriBuilder.FullUri(UriBuilder.NormalizePath(this, "projects/{ProjectId}/setdefaultrelease/{Id}"));
@@ -60,9 +78,38 @@ namespace SlickQA.SlickSharp
 			}
 		}
 
+		//TODO: Need Unit Test Coverage Here
 		public override string ToString()
 		{
 			return Name;
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj == null)
+			{
+				return false;
+			}
+			var other = obj as Release;
+			return other != null && Equals(other);
+		}
+
+		public static bool operator ==(Release left, Release right)
+		{
+			if ((object)left == null || (object)right == null)
+			{
+				return Equals(left, right);
+			}
+			return left.Equals(right);
+		}
+
+		public static bool operator !=(Release left, Release right)
+		{
+			if (left == null || right == null)
+			{
+				return !Equals(left, right);
+			}
+			return !left.Equals(right);
 		}
 	}
 }

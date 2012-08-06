@@ -25,10 +25,8 @@ namespace SlickQA.SlickSharp.Test
 	#endregion
 
 	[TestClass]
-	public sealed class ReferenceConverts
+	public sealed class ConvertToReference
 	{
-		//TODO: Write unit tests for the opposite conversion
-
 		[TestMethod]
 		public void ProjectReference_has_an_implicit_conversion_from_Project()
 		{
@@ -40,26 +38,20 @@ namespace SlickQA.SlickSharp.Test
 			Assert.AreEqual(p.Name, pr.Name);
 		}
 
-		//[TestMethod]
-		//public void ProjectReference_has_an_implicit_converstion_to_Project()
-		//{
-		//}
-
 		[TestMethod]
 		public void BuildReference_has_an_implicit_conversion_from_Build()
 		{
-			var b = new Build {Id = "0123456789abcdefABCDEF", Name = "My Build"};
+			var b = new Build
+			        {
+			        	Id = "0123456789abcdefABCDEF",
+						Name = "My Build"
+			        };
 
 			BuildReference br = b;
 
 			Assert.AreEqual(b.Id, br.Id);
 			Assert.AreEqual(b.Name, br.Name);
 		}
-
-		//[TestMethod]
-		//public void BuildReference_has_an_implicit_converstion_to_Build()
-		//{
-		//}
 
 		[TestMethod]
 		public void ComponentReference_has_an_implicit_conversion_from_Component()
@@ -73,11 +65,6 @@ namespace SlickQA.SlickSharp.Test
 			Assert.AreEqual(c.Code, cr.Code);
 		}
 
-		//[TestMethod]
-		//public void ComponentReference_has_an_implicit_converstion_to_Component()
-		//{
-		//}
-
 		[TestMethod]
 		public void ConfigurationReference_has_an_implicit_conversion_from_Configuration()
 		{
@@ -90,11 +77,6 @@ namespace SlickQA.SlickSharp.Test
 			Assert.AreEqual(c.Filename, cr.FileName);
 		}
 
-		//[TestMethod]
-		//public void ConfigurationReference_has_an_implicit_converstion_to_Configuration()
-		//{
-		//}
-
 		[TestMethod]
 		public void ReleaseReference_has_an_implicit_conversion_from_Release()
 		{
@@ -105,11 +87,6 @@ namespace SlickQA.SlickSharp.Test
 			Assert.AreEqual(r.Id, rr.Id);
 			Assert.AreEqual(r.Name, rr.Name);
 		}
-
-		//[TestMethod]
-		//public void ReleaseReference_has_an_implicit_converstion_to_Release()
-		//{
-		//}
 
 		[TestMethod]
 		public void ResultReference_has_an_implicit_conversion_from_Result()
@@ -129,11 +106,6 @@ namespace SlickQA.SlickSharp.Test
 			Assert.AreEqual(r.Status, rr.ResultStatus);
 		}
 
-		//[TestMethod]
-		//public void ResultReference_has_an_implicit_converstion_to_Result()
-		//{
-		//}
-
 		[TestMethod]
 		public void TestCaseReference_has_an_implicit_conversion_from_TestCase()
 		{
@@ -146,7 +118,7 @@ namespace SlickQA.SlickSharp.Test
 			         	AutomationTool = "c1",
 			         };
 
-			TestCaseReference tcr = tc;
+			TestcaseReference tcr = tc;
 
 			Assert.AreEqual(tc.Id, tcr.Id);
 			Assert.AreEqual(tc.Name, tcr.Name);
@@ -154,11 +126,6 @@ namespace SlickQA.SlickSharp.Test
 			Assert.AreEqual(tc.AutomationKey, tcr.AutomationKey);
 			Assert.AreEqual(tc.AutomationTool, tcr.AutomationTool);
 		}
-
-		//[TestMethod]
-		//public void TestCaseReference_has_an_implicit_converstion_to_TestCase()
-		//{
-		//}
 
 		[TestMethod]
 		public void TestRunReference_has_an_implicit_conversion_from_TestRun()
@@ -169,11 +136,6 @@ namespace SlickQA.SlickSharp.Test
 			Assert.AreEqual(tr.Id, trr.TestRunId);
 			Assert.AreEqual(tr.Name, trr.Name);
 		}
-
-		//[TestMethod]
-		//public void TestRunReference_has_an_implicit_converstion_to_TestRun()
-		//{
-		//}
 	}
 
 	#region ReSharper Directives

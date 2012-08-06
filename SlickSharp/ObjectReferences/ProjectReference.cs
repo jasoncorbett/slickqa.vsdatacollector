@@ -32,6 +32,10 @@ namespace SlickQA.SlickSharp.ObjectReferences
 			Name = project.Name;
 		}
 
+		public ProjectReference()
+		{
+		}
+
 		public static implicit operator ProjectReference(Project project)
 		{
 			return new ProjectReference(project);
@@ -39,7 +43,7 @@ namespace SlickQA.SlickSharp.ObjectReferences
 
 		public static implicit operator Project(ProjectReference projectReference)
 		{
-			var p = new Project {Id = projectReference.Id, Name = projectReference.Name};
+			var p = new Project { Id = projectReference.Id, Name = projectReference.Name };
 			p.Get();
 			return p;
 		}

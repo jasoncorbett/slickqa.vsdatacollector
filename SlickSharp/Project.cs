@@ -80,6 +80,7 @@ namespace SlickQA.SlickSharp
 			Extensions = new List<DataExtension<Project>>();
 		}
 
+		//TODO: Need Unit Test Coverage Here
 		public override string ToString()
 		{
 			return Name;
@@ -87,21 +88,43 @@ namespace SlickQA.SlickSharp
 
 		public override bool Equals(object obj)
 		{
+			if (obj == null)
+			{
+				return false;
+			}
 			var other = obj as Project;
+			return other != null && Equals(other);
+		}
+
+		public bool Equals(Project other)
+		{
 			if (other == null)
 			{
 				return false;
 			}
-			if (other.Id != null && Id != null)
+			if (Id != null && other.Id != null)
 			{
 				return other.Id == Id;
 			}
-			return other.Name != null && Name != null && other.Name == Name;
+			return Name != null && other.Name != null && other.Name == Name;
 		}
 
-		public override int GetHashCode()
+		public static bool operator ==(Project left, Project right)
 		{
-			return Convert.ToInt32(Id.Substring(0, Id.Length > 5 ? 5 : Id.Length), 16);
+			if ((object)left == null || (object)right == null)
+			{
+				return Equals(left, right);
+			}
+			return left.Equals(right);
+		}
+
+		public static bool operator !=(Project left, Project right)
+		{
+			if (left == null || right == null)
+			{
+				return !Equals(left, right);
+			}
+			return !left.Equals(right);
 		}
 	}
 }

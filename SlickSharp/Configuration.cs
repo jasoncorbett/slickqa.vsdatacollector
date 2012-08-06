@@ -22,7 +22,7 @@ namespace SlickQA.SlickSharp
 	[DataContract]
 	[CollectionApiPath("configurations")]
 	[ItemApiPath("", "Id", 0)]
-	public sealed class Configuration : JsonObject<Configuration>, IJsonObject
+	public sealed class Configuration : JsonObject<Configuration>, IJsonObject, IEquatable<Configuration>
 	{
 		[DataMember(Name = "configurationData")]
 		public Dictionary<String, String> ConfigurationData;
@@ -39,6 +39,24 @@ namespace SlickQA.SlickSharp
 		[DataMember(Name = "name")]
 		public String Name;
 
+		#region IEquatable<Configuration> Members
+
+		public bool Equals(Configuration other)
+		{
+			if (other == null)
+			{
+				return false;
+			}
+			if (Id != null && other.Id != null)
+			{
+				return other.Id == Id;
+			}
+			return Name != null && other.Name != null && other.Name == Name;
+		}
+
+		#endregion
+
+		//TODO: Need Unit Test Coverage Here
 		public static Configuration GetEnvironmentConfiguration(string name)
 		{
 			try
@@ -49,6 +67,34 @@ namespace SlickQA.SlickSharp
 			{
 				return null;
 			}
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj == null)
+			{
+				return false;
+			}
+			var other = obj as Configuration;
+			return other != null && Equals(other);
+		}
+
+		public static bool operator ==(Configuration left, Configuration right)
+		{
+			if ((object)left == null || (object)right == null)
+			{
+				return Equals(left, right);
+			}
+			return left.Equals(right);
+		}
+
+		public static bool operator !=(Configuration left, Configuration right)
+		{
+			if (left == null || right == null)
+			{
+				return !Equals(left, right);
+			}
+			return !left.Equals(right);
 		}
 	}
 }

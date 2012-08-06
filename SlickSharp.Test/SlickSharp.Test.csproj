@@ -56,9 +56,21 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BuildEquals.cs" />
+    <Compile Include="ConvertFromReference.cs" />
+    <Compile Include="ConfigurationEquals.cs" />
+    <Compile Include="JsonRequest.cs" />
+    <Compile Include="ReleaseEquals.cs" />
+    <Compile Include="RequestTimeout.cs" />
+    <Compile Include="ResultEquals.cs" />
+    <Compile Include="TestcaseEquals.cs" />
+    <Compile Include="TestPlanEquals.cs" />
+    <Compile Include="TestRunEquals.cs" />
+    <Compile Include="ComponentEquals.cs" />
+    <Compile Include="Dummy.cs" />
     <Compile Include="JsonObject_Put.cs" />
     <Compile Include="ProjectEquals.cs" />
-    <Compile Include="ReferenceConverts.cs" />
+    <Compile Include="ConvertToReference.cs" />
     <Compile Include="Web\GetListPath.cs" />
     <Compile Include="Web\GetMemberValue.cs" />
     <Compile Include="Web\IsNonDefaultValue.cs" />

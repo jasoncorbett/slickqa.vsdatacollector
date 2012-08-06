@@ -35,6 +35,7 @@ namespace SlickQA.SlickSharp.Logging
 		[DataMember(Name = ("mimetype"))]
 		public String Mimetype;
 
+		//TODO: Need Unit Test Coverage Here
 		public StoredFile PostContent(byte[] file)
 		{
 			Uri uri = UriBuilder.FullUri(UriBuilder.NormalizePath(this, "files/{Id}/content"));

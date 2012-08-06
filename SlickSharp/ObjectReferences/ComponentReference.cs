@@ -40,12 +40,5 @@ namespace SlickQA.SlickSharp.ObjectReferences
 		{
 			return new ComponentReference(component);
 		}
-
-		public static implicit operator Component(ComponentReference componentReference)
-		{
-			var c = new Component {Id = componentReference.Id, Name = componentReference.Name, Code = componentReference.Code};
-			c.Get();
-			return c;
-		}
 	}
 }

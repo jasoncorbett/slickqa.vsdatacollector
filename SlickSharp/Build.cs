@@ -23,7 +23,7 @@ namespace SlickQA.SlickSharp
 	[DataContract]
 	[CollectionApiPath("projects/{ProjectId}/releases/{ReleaseId}/builds")]
 	[ItemApiPath("", "Id", 0)]
-	public sealed class Build : JsonObject<Build>, IJsonObject
+	public sealed class Build : JsonObject<Build>, IJsonObject, IEquatable<Build>
 	{
 		[DataMember(Name = "built")]
 		public String Built;
@@ -40,6 +40,24 @@ namespace SlickQA.SlickSharp
 		[IgnoreDataMember]
 		public string ReleaseId { get; set; }
 
+		#region IEquatable<Build> Members
+
+		public bool Equals(Build other)
+		{
+			if (other == null)
+			{
+				return false;
+			}
+			if (Id != null && other.Id != null)
+			{
+				return other.Id == Id;
+			}
+			return Name != null && other.Name != null && other.Name == Name;
+		}
+
+		#endregion
+
+		//TODO: Need Unit Test Coverage Here
 		public void SetAsDefault()
 		{
 			Uri uri =
@@ -50,5 +68,34 @@ namespace SlickQA.SlickSharp
 			{
 			}
 		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj == null)
+			{
+				return false;
+			}
+			var other = obj as Build;
+			return other != null && Equals(other);
+		}
+
+		public static bool operator ==(Build left, Build right)
+		{
+			if ((object)left == null || (object)right == null)
+			{
+				return Equals(left, right);
+			}
+			return left.Equals(right);
+		}
+
+		public static bool operator !=(Build left, Build right)
+		{
+			if (left == null || right == null)
+			{
+				return !Equals(left, right);
+			}
+			return !left.Equals(right);
+		}
+
 	}
 }

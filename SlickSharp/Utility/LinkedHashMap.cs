@@ -19,6 +19,7 @@ using System.Runtime.Serialization;
 
 namespace SlickQA.SlickSharp.Utility
 {
+	//TODO: Need Unit Test Coverage Here
 	[DataContract]
 	public sealed class LinkedHashMap<T> : IDictionary<String, T> where T : class
 	{

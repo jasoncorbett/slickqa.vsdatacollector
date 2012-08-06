@@ -36,12 +36,5 @@ namespace SlickQA.SlickSharp.ObjectReferences
 		{
 			return new ReleaseReference(release);
 		}
-
-		public static implicit operator Release(ReleaseReference releaseReference)
-		{
-			var r = new Release {Id = releaseReference.Id, Name = releaseReference.Name};
-			r.Get();
-			return r;
-		}
 	}
 }

@@ -21,7 +21,8 @@ namespace SlickQA.SlickSharp
 {
 	[DataContract]
 	[CollectionApiPath("testcases")]
-	public sealed class Testcase : JsonObject<Testcase>, IJsonObject
+	[ItemApiPath("", "Id", 0)]
+	public sealed class Testcase : JsonObject<Testcase>, IJsonObject, IEquatable<Testcase>
 	{
 		[DataMember(Name = "automationId")]
 		public String AutomationId;
@@ -53,6 +54,24 @@ namespace SlickQA.SlickSharp
 		[DataMember(Name = "purpose")]
 		public String Purpose;
 
+		#region IEquatable<Testcase> Members
+
+		public bool Equals(Testcase other)
+		{
+			if (other == null)
+			{
+				return false;
+			}
+			if (Id != null && other.Id != null)
+			{
+				return other.Id == Id;
+			}
+			return Name != null && other.Name != null && other.Name == Name;
+		}
+
+		#endregion
+
+		//TODO: Need Unit Test Coverage Here
 		public static Testcase GetTestCaseByAutomationId(string automationId)
 		{
 			try
@@ -65,6 +84,7 @@ namespace SlickQA.SlickSharp
 			}
 		}
 
+		//TODO: Need Unit Test Coverage Here
 		public static Testcase GetTestCaseByAutomationKey(string automationKey)
 		{
 			try
@@ -75,6 +95,34 @@ namespace SlickQA.SlickSharp
 			{
 				return null;
 			}
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj == null)
+			{
+				return false;
+			}
+			var other = obj as Testcase;
+			return other != null && Equals(other);
+		}
+
+		public static bool operator ==(Testcase left, Testcase right)
+		{
+			if ((object)left == null || (object)right == null)
+			{
+				return Equals(left, right);
+			}
+			return left.Equals(right);
+		}
+
+		public static bool operator !=(Testcase left, Testcase right)
+		{
+			if (left == null || right == null)
+			{
+				return !Equals(left, right);
+			}
+			return !left.Equals(right);
 		}
 	}
 }

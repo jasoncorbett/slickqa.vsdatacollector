@@ -18,6 +18,7 @@ using System.Net;
 
 namespace SlickQA.SlickSharp.Web
 {
+	//TODO: Need Unit Test Coverage Here
 	[Serializable]
 	public sealed class JsonResponse : WebResponse, IHttpWebResponse
 	{

@@ -27,6 +27,7 @@ namespace SlickQA.SlickSharp
 	[DataContract]
 	public abstract class JsonObject<T> where T : class, IJsonObject
 	{
+		//TODO: Need Unit Test Coverage Here, Test with base Exception thrown
 		public void Get(bool createIfNotFound = false)
 		{
 			Uri uri = UriBuilder.RetrieveGetUri(this);
@@ -70,6 +71,7 @@ namespace SlickQA.SlickSharp
 			return RetrieiveList(uri);
 		}
 
+		//TODO: Need Unit Test Coverage Here
 		public static List<T> GetList(string relUrl)
 		{
 			try
