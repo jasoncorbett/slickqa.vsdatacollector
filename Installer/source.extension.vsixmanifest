@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Vsix xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="1.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2010">
+	<Identifier Id="SlickInstaller.AccessData Group, LLC.1c06ed4b-cef7-48ea-9e69-9bea8676ab9e">
+		<Name>Slick Data Collector</Name>
+		<Author>AccessData Group, LLC</Author>
+		<Version>1.0</Version>
+		<Description xml:space="preserve">Slick is a test management platform. The term platform is used to indicate that it is more than just an application. A test management application would typically dictate, very strictly, the workflow of the testing. Slick is meant to be adaptable to many different types of testing. Currently it is used by several companies to aid in testing web based products, desktop products, and everything in between.
+
+It includes a client for manual testing (Oil), and has an API that automated frameworks can use to submit results. It does not track test cases (though that will be included in the future), it tracks results, this makes it much more flexible for result submission. Slick does not have to know about the test before a result is submitted.</Description>
+		<Locale>1033</Locale>
+		<License>License.rtf</License>
+		<SupportedProducts>
+			<VisualStudio Version="10.0">
+				<Edition>Ultimate</Edition>
+				<Edition>Premium</Edition>
+				<Edition>Pro</Edition>
+			</VisualStudio>
+		</SupportedProducts>
+		<SupportedFrameworkRuntimeEdition MinVersion="4.0" MaxVersion="4.0" />
+	</Identifier>
+	<References />
+	<Content />
+</Vsix>
