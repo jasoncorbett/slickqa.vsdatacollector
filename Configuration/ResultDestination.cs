@@ -13,92 +13,110 @@
 // limitations under the License.
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Xml;
 using SlickQA.SlickSharp;
 
 namespace SlickQA.DataCollector.Configuration
 {
-	public sealed class ResultDestination
+	public sealed class ResultDestination : INotifyPropertyChanged
+
 	{
-		public readonly string ProjectName;
-		public readonly string ReleaseName;
+		private const string PROJECT_ATTRIBUTE_NAME = "ProjectId";
+		private const string RELEASE_ATTRIBUTE_NAME = "ReleaseId";
 
-		public ResultDestination() : this(String.Empty, String.Empty)
+		public ResultDestination()
 		{
-		}
-
-		public ResultDestination(string projectName, string release)
-		{
-			ProjectName = projectName;
-			ReleaseName = release;
 		}
 
 		public ResultDestination(XmlNode projectElem)
 		{
-			//TODO: Need Unit Test Coverage Here
 			if (projectElem.Attributes == null)
 			{
 				return;
 			}
-			XmlAttribute nameAttr = projectElem.Attributes["ProjectName"];
-			ProjectName = nameAttr.Value;
-			XmlAttribute releaseAttr = projectElem.Attributes["ReleaseName"];
-			ReleaseName = releaseAttr.Value;
+			XmlAttribute nameAttr = projectElem.Attributes[PROJECT_ATTRIBUTE_NAME];
+			Project = String.IsNullOrWhiteSpace(nameAttr.Value) ? null : new Project {Id = nameAttr.Value};
+
+			XmlAttribute releaseAttr = projectElem.Attributes[RELEASE_ATTRIBUTE_NAME];
+			Release = String.IsNullOrWhiteSpace(releaseAttr.Value) ? null : new Release {Id = releaseAttr.Value, ProjectId = nameAttr.Value};
 		}
 
-		//TODO: Need Unit Test Coverage Here
-		public ResultDestination(Project selectedProject, Release selectedRelease)
+		private Release _release;
+		private Project _project;
+
+		public Release Release
 		{
-			ProjectName = selectedProject.Name;
-			ReleaseName = selectedRelease.Name;
+			get {
+				if (_release != null)
+				{
+					_release.Get();
+				}
+
+				return _release;
+			}
+			set
+			{
+				_release = value;
+				NotifyPropertyChanged("Release");
+			}
 		}
 
-		//TODO: Need Unit Test Coverage Here
-		public override string ToString()
+		public Project Project
 		{
-			return !String.IsNullOrWhiteSpace(ProjectName) ? ProjectName : String.Format("No Project Name {0}", GetHashCode());
-		}
-
-		//TODO: Need Unit Test Coverage Here
-		public override int GetHashCode()
-		{
-			return ProjectName.GetHashCode() + ReleaseName.GetHashCode();
+			get
+			{
+				if (_project != null)
+				{
+					_project.Get();
+				}
+				return _project;
+			}
+			set
+			{
+				_project = value;
+				NotifyPropertyChanged("Project");
+			}
 		}
 
 		public override bool Equals(object obj)
 		{
 			var other = obj as ResultDestination;
-			//TODO: Need Unit Test Coverage Here
 			if (other == null)
 			{
 				return false;
 			}
-			return ProjectName.Equals(other.ProjectName) && ReleaseName.Equals(other.ReleaseName);
+			return Project.Equals(other.Project) && Release.Equals(other.Release);
 		}
 
-		//TODO: Need Unit Test Coverage Here
 		public XmlNode ToXml(XmlDocument doc)
 		{
 			XmlNode node = doc.CreateNode(XmlNodeType.Element, "ResultDestination", String.Empty);
 			XmlAttributeCollection attrCol = node.Attributes;
 
-			XmlAttribute nameAttr = doc.CreateAttribute("ProjectName");
-			nameAttr.Value = ProjectName;
-			XmlAttribute releaseAttr = doc.CreateAttribute("ReleaseName");
-			releaseAttr.Value = ReleaseName;
+			Debug.Assert(Project != null, "proj != null");
+			XmlAttribute projectAttr = doc.CreateAttribute(PROJECT_ATTRIBUTE_NAME);
+			projectAttr.Value = _project.Id;
+
+			XmlAttribute releaseAttr = doc.CreateAttribute(RELEASE_ATTRIBUTE_NAME);
+			releaseAttr.Value = Release.Id;
 
 			Debug.Assert(attrCol != null, "attrCol != null");
-			attrCol.Append(nameAttr);
+			attrCol.Append(projectAttr);
 			attrCol.Append(releaseAttr);
 
 			return node;
 		}
 
-		//TODO: Need Unit Test Coverage Here
-		public bool IsValid()
+		private void NotifyPropertyChanged(string propertyName)
 		{
-			return !String.IsNullOrWhiteSpace(ProjectName);
+			if (PropertyChanged != null)
+			{
+				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
 		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
 	}
 }

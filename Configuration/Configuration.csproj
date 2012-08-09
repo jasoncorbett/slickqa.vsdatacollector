@@ -43,8 +43,8 @@
     <Compile Include="ResultDestination.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScreenShotSettings.cs" />
-    <Compile Include="SlickConfig.cs" />
-    <Compile Include="SlickUrlType.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="SlickUrl.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\slickqa.slicksharp\SlickSharp\SlickSharp.csproj">

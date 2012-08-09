@@ -25,15 +25,15 @@ namespace SlickQA.DataCollector.Test
 		[TestMethod]
 		public void Converts_test_outcome_to_status_enum()
 		{
-			Assert.AreEqual(Status.BROKEN_TEST, OutcomeTranslator.Convert(TestOutcome.Error));
-			Assert.AreEqual(Status.CANCELLED, OutcomeTranslator.Convert(TestOutcome.Aborted));
-			Assert.AreEqual(Status.FAIL, OutcomeTranslator.Convert(TestOutcome.Failed));
-			Assert.AreEqual(Status.NO_RESULT, OutcomeTranslator.Convert(TestOutcome.Inconclusive));
-			Assert.AreEqual(Status.NO_RESULT, OutcomeTranslator.Convert(TestOutcome.InProgress));
-			Assert.AreEqual(Status.PASS, OutcomeTranslator.Convert(TestOutcome.Passed));
-			Assert.AreEqual(Status.SKIPPED, OutcomeTranslator.Convert(TestOutcome.NotExecuted));
-			Assert.AreEqual(Status.FAIL, OutcomeTranslator.Convert(TestOutcome.Timeout));
-			Assert.AreEqual(Status.NO_RESULT, OutcomeTranslator.Convert(TestOutcome.Pending));
+			Assert.AreEqual(ResultStatus.BROKEN_TEST, OutcomeTranslator.Convert(TestOutcome.Error));
+			Assert.AreEqual(ResultStatus.CANCELLED, OutcomeTranslator.Convert(TestOutcome.Aborted));
+			Assert.AreEqual(ResultStatus.FAIL, OutcomeTranslator.Convert(TestOutcome.Failed));
+			Assert.AreEqual(ResultStatus.NO_RESULT, OutcomeTranslator.Convert(TestOutcome.Inconclusive));
+			Assert.AreEqual(ResultStatus.NO_RESULT, OutcomeTranslator.Convert(TestOutcome.InProgress));
+			Assert.AreEqual(ResultStatus.PASS, OutcomeTranslator.Convert(TestOutcome.Passed));
+			Assert.AreEqual(ResultStatus.SKIPPED, OutcomeTranslator.Convert(TestOutcome.NotExecuted));
+			Assert.AreEqual(ResultStatus.FAIL, OutcomeTranslator.Convert(TestOutcome.Timeout));
+			Assert.AreEqual(ResultStatus.NO_RESULT, OutcomeTranslator.Convert(TestOutcome.Pending));
 		}
 	}
 }

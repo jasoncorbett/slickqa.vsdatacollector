@@ -54,14 +54,44 @@
     <Compile Include="ConfigurationEditor.Designer.cs">
       <DependentUpon>ConfigurationEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="CreateProjectController.cs" />
+    <Compile Include="CreateReleaseDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CreateReleaseDialog.Designer.cs">
+      <DependentUpon>CreateReleaseDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CreateReleaseController.cs" />
     <Compile Include="IConfigurationController.cs" />
     <Compile Include="IConfigurationView.cs" />
+    <Compile Include="ICreateProjectController.cs" />
+    <Compile Include="ICreateProjectView.cs" />
+    <Compile Include="CreateProjectDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CreateProjectDialog.Designer.cs">
+      <DependentUpon>CreateProjectDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ICreateReleaseController.cs" />
+    <Compile Include="ICreateReleaseView.cs" />
+    <Compile Include="NewProjectHandler.cs" />
+    <Compile Include="NewReleaseHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResetConfigHandler.cs" />
+    <Compile Include="ScreenshotController.cs" />
+    <Compile Include="SelectorController.cs" />
+    <Compile Include="UrlController.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ConfigurationEditor.resx">
       <DependentUpon>ConfigurationEditor.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CreateProjectDialog.resx">
+      <DependentUpon>CreateProjectDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CreateReleaseDialog.resx">
+      <DependentUpon>CreateReleaseDialog.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

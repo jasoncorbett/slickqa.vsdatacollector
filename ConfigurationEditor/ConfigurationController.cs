@@ -13,106 +13,95 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
-using System.Xml;
 using Microsoft.VisualStudio.TestTools.Execution;
 using SlickQA.DataCollector.Configuration;
-using SlickQA.SlickSharp;
 
 namespace SlickQA.DataCollector.ConfigurationEditor
 {
-	//TODO: Need Unit Test Coverage Here
 	public sealed class ConfigurationController : IConfigurationController
 	{
-		private SlickConfig _currentConfig;
+		private Config _currentConfig;
 		private DataCollectorSettings _dataCollectorSettings;
-		private SlickConfig _defaultConfig;
-		private IConfigurationView _view;
+		private Config _defaultConfig;
+		private readonly IConfigurationView _view;
+		private SelectorController _selectorController;
+		private UrlController _urlController;
+		private ScreenshotController _screenshotController;
 
-		public ConfigurationController()
-		{
-			_view = null;
-		}
 
 		public ConfigurationController(IConfigurationView configurationEditor)
 		{
 			_view = configurationEditor;
+			_view.VisibleChanged += ViewOnVisibleChanged;
+		}
+
+		private void ViewOnVisibleChanged(object sender, EventArgs eventArgs)
+		{
+			var form = sender as IConfigurationView;
+			if (form.Visible)
+			{
+				ResetWithConfig(_currentConfig);
+			}
 		}
 
 		#region IConfigurationController Members
 
-		public void GetProjects()
-		{
-			List<Project> projects = JsonObject<Project>.GetList();
-
-			_view.PopulateProjects(projects);
-		}
-
-		public IConfigurationView View
-		{
-			set { _view = value; }
-		}
-
-		public void InitializeSettings(DataCollectorSettings dataCollectorSettings)
+		public void Initialize(DataCollectorSettings dataCollectorSettings)
 		{
 			_dataCollectorSettings = dataCollectorSettings;
-			_defaultConfig = SlickConfig.LoadConfig(dataCollectorSettings.DefaultConfiguration);
-			_currentConfig = SlickConfig.LoadConfig(dataCollectorSettings.Configuration);
+			_defaultConfig = Config.LoadConfig(dataCollectorSettings.DefaultConfiguration);
+			_currentConfig = Config.LoadConfig(dataCollectorSettings.Configuration);
 
-			if (SlickUrlType.IsValid(_currentConfig.Url))
+			_selectorController = new SelectorController(_view);
+			_urlController = new UrlController(_view);
+			_screenshotController = new ScreenshotController(_view);
+
+			ResetConfig += _urlController.SetConfig;
+			ResetConfig += _selectorController.SetConfig;
+			ResetConfig += _screenshotController.SetConfig;
+		}
+
+		private void ResetWithConfig(Config config)
+		{
+			if (ResetConfig != null)
 			{
-				SlickConfig.SetServerConfig(_currentConfig.Url);
-				GetProjects();
+				ResetConfig(this, new ResetConfigHandlerArgs(config));
+				if (_currentConfig.Url.IsValid)
+				{
+					_selectorController.GetProjects(_view.GetProject, new EventArgs());
+				}
 			}
-
-			SetValues(_currentConfig);
 		}
 
 		public void ApplyDefaultSettings()
 		{
-			_view.PopulateProjects(new List<Project>());
-			SetValues(_defaultConfig);
+			_currentConfig = _defaultConfig;
+			ResetWithConfig(_currentConfig);
 		}
 
-		public void SetUrl(string scheme, string host, int port, string sitePath)
+		public event ResetConfigHandler ResetConfig;
+
+		public DataCollectorSettings SaveData()
 		{
-			_currentConfig.Url = new SlickUrlType(scheme, host, port, sitePath);
-			SlickConfig.SetServerConfig(_currentConfig.Url);
+			_dataCollectorSettings.Configuration.InnerText = String.Empty;
+
+			_currentConfig.ConfigToXml(_dataCollectorSettings.Configuration);
+			return _dataCollectorSettings;
 		}
 
-		public void SetResultDestination(Project project, Release release)
+		public bool VerifyData()
 		{
-			_currentConfig.ResultDestination = new ResultDestination(project, release);
-		}
-
-		public void SaveSettings(XmlElement configuration)
-		{
-			configuration.InnerText = String.Empty;
-
-			_currentConfig.ConfigToXml(configuration);
-		}
-
-		public void SetScreenshotSettings(bool takePreTestScreenshot, bool takePostTestScreenshot, bool takeScreenshotOnFailure)
-		{
-			_currentConfig.ScreenshotSettings = new ScreenShotSettings(takePreTestScreenshot, takePostTestScreenshot, takeScreenshotOnFailure);
+			return _currentConfig.Url.Scheme != null && !String.IsNullOrWhiteSpace(_currentConfig.Url.Host)
+			       && _currentConfig.ResultDestination.Project != null && _currentConfig.ResultDestination.Release != null;
 		}
 
 		#endregion
 
-		private void SetValues(SlickConfig config)
+		public void Dispose()
 		{
-			SlickUrlType slickUrl = config.Url;
-			if (slickUrl != null)
-			{
-				_view.SetUrl(slickUrl);
-			}
-			ResultDestination slickProject = config.ResultDestination;
-			if (slickProject.IsValid())
-			{
-				_view.SelectProjectAndRelease(slickProject);
-			}
-
-			_view.SetScreenshotSettings(_currentConfig.ScreenshotSettings);
+			ResetConfig -= _selectorController.SetConfig;
+			ResetConfig -= _urlController.SetConfig;
+			ResetConfig -= _screenshotController.SetConfig;
 		}
 	}
 }

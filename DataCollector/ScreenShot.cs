@@ -21,7 +21,6 @@ using SlickQA.SlickSharp.Logging;
 
 namespace SlickQA.DataCollector
 {
-	//TODO: Need Unit Test Coverage Here
 	internal static class ScreenShot
 	{
 		//TODO: Return screenshot bytes to put in datasink?

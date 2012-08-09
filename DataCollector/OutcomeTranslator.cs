@@ -19,30 +19,30 @@ namespace SlickQA.DataCollector
 {
 	public static class OutcomeTranslator
 	{
-		public static Status Convert(TestOutcome testOutcome)
+		public static ResultStatus Convert(TestOutcome testOutcome)
 		{
 			switch (testOutcome)
 			{
 				case TestOutcome.Passed:
-					return Status.PASS;
+					return ResultStatus.PASS;
 				case TestOutcome.Failed:
 				case TestOutcome.Timeout:
-					return Status.FAIL;
+					return ResultStatus.FAIL;
 				case TestOutcome.InProgress:
-					return Status.NO_RESULT;
+					return ResultStatus.NO_RESULT;
 				case TestOutcome.Error:
-					return Status.BROKEN_TEST;
+					return ResultStatus.BROKEN_TEST;
 				case TestOutcome.Pending:
-					return Status.NO_RESULT;
+					return ResultStatus.NO_RESULT;
 				case TestOutcome.Inconclusive:
-					return Status.NO_RESULT;
+					return ResultStatus.NO_RESULT;
 				case TestOutcome.Aborted:
-					return Status.CANCELLED;
+					return ResultStatus.CANCELLED;
 				case TestOutcome.NotExecuted:
-					return Status.SKIPPED;
+					return ResultStatus.SKIPPED;
 				//TODO: Need Unit Test Coverage Here
 				default:
-					return Status.NO_RESULT;
+					return ResultStatus.NO_RESULT;
 			}
 		}
 	}

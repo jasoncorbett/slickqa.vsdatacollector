@@ -13,18 +13,25 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
-using SlickQA.DataCollector.Configuration;
-using SlickQA.SlickSharp;
+using System.Windows.Forms;
 
 namespace SlickQA.DataCollector.ConfigurationEditor
 {
-	public interface IConfigurationView
+	public interface IConfigurationView : IDisposable
 	{
-		void PopulateProjects(IEnumerable<Project> projects);
-		void GetProjects(object sender, EventArgs e);
-		void SetUrl(SlickUrlType slickUrl);
-		void SelectProjectAndRelease(ResultDestination destination);
-		void SetScreenshotSettings(ScreenShotSettings screenshotSettings);
+		ComboBox Project { get; }
+		ComboBox Release { get; }
+		ComboBox Scheme { get; }
+		TextBox Host { get; }
+		Button GetProject { get; }
+		CheckBox PreTestScreenshot { get; }
+		CheckBox PostTestScreenshot { get; }
+		CheckBox FailureScreenshot { get; }
+		TextBox SitePath { get; }
+		NumericUpDown Port { get; }
+		Button AddProject { get; }
+		Button AddRelease { get; }
+		bool Visible { get; }
+		event EventHandler VisibleChanged;
 	}
 }

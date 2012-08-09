@@ -25,7 +25,7 @@ namespace SlickQA.DataCollector.Configuration.Test
 		{
 			const string DEFAULT_CONFIG =
 				"<DefaultConfiguration xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\">\n"
-				+ "  <ResultDestination ProjectName=\"\" ReleaseName=\"\" xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\" />"
+				+ "  <ResultDestination ProjectId=\"\" ReleaseId=\"\" xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\" />"
 				+
 				"  <Url Scheme=\"http\" Host=\"\" Port=\"8080\" SitePath=\"slick\" xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\" />"
 				+ "  <Screenshot PreTest=\"false\" PostTest=\"false\" OnFailure=\"true\" />"
@@ -36,10 +36,10 @@ namespace SlickQA.DataCollector.Configuration.Test
 			XmlElement defaultConfigElement = doc.DocumentElement;
 
 			var expectedProject = new ResultDestination();
-			var expectedUrl = new SlickUrlType();
+			var expectedUrl = new SlickUrl();
 			var expectedScreenshot = new ScreenShotSettings();
 
-			SlickConfig config = SlickConfig.LoadConfig(defaultConfigElement);
+			Config config = Config.LoadConfig(defaultConfigElement);
 
 			Assert.AreEqual(expectedProject, config.ResultDestination);
 			Assert.AreEqual(expectedUrl, config.Url);
@@ -51,7 +51,7 @@ namespace SlickQA.DataCollector.Configuration.Test
 		{
 			const string CONFIG =
 				"<Configuration xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\">\n"
-				+ "  <ResultDestination ProjectName=\"\" ReleaseName=\"\" xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\" />"
+				+ "  <ResultDestination ProjectId=\"\" ReleaseId=\"\" xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\" />"
 				+
 				"  <Url Scheme=\"http\" Host=\"\" Port=\"8080\" SitePath=\"slick\" xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\" />"
 				+ "  <Screenshot PreTest=\"false\" PostTest=\"false\" OnFailure=\"true\" />"
@@ -62,36 +62,10 @@ namespace SlickQA.DataCollector.Configuration.Test
 			XmlElement defaultConfigElement = doc.DocumentElement;
 
 			var expectedProject = new ResultDestination();
-			var expectedUrl = new SlickUrlType();
+			var expectedUrl = new SlickUrl();
 			var expectedScreenshot = new ScreenShotSettings();
 
-			SlickConfig config = SlickConfig.LoadConfig(defaultConfigElement);
-
-			Assert.AreEqual(expectedProject, config.ResultDestination);
-			Assert.AreEqual(expectedUrl, config.Url);
-			Assert.AreEqual(expectedScreenshot, config.ScreenshotSettings);
-		}
-
-		[TestMethod]
-		public void With_configured_testsettings_file()
-		{
-			const string TEST_SETTINGS_CONFIG =
-				"<Configuration xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\">\n"
-				+ "  <ResultDestination ProjectName=\"Bar\" ReleaseName=\"Baz\" xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\" />"
-				+
-				"  <Url Scheme=\"http\" Host=\"foo.baz.com\" Port=\"80\" SitePath=\"slickij\" xmlns=\"http://microsoft.com/schemas/VisualStudio/TeamTest/2010\" />"
-				+ "  <Screenshot PreTest=\"true\" PostTest=\"true\" OnFailure=\"false\" />"
-				+ "</Configuration>";
-
-			var doc = new XmlDocument();
-			doc.LoadXml(TEST_SETTINGS_CONFIG);
-			XmlElement defaultConfigElement = doc.DocumentElement;
-
-			var expectedProject = new ResultDestination("Bar", "Baz");
-			var expectedUrl = new SlickUrlType("http", "foo.baz.com", 80, "slickij");
-			var expectedScreenshot = new ScreenShotSettings(true, true, false);
-
-			SlickConfig config = SlickConfig.LoadConfig(defaultConfigElement);
+			Config config = Config.LoadConfig(defaultConfigElement);
 
 			Assert.AreEqual(expectedProject, config.ResultDestination);
 			Assert.AreEqual(expectedUrl, config.Url);

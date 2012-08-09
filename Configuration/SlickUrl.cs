@@ -13,24 +13,17 @@
 // limitations under the License.
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Xml;
+using SlickQA.SlickSharp.Web;
 
 namespace SlickQA.DataCollector.Configuration
 {
-	public sealed class SlickUrlType
+	public sealed class SlickUrl : INotifyPropertyChanged
 	{
-		public readonly string Host;
-		public readonly int Port;
-		public readonly string Scheme;
-		public readonly string SitePath;
-
-		public SlickUrlType() : this("http", String.Empty, 8080, "slick")
-		{
-		}
-
-		public SlickUrlType(string scheme, string host, int port, string sitePath)
+		public SlickUrl(string scheme = "http", string host = "", int port = 8080, string sitePath = "slick")
 		{
 			Scheme = scheme;
 			Host = host;
@@ -38,11 +31,54 @@ namespace SlickQA.DataCollector.Configuration
 			SitePath = sitePath;
 		}
 
-		public SlickUrlType(XmlNode urlElem)
+		private string _scheme;
+		public string Scheme
+		{
+			get { return _scheme; }
+			set
+			{
+				_scheme = value;
+				NotifyPropertyChanged("Scheme");
+			}
+		}
+
+		private string _host;
+		public string Host
+		{
+			get { return _host; }
+			set
+			{
+				_host = value;
+				NotifyPropertyChanged("Host");
+			}
+		}
+
+		private int _port;
+		public int Port
+		{
+			get { return _port; }
+			set
+			{
+				_port = value;
+				NotifyPropertyChanged("Port");
+			}
+		}
+
+		private string _sitePath;
+		public string SitePath
+		{
+			get { return _sitePath; }
+			set
+			{
+				_sitePath = value;
+				NotifyPropertyChanged("SitePath");
+			}
+		}
+
+		public SlickUrl(XmlNode urlElem)
 		{
 			if (urlElem.Attributes == null)
 			{
-				//TODO: Need Unit Test Coverage Here
 				return;
 			}
 			XmlAttribute schemeAttr = urlElem.Attributes["Scheme"];
@@ -56,32 +92,11 @@ namespace SlickQA.DataCollector.Configuration
 			SitePath = sitePathAttr.Value;
 		}
 
-		//TODO: Need Unit Test Coverage Here
 		public override string ToString()
 		{
 			return String.Format("{0}://{1}:{2}/{3}", Scheme, Host, Port, SitePath);
 		}
 
-		//TODO: Need Unit Test Coverage Here
-		public override int GetHashCode()
-		{
-			return Scheme.GetHashCode() + Host.GetHashCode() + Port.GetHashCode() + SitePath.GetHashCode();
-		}
-
-		public override bool Equals(object obj)
-		{
-			var other = obj as SlickUrlType;
-			if (other == null)
-			{
-				//TODO: Need Unit Test Coverage Here
-				return false;
-			}
-
-			return Scheme.Equals(other.Scheme) && Host.Equals(other.Host) && Port.Equals(other.Port)
-			       && SitePath.Equals(other.SitePath);
-		}
-
-		//TODO: Need Unit Test Coverage Here
 		public XmlNode ToXml(XmlDocument doc)
 		{
 			XmlNode node = doc.CreateNode(XmlNodeType.Element, "Url", String.Empty);
@@ -109,9 +124,31 @@ namespace SlickQA.DataCollector.Configuration
 			return node;
 		}
 
-		public static bool IsValid(SlickUrlType url)
+		public bool IsValid
 		{
-			return Uri.CheckSchemeName(url.Scheme) && !String.IsNullOrWhiteSpace(url.Host);
+			get
+			{
+				SetServerConfig(Scheme, Host, Port, SitePath);
+				return Uri.CheckSchemeName(Scheme) && !String.IsNullOrWhiteSpace(Host);
+			}
+		}
+
+		private void NotifyPropertyChanged(string propertyName)
+		{
+			if (PropertyChanged != null)
+			{
+				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		public static void SetServerConfig(string scheme, string host, int port, string sitePath)
+		{
+			ServerConfig.Scheme = scheme;
+			ServerConfig.SlickHost = host;
+			ServerConfig.Port = port;
+			ServerConfig.SitePath = sitePath;
 		}
 	}
 }

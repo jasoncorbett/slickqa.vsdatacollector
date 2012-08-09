@@ -13,24 +13,20 @@
 // limitations under the License.
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Xml;
 
 namespace SlickQA.DataCollector.Configuration
 {
-	public class ScreenShotSettings
+	public sealed class ScreenShotSettings : INotifyPropertyChanged
 	{
-		public readonly bool OnFailure;
-		public readonly bool PostTest;
-		public readonly bool PreTest;
-
 		public ScreenShotSettings(XmlNode screenshotElem)
 		{
 			XmlAttributeCollection attrs = screenshotElem.Attributes;
 			if (attrs == null)
 			{
-				//TODO: Need Unit Test Coverage Here
 				return;
 			}
 			PreTest = Convert.ToBoolean(attrs["PreTest"].Value);
@@ -38,43 +34,51 @@ namespace SlickQA.DataCollector.Configuration
 			OnFailure = Convert.ToBoolean(attrs["OnFailure"].Value);
 		}
 
-		public ScreenShotSettings()
-			:this(false, false, true)
-		{
-		}
-
-		public ScreenShotSettings(bool preTest, bool postTest, bool onFailure)
+		public ScreenShotSettings(bool preTest = false, bool postTest = false, bool onFailure = true)
 		{
 			PreTest = preTest;
 			PostTest = postTest;
 			OnFailure = onFailure;
 		}
 
-		//TODO: Need Unit Test Coverage Here
-		public override int GetHashCode()
+		private bool _preTest;
+		public bool PreTest
 		{
-			return PreTest.GetHashCode() + PostTest.GetHashCode() + OnFailure.GetHashCode();
-		}
-
-		public override bool Equals(object obj)
-		{
-			var other = obj as ScreenShotSettings;
-			if (other == null)
+			get { return _preTest; }
+			set
 			{
-				//TODO: Need Unit Test Coverage Here
-				return false;
+				_preTest = value;
+				NotifyPropertyChanged("PreTest");
 			}
-
-			return PreTest == other.PreTest && PostTest == other.PostTest && OnFailure == other.OnFailure;
 		}
 
-		//TODO: Need Unit Test Coverage Here
+		private bool _postTest;
+		public bool PostTest
+		{
+			get { return _postTest; }
+			set
+			{
+				_postTest = value;
+				NotifyPropertyChanged("PostTest");
+			}
+		}
+
+		private bool _onFailure;
+		public bool OnFailure
+		{
+			get { return _onFailure; }
+			set
+			{
+				_onFailure = value;
+				NotifyPropertyChanged("OnFailure");
+			}
+		}
+
 		public override string ToString()
 		{
 			return string.Format("PreTest? {0} PostTest? {1} OnFailure? {2}", PreTest, PostTest, OnFailure);
 		}
 
-		//TODO: Need Unit Test Coverage Here
 		public XmlNode ToXml(XmlDocument doc)
 		{
 			XmlNode node = doc.CreateNode(XmlNodeType.Element, "Screenshot", String.Empty);
@@ -89,7 +93,6 @@ namespace SlickQA.DataCollector.Configuration
 			XmlAttribute onFailureAttr = doc.CreateAttribute("OnFailure");
 			onFailureAttr.Value = OnFailure.ToString(CultureInfo.InvariantCulture);
 
-
 			Debug.Assert(attrCol != null, "attrCol != null");
 			attrCol.Append(preTestAttr);
 			attrCol.Append(postTestAttr);
@@ -97,5 +100,15 @@ namespace SlickQA.DataCollector.Configuration
 
 			return node;
 		}
+
+		private void NotifyPropertyChanged(string propertyName)
+		{
+			if (PropertyChanged != null)
+			{
+				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
 	}
 }

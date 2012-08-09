@@ -49,6 +49,7 @@
     <Compile Include="ScreenShot.cs" />
     <Compile Include="SlickCollector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UriInvalidException.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

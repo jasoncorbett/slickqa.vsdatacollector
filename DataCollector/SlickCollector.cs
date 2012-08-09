@@ -13,24 +13,26 @@
 // limitations under the License.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Xml;
+using Microsoft.VisualStudio.TestTools.Common;
 using Microsoft.VisualStudio.TestTools.Execution;
 using SlickQA.DataCollector.Configuration;
 using SlickQA.SlickSharp;
 using SlickQA.SlickSharp.Logging;
+using TestRun = SlickQA.SlickSharp.TestRun;
 
 namespace SlickQA.DataCollector
 {
-	//TODO: Need Unit Test Coverage Here
 	[DataCollectorTypeUri("datacollector://slickqa/SlickDataCollector/0.0.1")]
 	[DataCollectorFriendlyName("Slick", false)]
 	[DataCollectorConfigurationEditor("configurationeditor://slickqa/SlickDataCollectorConfigurationEditor/0.0.1")]
 	public class SlickCollector : Microsoft.VisualStudio.TestTools.Execution.DataCollector
 	{
-		private SlickConfig _config;
+		private Config _config;
 		private DataCollectionEnvironmentContext _dataCollectionEnvironmentContext;
 
 		private DataCollectionEvents _dataEvents;
@@ -41,13 +43,16 @@ namespace SlickQA.DataCollector
 		private TestRun _slickRun;
 
 		public override void Initialize(XmlElement configurationElement, DataCollectionEvents events,
-		                                DataCollectionSink dataSink, DataCollectionLogger logger,
-		                                DataCollectionEnvironmentContext environmentContext)
+										DataCollectionSink dataSink, DataCollectionLogger logger,
+										DataCollectionEnvironmentContext environmentContext)
 		{
-			_config = SlickConfig.LoadConfig(configurationElement);
+			_config = Config.LoadConfig(configurationElement);
 
-			SlickConfig.SetServerConfig(_config.Url);
-
+			if (!_config.Url.IsValid)
+			{
+				throw new UriInvalidException();
+			}
+			
 			_dataEvents = events;
 			_dataSink = dataSink;
 			_dataLogger = logger;
@@ -102,21 +107,20 @@ namespace SlickQA.DataCollector
 
 		private void OnSessionStart(object sender, SessionStartEventArgs eventArgs)
 		{
-			var project = new Project { Name = _config.ResultDestination.ProjectName };
-			project.Get();
-			Release release = project.Releases.FirstOrDefault(r => r.Name == _config.ResultDestination.ReleaseName);
-			if (release == null)
+			var project = _config.ResultDestination.Project;
+			Release release = _config.ResultDestination.Release;
+			if (release == null || String.IsNullOrWhiteSpace(release.Id))
 			{
 				throw new ConfigurationErrorsException(String.Format(
 					"Specified release name is not valid for the \"{0}\" project.", project));
-		}
+			}
 
 			_slickRun = new TestRun
-		{
-							ProjectReference = project,
+			            {
+			            	ProjectReference = project as Project,
 							ReleaseReference = release,
 							Name = DateTime.Now.ToString("f")
-						};
+			            };
 			_slickRun.Post();
 		}
 
@@ -133,7 +137,6 @@ namespace SlickQA.DataCollector
 			{
 				testcase = new Testcase
 						   {
-							   
 							   AutomationKey = automationKey,
 							   IsAutomated = true,
 							   Name = automationKey,
@@ -141,18 +144,19 @@ namespace SlickQA.DataCollector
 						   };
 				testcase.Post();
 			}
+			UpdateTestCaseWithTestData(testcase, eventArgs.TestElement);
 
 			var testResult = new Result
-			                     {
-			                     	Hostname = Environment.MachineName,
-									ProjectReference = _slickRun.ProjectReference,
-									ReleaseReference = _slickRun.ReleaseReference,
-									TestRunReference = _slickRun,
-									TestcaseReference = testcase,
-									Status = Status.NO_RESULT.ToString(),
-									RunStatus = RunStatus.RUNNING.ToString(),
-									Files = new List<StoredFile>(),
-			                     };
+								 {
+									 Hostname = Environment.MachineName,
+									 ProjectReference = _slickRun.ProjectReference,
+									 ReleaseReference = _slickRun.ReleaseReference,
+									 TestRunReference = _slickRun,
+									 TestcaseReference = testcase,
+									 Status = ResultStatus.NO_RESULT.ToString(),
+									 RunStatus = RunStatus.RUNNING.ToString(),
+									 Files = new List<StoredFile>(),
+								 };
 			if (_config.ScreenshotSettings.PreTest)
 			{
 				StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Pre Test {0}.png", automationKey));
@@ -161,6 +165,89 @@ namespace SlickQA.DataCollector
 
 			testResult.Post();
 			_results.Push(testResult);
+		}
+
+		private void UpdateTestCaseWithTestData(Testcase testcase, ITestElement testElement)
+		{
+			//testcase.Attributes;
+			//testcase.Author;
+			//testcase.AutomationId;
+			//testcase.AutomationTool;
+			//testcase.ComponentReference;
+			//testcase.Configuration;
+			//testcase.DataDrivenProperties;
+			//testcase.IsDeleted;
+			//testcase.Name;
+			//testcase.Priority;
+			//testcase.ProjectReference;
+			//testcase.Requirements;
+			//testcase.StabilityRating;
+			//testcase.Steps;
+
+			//testElement.AbortRunOnAgentFailure;
+			//testElement.Adapter;
+			//testElement.AgentAttributes;
+			//testElement.CanBeAggregated;
+			//testElement.CategoryId;
+			//testElement.ControllerPlugin;
+			//testElement.Copy;
+			//testElement.CreatedByUI;
+			//testElement.CssIteration;
+			//testElement.CssProjectStructure;
+			//testElement.DeploymentItems;
+			//testElement.Enabled;
+			//testElement.ErrorMessageForNonRunnable;
+			//testElement.ExecutionId;
+			//testElement.Groups;
+			//testElement.HumanReadableId;
+			//testElement.Id;
+			//testElement.IsAutomated;
+			//testElement.IsGroupable;
+			//testElement.IsModified;
+			//testElement.IsRunOnRestart;
+			//testElement.IsRunnable;
+			//testElement.Link;
+			//testElement.Name;
+			//testElement.Owner;
+			//testElement.ParentExecId;
+			//testElement.Priority;
+			//testElement.ProjectData;
+			//testElement.projectId;
+			//testElement.ProjectRelativePath;
+			
+			//testElement.ReadOnly;
+			//testElement.SolutionName;
+			//testElement.SourceFileName;
+			//testElement.Storage;
+			//testElement.TestCategories;
+			//testElement.TestType;
+			//testElement.Timeout;
+			//testElement.UserData;
+			//testElement.VisibleProperties;
+			//testElement.WorkItemIds;
+
+			testcase.Priority = testElement.Priority;
+			testcase.Purpose = testElement.Description;
+
+			var props = testElement.Properties;
+			foreach (DictionaryEntry entry in props)
+			{
+				if (!testcase.Attributes.ContainsKey(entry.Key.ToString()))
+				{
+					testcase.Attributes.Add(entry);
+				}
+			}
+
+			UpdateTags(testcase, testElement);
+
+			testcase.Put();
+		}
+
+		private static void UpdateTags(Testcase testcase, ITestElement testElement)
+		{
+			var categories = testElement.TestCategories.ToArray();
+			var allTags = testcase.Tags.Union(categories);
+			testcase.Tags = allTags.ToList();
 		}
 
 		private void OnTestCaseEnd(object sender, TestCaseEndEventArgs eventArgs)

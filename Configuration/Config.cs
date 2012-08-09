@@ -13,19 +13,18 @@
 // limitations under the License.
 
 using System.Xml;
-using SlickQA.SlickSharp.Web;
 
 namespace SlickQA.DataCollector.Configuration
 {
-	public sealed class SlickConfig
+	public sealed class Config
 	{
 		public ResultDestination ResultDestination = new ResultDestination();
 		public ScreenShotSettings ScreenshotSettings = new ScreenShotSettings();
-		public SlickUrlType Url = new SlickUrlType();
+		public SlickUrl Url = new SlickUrl();
 
-		public static SlickConfig LoadConfig(XmlElement configuration)
+		public static Config LoadConfig(XmlElement configuration)
 		{
-			var retVal = new SlickConfig();
+			var retVal = new Config();
 			XmlNodeList elements = configuration.GetElementsByTagName("ResultDestination");
 			if (elements.Count != 0)
 			{
@@ -36,7 +35,7 @@ namespace SlickQA.DataCollector.Configuration
 			if (elements.Count != 0)
 			{
 				XmlNode urlElem = elements[0];
-				retVal.Url = new SlickUrlType(urlElem);
+				retVal.Url = new SlickUrl(urlElem);
 			}
 			elements = configuration.GetElementsByTagName("Screenshot");
 			if (elements.Count != 0)
@@ -47,21 +46,6 @@ namespace SlickQA.DataCollector.Configuration
 			return retVal;
 		}
 
-		public static void SetServerConfig(string scheme, string host, int port, string sitePath)
-		{
-			ServerConfig.Scheme = scheme;
-			ServerConfig.SlickHost = host;
-			ServerConfig.Port = port;
-			ServerConfig.SitePath = sitePath;
-		}
-
-		//TODO: Need Unit Test Coverage Here
-		public static void SetServerConfig(SlickUrlType url)
-		{
-			SetServerConfig(url.Scheme, url.Host, url.Port, url.SitePath);
-		}
-
-		//TODO: Need Unit Test Coverage Here
 		public void ConfigToXml(XmlElement configuration)
 		{
 			configuration.AppendChild(ResultDestination.ToXml(configuration.OwnerDocument));

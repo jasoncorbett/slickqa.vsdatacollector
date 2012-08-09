@@ -68,8 +68,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Test
 			Project project1 = StreamConverter<Project>.ReadFromStream(project1Stream);
 			Project project2 = StreamConverter<Project>.ReadFromStream(project2Stream);
 
-			IEnumerable<Project> projects = null;
-
 			var mockRequest = new Mock<IHttpWebRequest>();
 			var mockView = new Mock<IConfigurationView>();
 			var mockResponse = new Mock<IHttpWebResponse>();
@@ -77,32 +75,15 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Test
 			mockRequest.Setup(request => request.GetResponse()).Returns(mockResponse.Object);
 			mockResponse.Setup(response => response.GetResponseStream()).Returns(listStream);
 
-			mockView.Setup(view => view.PopulateProjects(It.IsAny<IEnumerable<Project>>())).Callback<IEnumerable<Project>>(
-				list => projects = list);
-
 			RequestFactory.Factory = uri => mockRequest.Object;
 
-			IConfigurationController controller = new ConfigurationController(mockView.Object);
+			SlickUrl.SetServerConfig("test", "example.com", 8080, "slick");
+			var s = new SelectorController(mockView.Object);
+			s.GetProjects(null, null);
 
-			SlickConfig.SetServerConfig("test", "example.com", 8080, "slick");
-			controller.GetProjects();
-
-			List<Project> projList = projects.ToList();
+			var projList = s.Projects.ToList();
 			CollectionAssert.Contains(projList, project1);
 			CollectionAssert.Contains(projList, project2);
-		}
-
-
-		[TestMethod]
-		public void View_delegates_to_controller()
-		{
-			var mockController = new Mock<IConfigurationController>();
-
-			IConfigurationView view = new ConfigurationEditor(mockController.Object);
-
-			view.GetProjects(null, new EventArgs());
-
-			mockController.Verify(c => c.GetProjects());
 		}
 	}
 }

@@ -55,7 +55,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			this._trailingSlash = new System.Windows.Forms.Label();
 			this._project = new System.Windows.Forms.ComboBox();
 			this._addProject = new System.Windows.Forms.Button();
-			this.getProjects = new System.Windows.Forms.Button();
+			this._getProjects = new System.Windows.Forms.Button();
 			this._releaseLabel = new System.Windows.Forms.Label();
 			this._release = new System.Windows.Forms.ComboBox();
 			this._addRelease = new System.Windows.Forms.Button();
@@ -71,7 +71,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			// 
 			// _scheme
 			// 
-			this._scheme.AccessibleName = "scheme";
+			this._scheme.AccessibleName = "Uri Scheme";
 			this._scheme.AccessibleRole = System.Windows.Forms.AccessibleRole.DropList;
 			this._scheme.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._scheme.FormattingEnabled = true;
@@ -93,6 +93,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			// 
 			// _host
 			// 
+			this._host.AccessibleName = "URL Host";
 			this._host.AccessibleRole = System.Windows.Forms.AccessibleRole.Text;
 			this._host.Location = new System.Drawing.Point(177, 15);
 			this._host.Name = "_host";
@@ -112,7 +113,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			// 
 			// _sitePath
 			// 
-			this._sitePath.AccessibleName = "sitePath";
+			this._sitePath.AccessibleName = "URL Site Path";
 			this._sitePath.AccessibleRole = System.Windows.Forms.AccessibleRole.Text;
 			this._sitePath.Location = new System.Drawing.Point(443, 15);
 			this._sitePath.Name = "_sitePath";
@@ -163,7 +164,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			// 
 			// _urlLabel
 			// 
-			this._urlLabel.AccessibleName = "urlLabel";
+			this._urlLabel.AccessibleName = "Slick Url Label";
 			this._urlLabel.AccessibleRole = System.Windows.Forms.AccessibleRole.StaticText;
 			this._urlLabel.AutoSize = true;
 			this._urlLabel.Location = new System.Drawing.Point(3, 19);
@@ -185,20 +186,21 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			// 
 			// _project
 			// 
-			this._project.AccessibleName = "project";
+			this._project.AccessibleName = "Project Selector";
 			this._project.AccessibleRole = System.Windows.Forms.AccessibleRole.DropList;
+			this._project.CausesValidation = false;
 			this._project.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._project.Enabled = false;
 			this._project.FormattingEnabled = true;
 			this._project.Location = new System.Drawing.Point(80, 68);
 			this._project.Name = "_project";
 			this._project.Size = new System.Drawing.Size(269, 21);
 			this._project.Sorted = true;
 			this._project.TabIndex = 11;
-			this._project.SelectedIndexChanged += new System.EventHandler(this.GetReleases);
 			// 
 			// _addProject
 			// 
-			this._addProject.AccessibleName = "addProject";
+			this._addProject.AccessibleName = "Add Project";
 			this._addProject.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
 			this._addProject.Enabled = false;
 			this._addProject.Location = new System.Drawing.Point(355, 67);
@@ -207,19 +209,17 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			this._addProject.TabIndex = 12;
 			this._addProject.Text = "Add Project";
 			this._addProject.UseVisualStyleBackColor = true;
-			this._addProject.Visible = false;
 			// 
-			// getProjects
+			// _getProjects
 			// 
-			this.getProjects.AccessibleName = "getProjects";
-			this.getProjects.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
-			this.getProjects.Location = new System.Drawing.Point(567, 11);
-			this.getProjects.Name = "getProjects";
-			this.getProjects.Size = new System.Drawing.Size(89, 28);
-			this.getProjects.TabIndex = 9;
-			this.getProjects.Text = "Get Projects";
-			this.getProjects.UseVisualStyleBackColor = true;
-			this.getProjects.Click += new System.EventHandler(this.GetProjects);
+			this._getProjects.AccessibleName = "getProjects";
+			this._getProjects.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
+			this._getProjects.Location = new System.Drawing.Point(567, 11);
+			this._getProjects.Name = "_getProjects";
+			this._getProjects.Size = new System.Drawing.Size(89, 28);
+			this._getProjects.TabIndex = 9;
+			this._getProjects.Text = "Get Projects";
+			this._getProjects.UseVisualStyleBackColor = true;
 			// 
 			// _releaseLabel
 			// 
@@ -234,9 +234,11 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			// 
 			// _release
 			// 
-			this._release.AccessibleName = "release";
+			this._release.AccessibleName = "Release Selector";
 			this._release.AccessibleRole = System.Windows.Forms.AccessibleRole.DropList;
+			this._release.CausesValidation = false;
 			this._release.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._release.Enabled = false;
 			this._release.FormattingEnabled = true;
 			this._release.Location = new System.Drawing.Point(80, 101);
 			this._release.Name = "_release";
@@ -245,7 +247,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			// 
 			// _addRelease
 			// 
-			this._addRelease.AccessibleName = "addRelease";
+			this._addRelease.AccessibleName = "Add Release";
 			this._addRelease.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
 			this._addRelease.Enabled = false;
 			this._addRelease.Location = new System.Drawing.Point(355, 102);
@@ -254,7 +256,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			this._addRelease.TabIndex = 15;
 			this._addRelease.Text = "Add Release";
 			this._addRelease.UseVisualStyleBackColor = true;
-			this._addRelease.Visible = false;
 			// 
 			// _screenshotGroup
 			// 
@@ -276,19 +277,20 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			this._posttestScreenshot.AccessibleName = "posttestScreenshot";
 			this._posttestScreenshot.AccessibleRole = System.Windows.Forms.AccessibleRole.CheckButton;
 			this._posttestScreenshot.AutoSize = true;
+			this._posttestScreenshot.CausesValidation = false;
 			this._posttestScreenshot.Location = new System.Drawing.Point(13, 50);
 			this._posttestScreenshot.Name = "_posttestScreenshot";
 			this._posttestScreenshot.Size = new System.Drawing.Size(94, 17);
 			this._posttestScreenshot.TabIndex = 2;
 			this._posttestScreenshot.Text = "after each test";
 			this._posttestScreenshot.UseVisualStyleBackColor = true;
-			this._posttestScreenshot.CheckedChanged += new System.EventHandler(this.CheckedChanged);
 			// 
 			// _failScreenshot
 			// 
 			this._failScreenshot.AccessibleName = "failScreenshot";
 			this._failScreenshot.AccessibleRole = System.Windows.Forms.AccessibleRole.CheckButton;
 			this._failScreenshot.AutoSize = true;
+			this._failScreenshot.CausesValidation = false;
 			this._failScreenshot.Checked = true;
 			this._failScreenshot.CheckState = System.Windows.Forms.CheckState.Checked;
 			this._failScreenshot.Location = new System.Drawing.Point(13, 73);
@@ -297,20 +299,19 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			this._failScreenshot.TabIndex = 1;
 			this._failScreenshot.Text = "on test failure";
 			this._failScreenshot.UseVisualStyleBackColor = true;
-			this._failScreenshot.CheckedChanged += new System.EventHandler(this.CheckedChanged);
 			// 
 			// _pretestScreenshot
 			// 
 			this._pretestScreenshot.AccessibleName = "pretestScreenshot";
 			this._pretestScreenshot.AccessibleRole = System.Windows.Forms.AccessibleRole.CheckButton;
 			this._pretestScreenshot.AutoSize = true;
+			this._pretestScreenshot.CausesValidation = false;
 			this._pretestScreenshot.Location = new System.Drawing.Point(13, 27);
 			this._pretestScreenshot.Name = "_pretestScreenshot";
 			this._pretestScreenshot.Size = new System.Drawing.Size(103, 17);
 			this._pretestScreenshot.TabIndex = 0;
 			this._pretestScreenshot.Text = "before each test";
 			this._pretestScreenshot.UseVisualStyleBackColor = true;
-			this._pretestScreenshot.CheckedChanged += new System.EventHandler(this.CheckedChanged);
 			// 
 			// errorProvider1
 			// 
@@ -324,7 +325,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 			this.Controls.Add(this._addRelease);
 			this.Controls.Add(this._release);
 			this.Controls.Add(this._releaseLabel);
-			this.Controls.Add(this.getProjects);
+			this.Controls.Add(this._getProjects);
 			this.Controls.Add(this._addProject);
 			this.Controls.Add(this._project);
 			this.Controls.Add(this._trailingSlash);
@@ -357,19 +358,19 @@ namespace SlickQA.DataCollector.ConfigurationEditor
 		private System.Windows.Forms.Label _urlLabel;
 		private System.Windows.Forms.Label _trailingSlash;
 		private System.Windows.Forms.Button _addProject;
-		private System.Windows.Forms.Button getProjects;
-		private System.Windows.Forms.ComboBox _project;
-		private System.Windows.Forms.ComboBox _scheme;
-		private System.Windows.Forms.TextBox _host;
-		private System.Windows.Forms.NumericUpDown _port;
-		private System.Windows.Forms.TextBox _sitePath;
+		private System.Windows.Forms.Button _getProjects;
 		private System.Windows.Forms.Label _releaseLabel;
-		private System.Windows.Forms.ComboBox _release;
 		private System.Windows.Forms.Button _addRelease;
 		private System.Windows.Forms.GroupBox _screenshotGroup;
 		private System.Windows.Forms.CheckBox _posttestScreenshot;
 		private System.Windows.Forms.CheckBox _failScreenshot;
 		private System.Windows.Forms.CheckBox _pretestScreenshot;
 		private System.Windows.Forms.ErrorProvider errorProvider1;
+		private System.Windows.Forms.ComboBox _scheme;
+		private System.Windows.Forms.TextBox _host;
+		private System.Windows.Forms.NumericUpDown _port;
+		private System.Windows.Forms.TextBox _sitePath;
+		private System.Windows.Forms.ComboBox _project;
+		private System.Windows.Forms.ComboBox _release;
 	}
 }
