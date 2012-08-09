@@ -44,14 +44,15 @@
     <Compile Include="Build.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="Configuration.cs" />
+    <Compile Include="ConfigurationOverride.cs" />
     <Compile Include="ConfigurationType.cs" />
-    <Compile Include="NullProject.cs" />
     <Compile Include="ObjectReferences\BuildReference.cs" />
     <Compile Include="ObjectReferences\ConfigurationReference.cs" />
     <Compile Include="ObjectReferences\ComponentReference.cs" />
     <Compile Include="Logging\LogEntry.cs" />
     <Compile Include="Logging\LogLevel.cs" />
     <Compile Include="Queries\TestPlanQuery.cs" />
+    <Compile Include="TestStep.cs" />
     <Compile Include="Web\IHttpWebRequest.cs" />
     <Compile Include="Web\IHttpWebResponse.cs" />
     <Compile Include="Web\JsonRequest.cs" />
@@ -69,7 +70,6 @@
     <Compile Include="ObjectReferences\ProjectReference.cs" />
     <Compile Include="TestRun.cs" />
     <Compile Include="DataDrivenProperty.cs" />
-    <Compile Include="DataExtension.cs" />
     <Compile Include="Attributes\ItemApiPathAttribute.cs" />
     <Compile Include="IJsonObject.cs" />
     <Compile Include="JsonObject.cs" />
@@ -80,7 +80,7 @@
     <Compile Include="Result.cs" />
     <Compile Include="RunStatus.cs" />
     <Compile Include="Web\ServerConfig.cs" />
-    <Compile Include="Status.cs" />
+    <Compile Include="ResultStatus.cs" />
     <Compile Include="Testcase.cs" />
     <Compile Include="Utility\Json\StreamConverter.cs" />
     <Compile Include="Utility\LinkedHashMap.cs" />

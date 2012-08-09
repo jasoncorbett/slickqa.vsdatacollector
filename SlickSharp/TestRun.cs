@@ -24,26 +24,32 @@ namespace SlickQA.SlickSharp
 	[ItemApiPath("", "Id", 0)]
 	public sealed class TestRun : JsonObject<TestRun>, IJsonObject, IEquatable<TestRun>
 	{
-		[DataMember(Name = "build")]
-		public BuildReference BuildReference;
-
-		[DataMember(Name = "config")]
-		public ConfigurationReference ConfigurationReference;
-
 		[DataMember(Name = "id")]
 		public String Id;
+
+		[DataMember(Name = "testplanId")]
+		public String TestPlanId;
 
 		[DataMember(Name = "name")]
 		public String Name;
 
+		[DataMember(Name = "config")]
+		public ConfigurationReference ConfigurationReference;
+
+		[DataMember(Name = "runtimeOptions")]
+		public ConfigurationReference runtimeOptions;
+
 		[DataMember(Name = "project")]
 		public ProjectReference ProjectReference;
+
+		[DataMember(Name = "dateCreated")]
+		public DateTime Created;
 
 		[DataMember(Name = "release")]
 		public ReleaseReference ReleaseReference;
 
-		[DataMember(Name = "testplanId")]
-		public String TestPlanId;
+		[DataMember(Name = "build")]
+		public BuildReference BuildReference;
 
 		#region IEquatable<TestRun> Members
 

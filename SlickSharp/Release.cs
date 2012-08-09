@@ -24,6 +24,7 @@ namespace SlickQA.SlickSharp
 	[DataContract]
 	[CollectionApiPath("projects/{ProjectId}/releases")]
 	[ItemApiPath("", "Id", 0)]
+	[ItemApiPath("byname", "Name", 1)]
 	public sealed class Release : JsonObject<Release>, IJsonObject, IEquatable<Release>
 	{
 		[DataMember(Name = "builds")]
@@ -66,7 +67,6 @@ namespace SlickQA.SlickSharp
 
 		#endregion
 
-		//TODO: Need Unit Test Coverage Here
 		public void SetAsDefault()
 		{
 			Uri uri = UriBuilder.FullUri(UriBuilder.NormalizePath(this, "projects/{ProjectId}/setdefaultrelease/{Id}"));
@@ -78,7 +78,6 @@ namespace SlickQA.SlickSharp
 			}
 		}
 
-		//TODO: Need Unit Test Coverage Here
 		public override string ToString()
 		{
 			return Name;

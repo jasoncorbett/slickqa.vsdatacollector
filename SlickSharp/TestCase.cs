@@ -13,9 +13,11 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using SlickQA.SlickSharp.Attributes;
 using SlickQA.SlickSharp.ObjectReferences;
+using SlickQA.SlickSharp.Utility;
 
 namespace SlickQA.SlickSharp
 {
@@ -24,35 +26,63 @@ namespace SlickQA.SlickSharp
 	[ItemApiPath("", "Id", 0)]
 	public sealed class Testcase : JsonObject<Testcase>, IJsonObject, IEquatable<Testcase>
 	{
+		[DataMember(Name = "id")]
+		public String Id;
+
+		[DataMember(Name = "name")]
+		public String Name;
+
+		[DataMember(Name = "purpose")]
+		public String Purpose;
+
+		[DataMember(Name = "requirements")]
+		public String Requirements;
+
+		[DataMember(Name = "steps")]
+		public List<Step> Steps;
+
+		[DataMember(Name = "author")]
+		public String Author;
+
+
+		[DataMember(Name = "attributes")]
+		public LinkedHashMap<string> Attributes;
+
+		[DataMember(Name = "automated")]
+		public Boolean IsAutomated;
+
+		[DataMember(Name = "automationPriority")]
+		public int Priority;
+
+		[DataMember(Name = "automationTool")]
+		public String AutomationTool;
+
+		[DataMember(Name = "automationConfiguration")]
+		public String Configuration;
+
 		[DataMember(Name = "automationId")]
 		public String AutomationId;
 
 		[DataMember(Name = "automationKey")]
 		public String AutomationKey;
 
-		[DataMember(Name = "automationTool")]
-		public String AutomationTool;
+		[DataMember(Name = "stabilityRating")]
+		public int StabilityRating;
 
-		[DataMember(Name = "component")]
-		public ComponentReference ComponentReference;
-
-		[DataMember(Name = "deleted")]
-		public Boolean Deleted;
-
-		[DataMember(Name = "id")]
-		public String Id;
-
-		[DataMember(Name = "automated")]
-		public Boolean IsAutomated;
-
-		[DataMember(Name = "name")]
-		public String Name;
+		[DataMember(Name = "tags")]
+		public List<string> Tags;
 
 		[DataMember(Name = "project")]
 		public ProjectReference ProjectReference;
 
-		[DataMember(Name = "purpose")]
-		public String Purpose;
+		[DataMember(Name = "component")]
+		public ComponentReference ComponentReference;
+
+		[DataMember(Name = "dataDriven")]
+		public List<DataDrivenProperty> DataDrivenProperties;
+
+		[DataMember(Name = "deleted")]
+		public Boolean IsDeleted;
 
 		#region IEquatable<Testcase> Members
 
@@ -71,7 +101,6 @@ namespace SlickQA.SlickSharp
 
 		#endregion
 
-		//TODO: Need Unit Test Coverage Here
 		public static Testcase GetTestCaseByAutomationId(string automationId)
 		{
 			try
@@ -84,7 +113,6 @@ namespace SlickQA.SlickSharp
 			}
 		}
 
-		//TODO: Need Unit Test Coverage Here
 		public static Testcase GetTestCaseByAutomationKey(string automationKey)
 		{
 			try
@@ -124,5 +152,9 @@ namespace SlickQA.SlickSharp
 			}
 			return !left.Equals(right);
 		}
+	}
+
+	public class Step
+	{
 	}
 }

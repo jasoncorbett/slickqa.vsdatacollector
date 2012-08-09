@@ -131,7 +131,7 @@ namespace SlickQA.SlickSharp.Test
 			         {
 			         	Id = "0123456789abcdef",
 						DateRecorded = 123456789,
-						ResultStatus = Status.CANCELLED.ToString()
+						ResultStatus = ResultStatus.CANCELLED.ToString()
 			         };
 
 			var expected = new Result
@@ -139,7 +139,7 @@ namespace SlickQA.SlickSharp.Test
 			               	Id = "0123456789abcdef",
 			               	Hostname = "blah.example.com",
 			               	Recorded = 123456789,
-			               	Status = Status.CANCELLED.ToString(),
+			               	Status = ResultStatus.CANCELLED.ToString(),
 			               	Reason = "Unit Test"
 			               };
 
@@ -181,7 +181,7 @@ namespace SlickQA.SlickSharp.Test
 			               	AutomationId = "blah.blah.boo",
 			               	AutomationKey = "foo.bar.bazTest",
 			               	Name = "Dummy Test Case",
-			               	Deleted = false,
+			               	IsDeleted = false,
 			               	Purpose = "Regression"
 			               };
 
@@ -191,7 +191,7 @@ namespace SlickQA.SlickSharp.Test
 			Assert.AreEqual(expected.AutomationId, actual.AutomationId);
 			Assert.AreEqual(expected.AutomationKey, actual.AutomationKey);
 			Assert.AreEqual(expected.Name, actual.Name);
-			Assert.AreEqual(expected.Deleted, actual.Deleted);
+			Assert.AreEqual(expected.IsDeleted, actual.IsDeleted);
 			Assert.AreEqual(expected.Purpose, actual.Purpose);
 		}
 

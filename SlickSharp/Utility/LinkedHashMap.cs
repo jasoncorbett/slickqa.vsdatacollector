@@ -19,7 +19,6 @@ using System.Runtime.Serialization;
 
 namespace SlickQA.SlickSharp.Utility
 {
-	//TODO: Need Unit Test Coverage Here
 	[DataContract]
 	public sealed class LinkedHashMap<T> : IDictionary<String, T> where T : class
 	{
@@ -45,6 +44,11 @@ namespace SlickQA.SlickSharp.Utility
 		public void Add(KeyValuePair<String, T> item)
 		{
 			_dict.Add(item.Key, item.Value);
+		}
+
+		public void Add(DictionaryEntry entry)
+		{
+			_dict.Add(entry.Key.ToString(), entry.Value as T);
 		}
 
 		public IEnumerator<KeyValuePair<String, T>> GetEnumerator()

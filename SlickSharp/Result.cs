@@ -106,7 +106,6 @@ namespace SlickQA.SlickSharp
 
 		#endregion
 
-		//TODO: Need Unit Test Coverage Here
 		public void AddToLog(List<LogEntry> logaddon)
 		{
 			Uri uri = UriBuilder.FullUri(UriBuilder.NormalizePath(this, "results/{Id}/log"));

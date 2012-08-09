@@ -11,9 +11,21 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+using System.Runtime.Serialization;
+
 namespace SlickQA.SlickSharp
 {
-	public class DataExtension<T>
+	[DataContract]
+	public enum ResultStatus
 	{
+		[EnumMember]
+		PASS,
+		FAIL,
+		NOT_TESTED,
+		NO_RESULT,
+		BROKEN_TEST,
+		SKIPPED,
+		CANCELLED
 	}
 }

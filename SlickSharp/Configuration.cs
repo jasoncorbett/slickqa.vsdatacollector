@@ -13,9 +13,9 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 using SlickQA.SlickSharp.Attributes;
+using SlickQA.SlickSharp.Utility;
 
 namespace SlickQA.SlickSharp
 {
@@ -24,8 +24,11 @@ namespace SlickQA.SlickSharp
 	[ItemApiPath("", "Id", 0)]
 	public sealed class Configuration : JsonObject<Configuration>, IJsonObject, IEquatable<Configuration>
 	{
-		[DataMember(Name = "configurationData")]
-		public Dictionary<String, String> ConfigurationData;
+		[DataMember(Name = "id")]
+		public String Id;
+
+		[DataMember(Name = "name")]
+		public String Name;
 
 		[DataMember(Name = "configurationType")]
 		public String ConfigurationType;
@@ -33,11 +36,8 @@ namespace SlickQA.SlickSharp
 		[DataMember(Name = "filename")]
 		public String Filename;
 
-		[DataMember(Name = "id")]
-		public String Id;
-
-		[DataMember(Name = "name")]
-		public String Name;
+		[DataMember(Name = "configurationData")]
+		public LinkedHashMap<String> ConfigurationData;
 
 		#region IEquatable<Configuration> Members
 
@@ -56,7 +56,6 @@ namespace SlickQA.SlickSharp
 
 		#endregion
 
-		//TODO: Need Unit Test Coverage Here
 		public static Configuration GetEnvironmentConfiguration(string name)
 		{
 			try

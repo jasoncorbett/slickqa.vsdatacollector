@@ -25,14 +25,15 @@ namespace SlickQA.SlickSharp
 	[ItemApiPath("", "Id", 0)]
 	public sealed class Build : JsonObject<Build>, IJsonObject, IEquatable<Build>
 	{
-		[DataMember(Name = "built")]
-		public String Built;
-
 		[DataMember(Name = "id")]
 		public String Id;
 
 		[DataMember(Name = "name")]
 		public String Name;
+
+		[DataMember(Name = "built")]
+		public String Built;
+
 
 		[IgnoreDataMember]
 		public string ProjectId { get; set; }
@@ -57,7 +58,6 @@ namespace SlickQA.SlickSharp
 
 		#endregion
 
-		//TODO: Need Unit Test Coverage Here
 		public void SetAsDefault()
 		{
 			Uri uri =

@@ -23,17 +23,17 @@ namespace SlickQA.SlickSharp
 	[ItemApiPath("", "Id", 0)]
 	public sealed class Component : JsonObject<Component>, IJsonObject, IEquatable<Component>
 	{
-		[DataMember(Name = "code")]
-		public String Code;
-
-		[DataMember(Name = "description")]
-		public String Description;
-
 		[DataMember(Name = "id")]
 		public String Id;
 
 		[DataMember(Name = "name")]
 		public String Name;
+
+		[DataMember(Name = "description")]
+		public String Description;
+
+		[DataMember(Name = "code")]
+		public String Code;
 
 		[IgnoreDataMember]
 		public String ProjectId;

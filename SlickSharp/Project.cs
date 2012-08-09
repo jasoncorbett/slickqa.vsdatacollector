@@ -50,9 +50,6 @@ namespace SlickQA.SlickSharp
 		[DataMember(Name = "description")]
 		public String Description;
 
-		[DataMember(Name = "extensions")]
-		public List<DataExtension<Project>> Extensions;
-
 		[DataMember(Name = "id", EmitDefaultValue = false)]
 		public String Id; //TODO: Possibly org.bson.types.ObjectId compatible
 
@@ -77,10 +74,8 @@ namespace SlickQA.SlickSharp
 			AutomationTools = new List<string>();
 			Components = new List<Component>();
 			DataDrivenProperties = new List<DataDrivenProperty>();
-			Extensions = new List<DataExtension<Project>>();
 		}
 
-		//TODO: Need Unit Test Coverage Here
 		public override string ToString()
 		{
 			return Name;

@@ -18,7 +18,6 @@ namespace SlickQA.SlickSharp.Queries
 {
 	public static class TestPlanQuery
 	{
-		//TODO: Need Unit Test Coverage Here
 		public static List<TestPlan> GetTestPlans(this Project project)
 		{
 			try

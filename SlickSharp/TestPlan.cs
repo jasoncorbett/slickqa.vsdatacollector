@@ -23,14 +23,14 @@ namespace SlickQA.SlickSharp
 	[CollectionApiPath("testplans")]
 	public sealed class TestPlan : JsonObject<TestPlan>, IJsonObject, IEquatable<TestPlan>
 	{
-		[DataMember(Name = "createdBy")]
-		public String CreatedBy;
-
 		[DataMember(Name = "id")]
 		public String Id;
 
 		[DataMember(Name = "name")]
 		public String Name;
+
+		[DataMember(Name = "createdBy")]
+		public String CreatedBy;
 
 		[DataMember(Name = "project")]
 		public ProjectReference ProjectReference;

@@ -11,9 +11,23 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+using System;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
+
 namespace SlickQA.SlickSharp
 {
+	[DataContract]
 	public class DataDrivenProperty
 	{
+		[DataMember(Name = "name")]
+		public String Name;
+
+		[DataMember(Name = "requirement")]
+		public bool IsRequirement;
+
+		[DataMember(Name = "standardValues")]
+		public List<String> StandardValues;
 	}
 }
