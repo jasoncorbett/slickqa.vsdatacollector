@@ -15,12 +15,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Xml;
 using Microsoft.VisualStudio.TestTools.Common;
 using Microsoft.VisualStudio.TestTools.Execution;
-using SlickQA.DataCollector.Configuration;
 using SlickQA.SlickSharp;
 using SlickQA.SlickSharp.Logging;
 using TestRun = SlickQA.SlickSharp.TestRun;
@@ -32,7 +30,7 @@ namespace SlickQA.DataCollector
 	[DataCollectorConfigurationEditor("configurationeditor://slickqa/SlickDataCollectorConfigurationEditor/0.0.1")]
 	public class SlickCollector : Microsoft.VisualStudio.TestTools.Execution.DataCollector
 	{
-		private Config _config;
+		//private Config _config;
 		private DataCollectionEnvironmentContext _dataCollectionEnvironmentContext;
 
 		private DataCollectionEvents _dataEvents;
@@ -46,12 +44,12 @@ namespace SlickQA.DataCollector
 										DataCollectionSink dataSink, DataCollectionLogger logger,
 										DataCollectionEnvironmentContext environmentContext)
 		{
-			_config = Config.LoadConfig(configurationElement);
+			//_config = Config.LoadConfig(configurationElement);
 
-			if (!_config.Url.IsValid)
-			{
-				throw new UriInvalidException();
-			}
+			//if (!_config.Url.IsValid)
+			//{
+			//    throw new UriInvalidException();
+			//}
 			
 			_dataEvents = events;
 			_dataSink = dataSink;
@@ -107,21 +105,21 @@ namespace SlickQA.DataCollector
 
 		private void OnSessionStart(object sender, SessionStartEventArgs eventArgs)
 		{
-			var project = _config.ResultDestination.Project;
-			Release release = _config.ResultDestination.Release;
-			if (release == null || String.IsNullOrWhiteSpace(release.Id))
-			{
-				throw new ConfigurationErrorsException(String.Format(
-					"Specified release name is not valid for the \"{0}\" project.", project));
-			}
+			//var project = _config.ResultDestination.Project;
+			//Release release = _config.ResultDestination.Release;
+			//if (release == null || String.IsNullOrWhiteSpace(release.Id))
+			//{
+			//    throw new ConfigurationErrorsException(String.Format(
+			//        "Specified release name is not valid for the \"{0}\" project.", project));
+			//}
 
-			_slickRun = new TestRun
-			            {
-			            	ProjectReference = project as Project,
-							ReleaseReference = release,
-							Name = DateTime.Now.ToString("f")
-			            };
-			_slickRun.Post();
+			//_slickRun = new TestRun
+			//            {
+			//                ProjectReference = project as Project,
+			//                ReleaseReference = release,
+			//                Name = DateTime.Now.ToString("f")
+			//            };
+			//_slickRun.Post();
 		}
 
 		private void OnSessionEnd(object sender, SessionEndEventArgs sessionEndEventArgs)
@@ -157,11 +155,11 @@ namespace SlickQA.DataCollector
 									 RunStatus = RunStatus.RUNNING.ToString(),
 									 Files = new List<StoredFile>(),
 								 };
-			if (_config.ScreenshotSettings.PreTest)
-			{
-				StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Pre Test {0}.png", automationKey));
-				testResult.Files.Add(file);
-			}
+			//if (_config.ScreenshotSettings.PreTest)
+			//{
+			//    StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Pre Test {0}.png", automationKey));
+			//    testResult.Files.Add(file);
+			//}
 
 			testResult.Post();
 			_results.Push(testResult);
@@ -254,11 +252,11 @@ namespace SlickQA.DataCollector
 		{
 			Result testResult = _results.Pop();
 
-			if (_config.ScreenshotSettings.PostTest)
-			{
-				StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Post Test {0}.png", eventArgs.TestElement.HumanReadableId));
-				testResult.Files.Add(file);
-			}
+			//if (_config.ScreenshotSettings.PostTest)
+			//{
+			//    StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Post Test {0}.png", eventArgs.TestElement.HumanReadableId));
+			//    testResult.Files.Add(file);
+			//}
 
 			testResult.Status = OutcomeTranslator.Convert(eventArgs.TestOutcome).ToString();
 			testResult.RunStatus = RunStatus.FINISHED.ToString();
@@ -269,11 +267,11 @@ namespace SlickQA.DataCollector
 		{
 			Result testResult = _results.Peek();
 
-			if (_config.ScreenshotSettings.OnFailure)
-			{
-				StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Test Failure {0}.png", eventArgs.TestElement.HumanReadableId));
-				testResult.Files.Add(file);
-			}
+			//if (_config.ScreenshotSettings.OnFailure)
+			//{
+			//    StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Test Failure {0}.png", eventArgs.TestElement.HumanReadableId));
+			//    testResult.Files.Add(file);
+			//}
 		}
 
 		//private void OnTestCasePause(object sender, TestCasePauseEventArgs testCasePauseEventArgs)

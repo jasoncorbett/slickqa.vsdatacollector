@@ -59,10 +59,6 @@
       <Project>{4DB0F133-F095-4C10-BF62-0939195F26FB}</Project>
       <Name>SlickSharp</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Configuration\Configuration.csproj">
-      <Project>{5A741FFF-6FFA-4319-B031-EF8F8F7FA307}</Project>
-      <Name>Configuration</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
