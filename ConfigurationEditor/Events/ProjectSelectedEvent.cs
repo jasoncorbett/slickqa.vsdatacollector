@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using SlickQA.DataCollector.Models;
-using SlickQA.SlickSharp;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.Events
 {

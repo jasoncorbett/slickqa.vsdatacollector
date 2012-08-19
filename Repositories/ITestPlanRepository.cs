@@ -15,12 +15,12 @@
 using System.Collections.Generic;
 using SlickQA.DataCollector.Models;
 
-namespace SlickQA.DataCollector.ConfigurationEditor.Repositories
+namespace SlickQA.DataCollector.Repositories
 {
-	public interface IProjectRepository
+	public interface ITestPlanRepository
 	{
-		void Load();
-		string AddProject(ProjectInfo info);
-		IList<ProjectInfo> GetProjects();
+		IEnumerable<TestPlanInfo> GetPlans(string projectId);
+		void Load(string projectId);
+		string AddTestPlan(TestPlanInfo info);
 	}
 }

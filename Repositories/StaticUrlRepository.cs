@@ -12,15 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
 using SlickQA.DataCollector.Models;
+using SlickQA.SlickSharp.Web;
 
-namespace SlickQA.DataCollector.ConfigurationEditor.Repositories
+namespace SlickQA.DataCollector.Repositories
 {
-	public interface ITestPlanRepository
+	public class StaticUrlRepository : IUrlRepository
 	{
-		IEnumerable<TestPlanInfo> GetPlans(string projectId);
-		void Load(string projectId);
-		string AddTestPlan(TestPlanInfo info);
+		#region IUrlRepository Members
+
+		public void SetUrl(UrlInfo urlInfo)
+		{
+			ServerConfig.Scheme = urlInfo.Scheme;
+			ServerConfig.SlickHost = urlInfo.HostName;
+			ServerConfig.Port = urlInfo.Port;
+			ServerConfig.SitePath = urlInfo.SitePath;
+		}
+
+		#endregion
 	}
 }

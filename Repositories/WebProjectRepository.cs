@@ -17,9 +17,9 @@ using System.Linq;
 using SlickQA.DataCollector.Models;
 using SlickQA.SlickSharp;
 
-namespace SlickQA.DataCollector.ConfigurationEditor.Repositories
+namespace SlickQA.DataCollector.Repositories
 {
-	internal class WebProjectRepository : IProjectRepository
+	public class WebProjectRepository : IProjectRepository
 	{
 		private bool _refreshProjects;
 		private List<ProjectInfo> Projects { get; set; }

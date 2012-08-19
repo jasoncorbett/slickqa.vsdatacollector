@@ -17,9 +17,9 @@ using System.Linq;
 using SlickQA.DataCollector.Models;
 using SlickQA.SlickSharp;
 
-namespace SlickQA.DataCollector.ConfigurationEditor.Repositories
+namespace SlickQA.DataCollector.Repositories
 {
-	class WebReleaseRepository : IReleaseRepository
+	public class WebReleaseRepository : IReleaseRepository
 	{
 		public WebReleaseRepository()
 		{
@@ -41,6 +41,20 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Repositories
 			return Releases[projectId];
 		}
 
+		public string AddRelease(ReleaseInfo info)
+		{
+			var release = new Release
+			{
+				Name = info.Name,
+				ProjectId = info.ProjectId
+			};
+			release.Post();
+			RefreshReleases[info.ProjectId] = true;
+			return release.Id;
+		}
+
+		#endregion
+
 		public void Load(string projectId)
 		{
 			string listUrl = string.Format("projects/{0}/releases", projectId);
@@ -55,20 +69,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Repositories
 				RefreshReleases.Add(projectId, false);
 			}
 		}
-
-		public string AddRelease(ReleaseInfo info)
-		{
-			var release = new Release
-			{
-				Name = info.Name,
-				ProjectId = info.ProjectId
-			};
-			release.Post();
-			RefreshReleases[info.ProjectId] = true;
-			return release.Id;
-		}
-
-		#endregion
 
 		private static List<ReleaseInfo> ConvertToReleaseInfo(IEnumerable<Release> releases, string projectId)
 		{

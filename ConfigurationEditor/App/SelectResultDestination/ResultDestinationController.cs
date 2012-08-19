@@ -18,10 +18,9 @@ using System.Xml;
 using SlickQA.DataCollector.ConfigurationEditor.AppController;
 using SlickQA.DataCollector.ConfigurationEditor.Commands;
 using SlickQA.DataCollector.ConfigurationEditor.Events;
-using SlickQA.DataCollector.ConfigurationEditor.Repositories;
 using SlickQA.DataCollector.EventAggregator;
 using SlickQA.DataCollector.Models;
-using SlickQA.SlickSharp;
+using SlickQA.DataCollector.Repositories;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.App.SelectResultDestination
 {

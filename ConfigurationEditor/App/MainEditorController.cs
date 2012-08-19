@@ -16,7 +16,7 @@ using System;
 using Microsoft.VisualStudio.TestTools.Execution;
 using SlickQA.DataCollector.ConfigurationEditor.AppController;
 using SlickQA.DataCollector.ConfigurationEditor.Events;
-using SlickQA.DataCollector.ConfigurationEditor.Repositories;
+using SlickQA.DataCollector.Repositories;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.App
 {

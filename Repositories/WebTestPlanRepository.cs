@@ -17,9 +17,9 @@ using System.Linq;
 using SlickQA.DataCollector.Models;
 using SlickQA.SlickSharp;
 
-namespace SlickQA.DataCollector.ConfigurationEditor.Repositories
+namespace SlickQA.DataCollector.Repositories
 {
-	class WebTestPlanRepository : ITestPlanRepository
+	public class WebTestPlanRepository : ITestPlanRepository
 	{
 		public WebTestPlanRepository()
 		{

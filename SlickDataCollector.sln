@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventAggregator", "EventAgg
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EditorGuiTester", "EditorGuiTester\EditorGuiTester.csproj", "{22A52EFE-CDD8-4D46-B88D-356367CF9563}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repositories", "Repositories\Repositories.csproj", "{D7602FB6-1938-48CA-A3E2-E8752346D5CA}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Configuration.vsmdi
@@ -148,6 +150,16 @@ Global
 		{22A52EFE-CDD8-4D46-B88D-356367CF9563}.Release|Mixed Platforms.Build.0 = Release|x86
 		{22A52EFE-CDD8-4D46-B88D-356367CF9563}.Release|x86.ActiveCfg = Release|x86
 		{22A52EFE-CDD8-4D46-B88D-356367CF9563}.Release|x86.Build.0 = Release|x86
+		{D7602FB6-1938-48CA-A3E2-E8752346D5CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7602FB6-1938-48CA-A3E2-E8752346D5CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7602FB6-1938-48CA-A3E2-E8752346D5CA}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{D7602FB6-1938-48CA-A3E2-E8752346D5CA}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{D7602FB6-1938-48CA-A3E2-E8752346D5CA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D7602FB6-1938-48CA-A3E2-E8752346D5CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7602FB6-1938-48CA-A3E2-E8752346D5CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7602FB6-1938-48CA-A3E2-E8752346D5CA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{D7602FB6-1938-48CA-A3E2-E8752346D5CA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{D7602FB6-1938-48CA-A3E2-E8752346D5CA}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -15,16 +15,11 @@
 using System.Collections.Generic;
 using SlickQA.DataCollector.Models;
 
-namespace SlickQA.DataCollector.ConfigurationEditor.App.SelectResultDestination
+namespace SlickQA.DataCollector.Repositories
 {
-	public interface IResultDestinationView
+	public interface IReleaseRepository
 	{
-		ResultDestinationController Controller { set; }
-		void LoadProjectList(IEnumerable<ProjectInfo> projectList);
-		void SelectProject(ProjectInfo project);
-		void LoadReleaseList(IEnumerable<ReleaseInfo> releaseList);
-		void SelectRelease(ReleaseInfo release);
-		void EnableAddReleaseButton();
-		void EnableAddProjectButton();
+		string AddRelease(ReleaseInfo info);
+		IEnumerable<ReleaseInfo> GetReleases(string projectId);
 	}
 }

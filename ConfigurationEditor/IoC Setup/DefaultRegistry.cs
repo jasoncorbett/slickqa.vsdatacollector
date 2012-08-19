@@ -25,10 +25,10 @@ using SlickQA.DataCollector.ConfigurationEditor.App.SupplyTestPlanInfo;
 using SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo;
 using SlickQA.DataCollector.ConfigurationEditor.AppController;
 using SlickQA.DataCollector.ConfigurationEditor.Commands;
-using SlickQA.DataCollector.ConfigurationEditor.Repositories;
 using SlickQA.DataCollector.ConfigurationEditor.Services;
 using SlickQA.DataCollector.ConfigurationEditor.View;
 using SlickQA.DataCollector.EventAggregator;
+using SlickQA.DataCollector.Repositories;
 using StructureMap.Configuration.DSL;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.IoC_Setup
@@ -67,8 +67,9 @@ namespace SlickQA.DataCollector.ConfigurationEditor.IoC_Setup
 			For<ICommand<AddNewTestPlanData>>().Use<AddNewTestPlanService>();
 
 			//Repositories
-			For<IProjectRepository>().Singleton().Use<WebProjectRepository>();
 			For<IUrlRepository>().Singleton().Use<StaticUrlRepository>();
+			For<IProjectRepository>().Singleton().Use<WebProjectRepository>();
+			For<IReleaseRepository>().Singleton().Use<WebReleaseRepository>();
 			For<ITestPlanRepository>().Singleton().Use<WebTestPlanRepository>();
 			
 			// Application Level Config

@@ -18,7 +18,6 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming;
 using SlickQA.DataCollector.Models;
-using SlickQA.SlickSharp;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.View
 {

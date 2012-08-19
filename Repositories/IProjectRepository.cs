@@ -12,12 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Collections.Generic;
 using SlickQA.DataCollector.Models;
 
-namespace SlickQA.DataCollector.ConfigurationEditor.Repositories
+namespace SlickQA.DataCollector.Repositories
 {
-	public interface IUrlRepository
+	public interface IProjectRepository
 	{
-		void SetUrl(UrlInfo urlInfo);
+		void Load();
+		string AddProject(ProjectInfo info);
+		IList<ProjectInfo> GetProjects();
 	}
 }

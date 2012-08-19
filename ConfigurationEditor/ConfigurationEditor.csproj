@@ -67,11 +67,6 @@
     <Compile Include="Events\SettingsLoadedEvent.cs" />
     <Compile Include="Events\TestPlanAddedEvent.cs" />
     <Compile Include="Events\TestPlansLoadedEvent.cs" />
-    <Compile Include="Repositories\IUrlRepository.cs" />
-    <Compile Include="Repositories\StaticUrlRepository.cs" />
-    <Compile Include="Repositories\WebReleaseRepository.cs" />
-    <Compile Include="Repositories\ITestPlanRepository.cs" />
-    <Compile Include="Repositories\WebTestPlanRepository.cs" />
     <Compile Include="Services\AddNewProjectService.cs" />
     <Compile Include="Commands\AddNewReleaseData.cs" />
     <Compile Include="Services\AddNewReleaseService.cs" />
@@ -113,9 +108,7 @@
     <Compile Include="IoC Setup\BootStrapper.cs" />
     <Compile Include="IoC Setup\DefaultRegistry.cs" />
     <Compile Include="IoC Setup\EventInterceptor.cs" />
-    <Compile Include="Repositories\IProjectRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\WebProjectRepository.cs" />
     <Compile Include="Services\AddNewTestPlanService.cs" />
     <Compile Include="View\ChooseBuildProviderForm.cs">
       <SubType>Form</SubType>
@@ -179,10 +172,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\slickqa.slicksharp\SlickSharp\SlickSharp.csproj">
-      <Project>{4DB0F133-F095-4C10-BF62-0939195F26FB}</Project>
-      <Name>SlickSharp</Name>
-    </ProjectReference>
     <ProjectReference Include="..\EventAggregator\EventAggregator.csproj">
       <Project>{7FB26462-89AC-4E47-B613-B4B5C0E4AF4E}</Project>
       <Name>EventAggregator</Name>
@@ -190,6 +179,10 @@
     <ProjectReference Include="..\Models\Models.csproj">
       <Project>{16665302-F509-4A5E-A234-746F78082365}</Project>
       <Name>Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Repositories\Repositories.csproj">
+      <Project>{D7602FB6-1938-48CA-A3E2-E8752346D5CA}</Project>
+      <Name>Repositories</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

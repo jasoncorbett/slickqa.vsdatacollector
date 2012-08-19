@@ -13,22 +13,11 @@
 // limitations under the License.
 
 using SlickQA.DataCollector.Models;
-using SlickQA.SlickSharp.Web;
 
-namespace SlickQA.DataCollector.ConfigurationEditor.Repositories
+namespace SlickQA.DataCollector.Repositories
 {
-	internal class StaticUrlRepository : IUrlRepository
+	public interface IUrlRepository
 	{
-		#region IUrlRepository Members
-
-		public void SetUrl(UrlInfo urlInfo)
-		{
-			ServerConfig.Scheme = urlInfo.Scheme;
-			ServerConfig.SlickHost = urlInfo.HostName;
-			ServerConfig.Port = urlInfo.Port;
-			ServerConfig.SitePath = urlInfo.SitePath;
-		}
-
-		#endregion
+		void SetUrl(UrlInfo urlInfo);
 	}
 }
