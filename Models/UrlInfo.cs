@@ -20,7 +20,7 @@ namespace SlickQA.DataCollector.Models
 {
 	public sealed class UrlInfo
 	{
-		private const string TAG_NAME = "Url";
+		public const string TAG_NAME = "Url";
 
 		public string Scheme { get; set; }
 		public string HostName { get; set; }
@@ -99,6 +99,17 @@ namespace SlickQA.DataCollector.Models
 		public static UrlInfo FromXml(XmlElement configuration)
 		{
 			return new UrlInfo(configuration.GetElementsByTagName(TAG_NAME));
+		}
+
+		public XmlNode ToXmlNode()
+		{
+			XmlNode node = new XmlDocument();
+			var writer = node.CreateNavigator().AppendChild();
+
+			var s = new XmlSerializer(GetType());
+			s.Serialize(writer, this);
+
+			return node;
 		}
 	}
 }

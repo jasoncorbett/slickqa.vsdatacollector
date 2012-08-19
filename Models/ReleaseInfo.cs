@@ -76,5 +76,16 @@ namespace SlickQA.DataCollector.Models
 		{
 			return new ReleaseInfo(configuration.GetElementsByTagName(TAG_NAME));
 		}
+
+		public XmlNode ToXmlNode()
+		{
+			XmlNode node = new XmlDocument();
+			var writer = node.CreateNavigator().AppendChild();
+
+			var s = new XmlSerializer(GetType());
+			s.Serialize(writer, this);
+
+			return node;
+		}
 	}
 }

@@ -21,7 +21,7 @@ namespace SlickQA.DataCollector.Models
 {
 	public sealed class BuildProviderInfo
 	{
-		private const string TAG_NAME = "BuildProvider";
+		public const string TAG_NAME = "BuildProvider";
 
 		public string AssemblyName { get; private set; }
 		public string Directory { get; private set; }
@@ -95,6 +95,17 @@ namespace SlickQA.DataCollector.Models
 		public override string ToString()
 		{
 			return string.Format("{0}\\{1}:{2}", Directory, AssemblyName, FullMethodName());
+		}
+
+		public XmlNode ToXmlNode()
+		{
+			XmlNode node = new XmlDocument();
+			var writer = node.CreateNavigator().AppendChild();
+
+			var s = new XmlSerializer(GetType());
+			s.Serialize(writer, this);
+
+			return node;
 		}
 	}
 }

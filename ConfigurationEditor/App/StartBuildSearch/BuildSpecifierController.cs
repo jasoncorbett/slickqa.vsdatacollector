@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using SlickQA.DataCollector.ConfigurationEditor.AppController;
 using SlickQA.DataCollector.ConfigurationEditor.Commands;
 using SlickQA.DataCollector.ConfigurationEditor.Events;
@@ -24,7 +23,8 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.StartBuildSearch
 	public class BuildSpecifierController :
 		IEventHandler<BuildProviderSelectedEvent>,
 		IEventHandler<SettingsLoadedEvent>,
-		IEventHandler<ResetEvent>
+		IEventHandler<ResetEvent>,
+		IEventHandler<SaveDataEvent>
 	{
 		private BuildProviderInfo DefaultProvider { get; set; }
 		private BuildProviderInfo CurrentProvider { get; set; }
@@ -61,6 +61,13 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.StartBuildSearch
 			CurrentProvider = new BuildProviderInfo(DefaultProvider);
 
 			View.SetProviderText(CurrentProvider.ToString());
+		}
+
+		public void Handle(SaveDataEvent eventData)
+		{
+			var config = eventData.Settings.Configuration;
+
+			config.UpdateTagWithNewValue(BuildProviderInfo.TAG_NAME, CurrentProvider.ToXmlNode());
 		}
 	}
 }

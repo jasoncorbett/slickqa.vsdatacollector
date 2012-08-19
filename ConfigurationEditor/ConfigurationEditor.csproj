@@ -61,6 +61,7 @@
     <Compile Include="Commands\AddNewProjectData.cs" />
     <Compile Include="Commands\AddNewTestPlanData.cs" />
     <Compile Include="Commands\RetrieveTestPlansData.cs" />
+    <Compile Include="ConfigExtensions.cs" />
     <Compile Include="Events\ResetEvent.cs" />
     <Compile Include="Events\SaveDataEvent.cs" />
     <Compile Include="Events\ServiceProviderLoadedEvent.cs" />

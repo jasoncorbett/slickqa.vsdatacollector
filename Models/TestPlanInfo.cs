@@ -20,7 +20,7 @@ namespace SlickQA.DataCollector.Models
 {
 	public class TestPlanInfo
 	{
-		private const string TAG_NAME = "Plan";
+		public const string TAG_NAME = "Plan";
 
 		public string Id { get; set; }
 		public string Name { get; set; }
@@ -79,6 +79,17 @@ namespace SlickQA.DataCollector.Models
 		public static TestPlanInfo FromXml(XmlElement configuration)
 		{
 			return new TestPlanInfo(configuration.GetElementsByTagName(TAG_NAME));
+		}
+
+		public XmlNode ToXmlNode()
+		{
+			XmlNode node = new XmlDocument();
+			var writer = node.CreateNavigator().AppendChild();
+
+			var s = new XmlSerializer(GetType());
+			s.Serialize(writer, this);
+
+			return node;
 		}
 	}
 }

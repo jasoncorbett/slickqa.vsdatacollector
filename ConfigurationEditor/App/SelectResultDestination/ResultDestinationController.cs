@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Collections.Generic;
+using System.Xml;
 using SlickQA.DataCollector.ConfigurationEditor.AppController;
 using SlickQA.DataCollector.ConfigurationEditor.Commands;
 using SlickQA.DataCollector.ConfigurationEditor.Events;
@@ -28,7 +29,8 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SelectResultDestination
 		IEventHandler<ProjectSelectedEvent>, 
 		IEventHandler<ReleaseAddedEvent>,
 		IEventHandler<SettingsLoadedEvent>,
-		IEventHandler<ResetEvent>
+		IEventHandler<ResetEvent>,
+		IEventHandler<SaveDataEvent>
 	{
 		public ResultDestinationController(IResultDestinationView view, IApplicationController appController, IProjectRepository projectRepository, IReleaseRepository releaseRepository)
 		{
@@ -115,6 +117,14 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SelectResultDestination
 
 			CurrentRelease = new ReleaseInfo(DefaultRelease);
 			View.SelectRelease(CurrentRelease);
+		}
+
+		public void Handle(SaveDataEvent eventData)
+		{
+			var config = eventData.Settings.Configuration;
+
+			config.UpdateTagWithNewValue(ProjectInfo.TAG_NAME, CurrentProject.ToXmlNode());
+			config.UpdateTagWithNewValue(ReleaseInfo.TAG_NAME, CurrentRelease.ToXmlNode());
 		}
 	}
 }

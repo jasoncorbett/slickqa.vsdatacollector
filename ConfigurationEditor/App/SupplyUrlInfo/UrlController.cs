@@ -27,7 +27,8 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 	public class UrlController : IGetUrlInfo,
 		IEventHandler<UrlValidatedEvent>,
 		IEventHandler<SettingsLoadedEvent>,
-		IEventHandler<ResetEvent>
+		IEventHandler<ResetEvent>,
+		IEventHandler<SaveDataEvent>
 	{
 		private static readonly List<string> _schemes = new List<string> {Uri.UriSchemeHttp, Uri.UriSchemeHttps};
 		private IApplicationController AppController { get; set; }
@@ -139,6 +140,13 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 			CurrentUrl = new UrlInfo(DefaultUrl);
 
 			View.Update(CurrentUrl);
+		}
+
+		public void Handle(SaveDataEvent eventData)
+		{
+			var config = eventData.Settings.Configuration;
+
+			config.UpdateTagWithNewValue(UrlInfo.TAG_NAME, CurrentUrl.ToXmlNode());
 		}
 	}
 }
