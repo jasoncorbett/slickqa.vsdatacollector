@@ -12,61 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Reflection;
-using System.Xml;
-using System.Xml.Serialization;
 
 namespace SlickQA.DataCollector.Models
 {
 	public sealed class BuildProviderInfo
 	{
-		public string AssemblyName { get; set; }
-		public string Directory { get; set; }
-		public MethodInfo Method { get; set; }
+		public string AssemblyName { get; private set; }
+		public string Directory { get; private set; }
+		public MethodInfo Method { get; private set; }
 
 		public BuildProviderInfo(string assemblyName, string directory, MethodInfo method)
 		{
 			AssemblyName = assemblyName;
 			Directory = directory;
 			Method = method;
-		}
-
-		public BuildProviderInfo(BuildProviderInfo other)
-			:this(other.AssemblyName, other.Directory, other.Method)
-		{
-		}
-
-		public BuildProviderInfo(XmlNodeList elements)
-		{
-
-			try
-			{
-				//TODO: Figure out how to serialize the MethodInfo
-			}
-			catch (IndexOutOfRangeException)
-			{
-				InitializeWithDefaults();
-			}
-			catch(InvalidOperationException)
-			{
-				InitializeWithDefaults();
-			}
-		}
-
-		private void InitializeWithDefaults()
-		{
-			AssemblyName = string.Empty;
-			Directory = string.Empty;
-			Method = null;
-		}
-
-		public XmlNode ToXmlNode()
-		{
-			var serializer = new XmlSerializer(GetType());
-			XmlNode node = new XmlDocument();
-			serializer.Serialize(node.CreateNavigator().AppendChild(), this);
-			return node;
 		}
 	}
 }

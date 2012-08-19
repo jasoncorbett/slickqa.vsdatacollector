@@ -55,7 +55,7 @@ namespace SlickQA.DataCollector.Repositories
 
 		#endregion
 
-		public void Load(string projectId)
+		private void Load(string projectId)
 		{
 			string listUrl = string.Format("projects/{0}/releases", projectId);
 			if (Releases.ContainsKey(projectId))

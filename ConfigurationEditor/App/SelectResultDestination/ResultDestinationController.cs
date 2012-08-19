@@ -35,6 +35,8 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SelectResultDestination
 			AppController = appController;
 			ProjectRepository = projectRepository;
 			ReleaseRepository = releaseRepository;
+			Project = new ProjectInfo();
+			Release = new ReleaseInfo();
 		}
 
 		private IResultDestinationView View { get; set; }

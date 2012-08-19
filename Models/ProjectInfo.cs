@@ -12,10 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Xml;
 using System.Xml.Serialization;
 
 namespace SlickQA.DataCollector.Models
@@ -23,16 +20,16 @@ namespace SlickQA.DataCollector.Models
 	public sealed class ProjectInfo
 	{
 		public string Id { get; set; }
-		public string Name { get; set; }
+		public string Name { get; private set; }
 
 		[XmlIgnore]
-		public string Description { get; set; }
+		public string Description { get; private set; }
 		[XmlIgnore]
-		public string ReleaseName { get; set; }
+		public string ReleaseName { get; private set; }
 		[XmlIgnore]
-		public List<string> Tags { get; set; }
+		public List<string> Tags { get; private set; }
 
-		public ProjectInfo(string id, string name, string description, string releaseName, List<String> tags)
+		public ProjectInfo(string id, string name, string description, string releaseName, List<string> tags)
 		{
 			Id = id;
 			Name = name;
@@ -41,50 +38,13 @@ namespace SlickQA.DataCollector.Models
 			Tags = tags;
 		}
 
-		public ProjectInfo(ProjectInfo other)
-			:this(other.Id, other.Name, other.Description, other.ReleaseName, other.Tags)
-		{
-		}
-
-		public ProjectInfo(XmlNodeList elements)
-		{
-			try
-			{
-				XmlReader reader = new XmlNodeReader(elements[0]);
-				var serializer = new XmlSerializer(typeof(ProjectInfo));
-				var project = serializer.Deserialize(reader) as ProjectInfo;
-				Debug.Assert(project != null, "project != null");
-				Id = project.Id;
-				Name = project.Name;
-				Description = string.Empty;
-				ReleaseName = string.Empty;
-				Tags = new List<string>();
-			}
-			catch (IndexOutOfRangeException)
-			{
-				InitializeWithDefaults();
-			}
-			catch(InvalidOperationException)
-			{
-				InitializeWithDefaults();
-			}
-		}
-
-		private void InitializeWithDefaults()
+		public ProjectInfo()
 		{
 			Id = string.Empty;
 			Name = string.Empty;
 			Description = string.Empty;
 			ReleaseName = string.Empty;
 			Tags = new List<string>();
-		}
-
-		public XmlNode ToXmlNode()
-		{
-			var serializer = new XmlSerializer(GetType());
-			XmlNode node = new XmlDocument();
-			serializer.Serialize(node.CreateNavigator().AppendChild(), this);
-			return node;
 		}
 	}
 }

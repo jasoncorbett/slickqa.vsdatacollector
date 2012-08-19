@@ -13,9 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Diagnostics;
-using System.Xml;
-using System.Xml.Serialization;
 
 namespace SlickQA.DataCollector.Models
 {
@@ -26,42 +23,9 @@ namespace SlickQA.DataCollector.Models
 		public int Port { get; set; }
 		public string SitePath { get; set; }
 
-		public UrlInfo(string scheme, string hostName, int port, string sitePath)
+		public UrlInfo()
 		{
-			Scheme = scheme;
-			HostName = hostName;
-			Port = port;
-			SitePath = sitePath;
-		}
-
-		public UrlInfo(UrlInfo other)
-			:this(other.Scheme, other.HostName, other.Port, other.SitePath)
-		{
-		}
-
-		public UrlInfo(XmlNodeList elements)
-		{
-			try
-			{
-				XmlReader reader = new XmlNodeReader(elements[0]);
-				var serializer = new XmlSerializer(GetType());
-				var currentUrl = serializer.Deserialize(reader) as UrlInfo;
-				Debug.Assert(currentUrl != null, "currentUrl != null");
-				Scheme = currentUrl.Scheme;
-				HostName = currentUrl.HostName;
-				Port = currentUrl.Port;
-				SitePath = currentUrl.SitePath;
-			}
-			catch (IndexOutOfRangeException e)
-			{
-				//Create a default UrlInfo since none was specified in the xml
-				InitializeWithDefaults();
-			}
-			catch (InvalidOperationException e)
-			{
-				//Create a default UrlInfo since we can't read from the Xml
-				InitializeWithDefaults();
-			}
+			InitializeWithDefaults();
 		}
 
 		public string DisplayName
@@ -87,19 +51,9 @@ namespace SlickQA.DataCollector.Models
 		private void InitializeWithDefaults()
 		{
 			Scheme = Uri.UriSchemeHttp;
-			HostName = String.Empty;
+			HostName = string.Empty;
 			Port = 8080;
-			SitePath = String.Empty;
+			SitePath = string.Empty;
 		}
-
-		public XmlNode ToXmlNode()
-		{
-			var serializer = new XmlSerializer(GetType());
-			XmlNode node = new XmlDocument();
-			serializer.Serialize(node.CreateNavigator().AppendChild(), this);
-			return node;
-		}
-
-		public const string TAG_NAME = "Url";
 	}
 }

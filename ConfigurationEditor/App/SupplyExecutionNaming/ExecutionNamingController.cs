@@ -14,7 +14,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
 using SlickQA.DataCollector.ConfigurationEditor.AppController;
 using SlickQA.DataCollector.ConfigurationEditor.Commands;
 using SlickQA.DataCollector.ConfigurationEditor.Events;

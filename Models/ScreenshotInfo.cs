@@ -12,48 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Diagnostics;
-using System.Xml;
-using System.Xml.Serialization;
-
 namespace SlickQA.DataCollector.Models
 {
 	public class ScreenshotInfo
 	{
-		public ScreenshotInfo(bool preTest, bool postTest, bool failedTest)
+		public ScreenshotInfo()
 		{
-			PreTest = preTest;
-			PostTest = postTest;
-			FailedTest = failedTest;
-		}
-
-		public ScreenshotInfo(ScreenshotInfo other)
-			:this(other.PreTest, other.PostTest, other.FailedTest)
-		{
-			
-		}
-
-		public ScreenshotInfo(XmlNodeList elements)
-		{
-			try
-			{
-				XmlReader reader = new XmlNodeReader(elements[0]);
-				var serializer = new XmlSerializer(typeof(ScreenshotInfo));
-				var settings = serializer.Deserialize(reader) as ScreenshotInfo;
-				Debug.Assert(settings != null, "settings != null");
-				PreTest = settings.PreTest;
-				PostTest = settings.PostTest;
-				FailedTest = settings.FailedTest;
-			}
-			catch (IndexOutOfRangeException)
-			{
-				InitializeWithDefaults();
-			}
-			catch (InvalidOperationException)
-			{
-				InitializeWithDefaults();
-			}
+			InitializeWithDefaults();
 		}
 
 		private void InitializeWithDefaults()
@@ -63,16 +28,8 @@ namespace SlickQA.DataCollector.Models
 			FailedTest = true;
 		}
 
-		public bool PreTest { get; set; }
-		public bool PostTest { get; set; }
-		public bool FailedTest { get; set; }
-
-		public XmlNode ToXmlNode()
-		{
-			var serializer = new XmlSerializer(GetType());
-			XmlNode node = new XmlDocument();
-			serializer.Serialize(node.CreateNavigator().AppendChild(), this);
-			return node;
-		}
+		public bool PreTest { private get; set; }
+		public bool PostTest { private get; set; }
+		public bool FailedTest { private get; set; }
 	}
 }

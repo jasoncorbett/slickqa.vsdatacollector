@@ -15,7 +15,6 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Xml;
 using SlickQA.DataCollector.ConfigurationEditor.AppController;
 using SlickQA.DataCollector.ConfigurationEditor.Commands;
 using SlickQA.DataCollector.ConfigurationEditor.Events;
@@ -32,7 +31,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 		private IApplicationController AppController { get; set; }
 		private ISetUrlView View { get; set; }
 		private IUrlRepository UrlRepository { get; set; }
-		private UrlInfo DefaultUrlInfo { get; set; }
 		private UrlInfo CurrentUrlInfo { get; set; }
 
 		public UrlController(ISetUrlView view, IApplicationController appController, IUrlRepository repository)
@@ -41,6 +39,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 			View.Controller = this;
 			AppController = appController;
 			UrlRepository = repository;
+			CurrentUrlInfo = new UrlInfo();
 		}
 
 

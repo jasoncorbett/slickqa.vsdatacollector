@@ -12,19 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Xml;
-using System.Xml.Serialization;
-
 namespace SlickQA.DataCollector.Models
 {
 	public sealed class ReleaseInfo
 	{
 		public string Id { get; set; }
-		public string Name { get; set; }
-		public string ProjectId { get; set; }
+		public string Name { get; private set; }
+		public string ProjectId { get; private set; }
 
 		public ReleaseInfo(string id, string name, string projectId)
 		{
@@ -33,46 +27,11 @@ namespace SlickQA.DataCollector.Models
 			ProjectId = projectId;
 		}
 
-		public ReleaseInfo(ReleaseInfo other)
-			:this(other.Id, other.Name, other.ProjectId)
-		{
-		}
-
-		public ReleaseInfo(XmlNodeList elements)
-		{
-			try
-			{
-				XmlReader reader = new XmlNodeReader(elements[0]);
-				var serializer = new XmlSerializer(typeof(ReleaseInfo));
-				var release = serializer.Deserialize(reader) as ReleaseInfo;
-				Debug.Assert(release != null, "release != null");
-				Id = release.Id;
-				Name = release.Name;
-				ProjectId = release.ProjectId;
-			}
-			catch (IndexOutOfRangeException)
-			{
-				InitializeWithDefaults();
-			}
-			catch(InvalidOperationException)
-			{
-				InitializeWithDefaults();
-			}
-		}
-
-		private void InitializeWithDefaults()
+		public ReleaseInfo()
 		{
 			Id = string.Empty;
 			Name = string.Empty;
 			ProjectId = string.Empty;
-		}
-
-		public XmlNode ToXmlNode()
-		{
-			var serializer = new XmlSerializer(GetType());
-			XmlNode node = new XmlDocument();
-			serializer.Serialize(node.CreateNavigator().AppendChild(), this);
-			return node;
 		}
 	}
 }
