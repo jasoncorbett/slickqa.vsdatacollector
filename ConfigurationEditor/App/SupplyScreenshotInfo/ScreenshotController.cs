@@ -12,21 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Xml;
-using SlickQA.DataCollector.ConfigurationEditor.Events;
-using SlickQA.DataCollector.EventAggregator;
 using SlickQA.DataCollector.Models;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyScreenshotInfo
 {
-	public class ScreenshotController : IEventHandler<SettingsLoadedEvent>, IEventHandler<ResetEvent>, IEventHandler<SaveDataEvent>
+	public class ScreenshotController
 	{
-		private ScreenshotInfo DefaultScreenshot { get; set; }
 		private ScreenshotInfo CurrentScreenshot { get; set; }
 		private IScreenshotView View { get; set; }
 
 		public ScreenshotController(IScreenshotView view)
 		{
+			CurrentScreenshot = new ScreenshotInfo();
 			View = view;
 			View.Controller = this;
 		}
@@ -44,44 +41,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyScreenshotInfo
 		public void FailureSettingSupplied(bool failedTestState)
 		{
 			CurrentScreenshot.FailedTest = failedTestState;
-		}
-
-		public void Handle(SettingsLoadedEvent eventData)
-		{
-			CurrentScreenshot = GetScreenshotInfoFromConfig(eventData.Settings.Configuration);
-			DefaultScreenshot = GetScreenshotInfoFromConfig(eventData.Settings.DefaultConfiguration);
-
-			View.Update(CurrentScreenshot.PreTest, CurrentScreenshot.PostTest, CurrentScreenshot.FailedTest);
-		}
-
-
-		public void Handle(ResetEvent eventData)
-		{
-			CurrentScreenshot = new ScreenshotInfo(DefaultScreenshot);
-			View.Update(CurrentScreenshot.PreTest, CurrentScreenshot.PostTest, CurrentScreenshot.FailedTest);
-		}
-
-
-		public void Handle(SaveDataEvent eventData)
-		{
-			var config = eventData.Settings.Configuration;
-
-			var node = CurrentScreenshot.ToXmlNode();
-
-			XmlNodeList elements = config.GetElementsByTagName("Screenshot");
-			if (elements.Count != 0)
-			{
-				config.ReplaceChild(node, elements[0]);
-			}
-			else
-			{
-				config.AppendChild(node);
-			}
-		}
-
-		private static ScreenshotInfo GetScreenshotInfoFromConfig(XmlElement xmlElement)
-		{
-			return new ScreenshotInfo(xmlElement.GetElementsByTagName("Screenshot"));
 		}
 	}
 }

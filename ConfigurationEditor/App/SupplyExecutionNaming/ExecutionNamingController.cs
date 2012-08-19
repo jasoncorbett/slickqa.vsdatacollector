@@ -27,10 +27,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming
 	public class ExecutionNamingController :
 		IEventHandler<ProjectSelectedEvent>,
 		IEventHandler<TestPlansLoadedEvent>,
-		IEventHandler<TestPlanAddedEvent>,
-		IEventHandler<SettingsLoadedEvent>,
-		IEventHandler<SaveDataEvent>,
-		IEventHandler<ResetEvent>
+		IEventHandler<TestPlanAddedEvent>
 	{
 		public ExecutionNamingController(IExecutionNamingView view, IApplicationController appController, ITestPlanRepository repository)
 		{
@@ -38,6 +35,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming
 			View.Controller = this;
 			AppController = appController;
 			Repository = repository;
+			CurrentTestPlan = new TestPlanInfo();
 		}
 
 		private IApplicationController AppController { get; set; }
@@ -45,7 +43,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming
 		private ProjectInfo Project { get; set; }
 		private IExecutionNamingView View { get; set; }
 		private TestPlanInfo CurrentTestPlan { get; set; }
-		private TestPlanInfo DefaultTestPlan { get; set; }
 
 		public void TestPlanSupplied(TestPlanInfo testPlan)
 		{
@@ -80,42 +77,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming
 			View.DisplayPlans(testPlans);
 
 			View.SelectPlan(eventData.TestPlan);
-		}
-
-		public void Handle(SettingsLoadedEvent eventData)
-		{
-			CurrentTestPlan = GetTestPlanFromConfig(eventData.Settings.Configuration);
-			DefaultTestPlan = GetTestPlanFromConfig(eventData.Settings.DefaultConfiguration);
-
-			View.SelectPlan(CurrentTestPlan);
-		}
-
-		private TestPlanInfo GetTestPlanFromConfig(XmlElement configuration)
-		{
-			return new TestPlanInfo(configuration.GetElementsByTagName(TestPlanInfo.TAG_NAME));
-		}
-
-		public void Handle(SaveDataEvent eventData)
-		{
-			var config = eventData.Settings.Configuration;
-
-			var node = CurrentTestPlan.ToXmlNode();
-
-			XmlNodeList elements = config.GetElementsByTagName(TestPlanInfo.TAG_NAME);
-			if (elements.Count != 0)
-			{
-				config.ReplaceChild(node, elements[0]);
-			}
-			else
-			{
-				config.AppendChild(node);
-			}
-		}
-
-		public void Handle(ResetEvent eventData)
-		{
-			CurrentTestPlan = new TestPlanInfo(DefaultTestPlan);
-			View.DisplayPlans(new List<TestPlanInfo>());
 		}
 	}
 }

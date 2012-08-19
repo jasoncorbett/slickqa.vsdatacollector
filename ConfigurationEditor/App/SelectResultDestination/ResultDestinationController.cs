@@ -13,8 +13,6 @@
 // limitations under the License.
 
 using System.Collections.Generic;
-using System.Linq;
-using System.Xml;
 using SlickQA.DataCollector.ConfigurationEditor.AppController;
 using SlickQA.DataCollector.ConfigurationEditor.Commands;
 using SlickQA.DataCollector.ConfigurationEditor.Events;
@@ -24,9 +22,11 @@ using SlickQA.DataCollector.Repositories;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.App.SelectResultDestination
 {
-	public class ResultDestinationController : IEventHandler<ProjectAddedEvent>, 
-		IEventHandler<ReleaseAddedEvent>, IEventHandler<ProjectSelectedEvent>, 
-		IEventHandler<ProjectsLoadedEvent>, IEventHandler<SettingsLoadedEvent>
+	public class ResultDestinationController :
+		IEventHandler<ProjectsLoadedEvent>,
+		IEventHandler<ProjectAddedEvent>,
+		IEventHandler<ProjectSelectedEvent>, 
+		IEventHandler<ReleaseAddedEvent>
 	{
 		public ResultDestinationController(IResultDestinationView view, IApplicationController appController, IProjectRepository projectRepository, IReleaseRepository releaseRepository)
 		{
@@ -93,14 +93,5 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SelectResultDestination
 			View.LoadProjectList(ProjectRepository.GetProjects());
 			View.EnableAddProjectButton();
 		}
-
-		public void Handle(SettingsLoadedEvent eventData)
-		{
-			Config = eventData.Settings.Configuration;
-			DefaultConfig = eventData.Settings.DefaultConfiguration;
-		}
-
-		private XmlElement DefaultConfig { get; set; }
-		private XmlElement Config { get; set; }
 	}
 }

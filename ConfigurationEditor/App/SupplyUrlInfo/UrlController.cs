@@ -26,10 +26,7 @@ using SlickQA.DataCollector.Repositories;
 namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 {
 	public class UrlController : IGetUrlInfo,
-		IEventHandler<UrlValidatedEvent>,
-		IEventHandler<SettingsLoadedEvent>,
-		IEventHandler<SaveDataEvent>,
-		IEventHandler<ResetEvent>
+		IEventHandler<UrlValidatedEvent>
 	{
 		private static readonly List<string> _schemes = new List<string> {Uri.UriSchemeHttp, Uri.UriSchemeHttps};
 		private IApplicationController AppController { get; set; }
@@ -77,9 +74,10 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 			AppController.Execute(new RetrieveProjectsData());
 		}
 
+
+		//TODO: Fix URL Load and Config Handling
 		public void Load()
 		{
-			//TODO: Need to load config here possibly.
 			View.LoadSchemes(_schemes);
 			View.SetPort(8080);
 		}
@@ -123,47 +121,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 		public void Handle(UrlValidatedEvent eventData)
 		{
 			UrlRepository.SetUrl(eventData.UrlInfo);
-		}
-
-		//TODO: Fix URL Load and Config Handling
-
-		public void Handle(SettingsLoadedEvent eventData)
-		{
-			CurrentUrlInfo = GetUrlFromConfig(eventData.Settings.Configuration);
-			DefaultUrlInfo = GetUrlFromConfig(eventData.Settings.DefaultConfiguration);
-
-			View.LoadSchemes(_schemes);
-			View.Update(CurrentUrlInfo.Scheme, CurrentUrlInfo.HostName, CurrentUrlInfo.Port, CurrentUrlInfo.SitePath);
-		}
-
-		private static UrlInfo GetUrlFromConfig(XmlElement xmlElement)
-		{
-			return new UrlInfo(xmlElement.GetElementsByTagName(UrlInfo.TAG_NAME));
-		}
-
-		public void Handle(SaveDataEvent eventData)
-		{
-			var config = eventData.Settings.Configuration;
-
-			var node = CurrentUrlInfo.ToXmlNode();
-
-			XmlNodeList elements = config.GetElementsByTagName(UrlInfo.TAG_NAME);
-			if (elements.Count != 0)
-			{
-				config.ReplaceChild(node, elements[0]);
-			}
-			else
-			{
-				config.AppendChild(node);
-			}
-		}
-
-		public void Handle(ResetEvent eventData)
-		{
-			CurrentUrlInfo = new UrlInfo(DefaultUrlInfo);
-
-			View.LoadSchemes(_schemes);
-			View.Update(CurrentUrlInfo.Scheme, CurrentUrlInfo.HostName, CurrentUrlInfo.Port, CurrentUrlInfo.SitePath);
 		}
 	}
 }

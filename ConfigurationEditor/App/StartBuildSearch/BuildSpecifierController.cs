@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Xml;
 using SlickQA.DataCollector.ConfigurationEditor.AppController;
 using SlickQA.DataCollector.ConfigurationEditor.Commands;
 using SlickQA.DataCollector.ConfigurationEditor.Events;
@@ -20,7 +19,7 @@ using SlickQA.DataCollector.EventAggregator;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.App.StartBuildSearch
 {
-	public class BuildSpecifierController : IEventHandler<BuildProviderSelectedEvent>, IEventHandler<SettingsLoadedEvent>
+	public class BuildSpecifierController : IEventHandler<BuildProviderSelectedEvent>
 	{
 		public BuildSpecifierController(IBuildSpecifierView view, IApplicationController appController)
 		{
@@ -54,13 +53,5 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.StartBuildSearch
 
 			View.SetProviderText(p.Directory+"\\"+ p.AssemblyName + ":" + fullMethodName);
 		}
-		public void Handle(SettingsLoadedEvent eventData)
-		{
-			Config = eventData.Settings.Configuration;
-			DefaultConfig = eventData.Settings.DefaultConfiguration;
-		}
-
-		private XmlElement DefaultConfig { get; set; }
-		private XmlElement Config { get; set; }
 	}
 }
