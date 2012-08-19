@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo;
+using SlickQA.DataCollector.Models;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.View
 {
@@ -47,12 +48,12 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 			_port.Value = portNumber;
 		}
 
-		public void Update(string scheme, string hostName, int port, string sitePath)
+		public void Update(UrlInfo url)
 		{
-			_scheme.SelectedItem = scheme;
-			_host.Text = hostName;
-			_port.Value = port;
-			_sitePath.Text = sitePath;
+			_scheme.SelectedItem = url.Scheme;
+			_host.Text = url.HostName;
+			_port.Value = url.Port;
+			_sitePath.Text = url.SitePath;
 		}
 
 		#endregion

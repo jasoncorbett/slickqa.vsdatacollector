@@ -80,6 +80,11 @@ namespace SlickQA.DataCollector.Models
 			}
 		}
 
+		public ProjectInfo(ProjectInfo other)
+			:this(other.Id,other.Name,other.Description,other.ReleaseName,new List<string>(other.Tags))
+		{
+		}
+
 		public static ProjectInfo FromXml(XmlElement configuration)
 		{
 			return new ProjectInfo(configuration.GetElementsByTagName(TAG_NAME));

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Collections.Generic;
+using SlickQA.DataCollector.Models;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 {
@@ -23,6 +24,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 		void EnableButton(bool state);
 		void LoadSchemes(List<string> schemes);
 		void SetPort(int portNumber);
-		void Update(string scheme, string hostName, int port, string sitePath);
+		void Update(UrlInfo url);
 	}
 }

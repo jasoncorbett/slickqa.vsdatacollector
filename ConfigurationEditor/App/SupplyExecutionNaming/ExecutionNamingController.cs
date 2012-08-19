@@ -27,7 +27,8 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming
 		IEventHandler<ProjectSelectedEvent>,
 		IEventHandler<TestPlansLoadedEvent>,
 		IEventHandler<TestPlanAddedEvent>,
-		IEventHandler<SettingsLoadedEvent>
+		IEventHandler<SettingsLoadedEvent>,
+		IEventHandler<ResetEvent>
 	{
 		private IApplicationController AppController { get; set; }
 		private ITestPlanRepository Repository { get; set; }
@@ -85,6 +86,13 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming
 		{
 			CurrentTestPlan = TestPlanInfo.FromXml(eventData.Settings.Configuration);
 			DefaultTestPlan = TestPlanInfo.FromXml(eventData.Settings.DefaultConfiguration);
+		}
+
+		public void Handle(ResetEvent eventData)
+		{
+			CurrentTestPlan = new TestPlanInfo(DefaultTestPlan);
+
+			View.SelectPlan(CurrentTestPlan);
 		}
 	}
 }

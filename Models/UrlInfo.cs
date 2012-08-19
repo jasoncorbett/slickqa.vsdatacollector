@@ -55,6 +55,19 @@ namespace SlickQA.DataCollector.Models
 			}
 		}
 
+		public UrlInfo(UrlInfo other)
+			:this(other.Scheme, other.HostName, other.Port, other.SitePath)
+		{
+		}
+
+		private UrlInfo(string scheme, string hostName, int port, string sitePath)
+		{
+			Scheme = scheme;
+			HostName = hostName;
+			Port = port;
+			SitePath = sitePath;
+		}
+
 		public string DisplayName
 		{
 			get { return String.Format("{0}://{1}:{2}/{3}", Scheme, HostName, Port, !String.IsNullOrWhiteSpace(SitePath) ? SitePath + "/" : String.Empty); }

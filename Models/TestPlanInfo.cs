@@ -63,6 +63,11 @@ namespace SlickQA.DataCollector.Models
 			}
 		}
 
+		public TestPlanInfo(TestPlanInfo other)
+			:this(other.Id, other.Name, other.ProjectId, other.CreatedBy)
+		{
+		}
+
 		private void InitializeWithDefaults()
 		{
 			Id = string.Empty;

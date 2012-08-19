@@ -61,16 +61,40 @@ namespace SlickQA.DataCollector.Models
 			InitializeWithDefaults();
 		}
 
+		public BuildProviderInfo(BuildProviderInfo other)
+			:this(other.AssemblyName, other.Directory, other.Method)
+		{
+		}
+
 		private void InitializeWithDefaults()
 		{
-			AssemblyName = string.Empty;
-			Directory = string.Empty;
+			AssemblyName = String.Empty;
+			Directory = String.Empty;
 			Method = null;
 		}
 
 		public static BuildProviderInfo FromXml(XmlElement configuration)
 		{
 			return new BuildProviderInfo(configuration.GetElementsByTagName(TAG_NAME));
+		}
+
+		private string FullMethodName()
+		{
+			string fullMethodName;
+			if (Method.DeclaringType != null)
+			{
+				fullMethodName = Method.DeclaringType.FullName + "." + Method.Name;
+			}
+			else
+			{
+				fullMethodName = Method.Name;
+			}
+			return fullMethodName;
+		}
+
+		public override string ToString()
+		{
+			return string.Format("{0}\\{1}:{2}", Directory, AssemblyName, FullMethodName());
 		}
 	}
 }

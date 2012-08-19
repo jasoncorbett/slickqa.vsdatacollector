@@ -67,6 +67,11 @@ namespace SlickQA.DataCollector.Models
 			}
 		}
 
+		public ReleaseInfo(ReleaseInfo other)
+			:this(other.Id, other.Name, other.ProjectId)
+		{
+		}
+
 		public static ReleaseInfo FromXml(XmlElement configuration)
 		{
 			return new ReleaseInfo(configuration.GetElementsByTagName(TAG_NAME));
