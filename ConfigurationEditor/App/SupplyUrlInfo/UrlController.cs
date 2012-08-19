@@ -19,9 +19,9 @@ using System.Xml;
 using SlickQA.DataCollector.ConfigurationEditor.AppController;
 using SlickQA.DataCollector.ConfigurationEditor.Commands;
 using SlickQA.DataCollector.ConfigurationEditor.Events;
+using SlickQA.DataCollector.ConfigurationEditor.Repositories;
 using SlickQA.DataCollector.EventAggregator;
 using SlickQA.DataCollector.Models;
-using SlickQA.SlickSharp.Web;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 {
@@ -32,18 +32,21 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 		IEventHandler<ResetEvent>
 	{
 		private static readonly List<string> _schemes = new List<string> {Uri.UriSchemeHttp, Uri.UriSchemeHttps};
+		private IApplicationController AppController { get; set; }
+		private ISetUrlView View { get; set; }
+		private IUrlRepository UrlRepository { get; set; }
 		private UrlInfo DefaultUrlInfo { get; set; }
 		private UrlInfo CurrentUrlInfo { get; set; }
 
-		public UrlController(ISetUrlView view, IApplicationController appController)
+		public UrlController(ISetUrlView view, IApplicationController appController, IUrlRepository repository)
 		{
 			View = view;
 			View.Controller = this;
 			AppController = appController;
+			UrlRepository = repository;
 		}
 
-		private IApplicationController AppController { get; set; }
-		private ISetUrlView View { get; set; }
+
 
 		public void SchemeSupplied(string scheme)
 		{
@@ -119,10 +122,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 
 		public void Handle(UrlValidatedEvent eventData)
 		{
-			ServerConfig.Scheme = eventData.UrlInfo.Scheme;
-			ServerConfig.SlickHost = eventData.UrlInfo.HostName;
-			ServerConfig.Port = eventData.UrlInfo.Port;
-			ServerConfig.SitePath = eventData.UrlInfo.SitePath;
+			UrlRepository.SetUrl(eventData.UrlInfo);
 		}
 
 		//TODO: Fix URL Load and Config Handling

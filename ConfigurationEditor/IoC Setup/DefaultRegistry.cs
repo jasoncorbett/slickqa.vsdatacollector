@@ -68,6 +68,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.IoC_Setup
 
 			//Repositories
 			For<IProjectRepository>().Singleton().Use<WebProjectRepository>();
+			For<IUrlRepository>().Singleton().Use<StaticUrlRepository>();
 			For<ITestPlanRepository>().Singleton().Use<WebTestPlanRepository>();
 			
 			// Application Level Config
