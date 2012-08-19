@@ -20,7 +20,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Repositories
 {
 	public interface ITestPlanRepository
 	{
-		IEnumerable<TestPlan> GetPlans(string projectId);
+		IEnumerable<TestPlanInfo> GetPlans(string projectId);
 		void Load(string projectId);
 		string AddTestPlan(TestPlanInfo info);
 	}

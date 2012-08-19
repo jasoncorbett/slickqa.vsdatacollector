@@ -30,7 +30,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 		{
 			InitializeComponent();
 
-			Plans = new BindingList<TestPlan>();
+			Plans = new BindingList<TestPlanInfo>();
 
 			_bs = new BindingSource {DataSource = Plans};
 
@@ -38,7 +38,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 			_planComboBox.DataSource = _bs;
 		}
 
-		private BindingList<TestPlan> Plans { get; set; }
+		private BindingList<TestPlanInfo> Plans { get; set; }
 
 		#region IExecutionNamingView Members
 
@@ -59,10 +59,10 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 			_planComboBox.SelectedItem = plan;
 		}
 
-		public void DisplayPlans(IEnumerable<TestPlan> plans)
+		public void DisplayPlans(IEnumerable<TestPlanInfo> plans)
 		{
 			Plans.Clear();
-			foreach (TestPlan testPlan in plans)
+			foreach (TestPlanInfo testPlan in plans)
 			{
 				Plans.Add(testPlan);
 			}
@@ -77,7 +77,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 
 		private void PlanComboBoxSelectedIndexChanged(object sender, EventArgs e)
 		{
-			var testPlan = _planComboBox.SelectedItem as TestPlan;
+			var testPlan = _planComboBox.SelectedItem as TestPlanInfo;
 			if (testPlan != null)
 			{
 				Controller.TestPlanSupplied(testPlan);

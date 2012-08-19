@@ -54,7 +54,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Repositories
 			}
 		}
 
-		private List<ReleaseInfo> ConvertToReleaseInfo(List<Release> releases, string projectId)
+		private static List<ReleaseInfo> ConvertToReleaseInfo(IEnumerable<Release> releases, string projectId)
 		{
 			return releases.Select(release => new ReleaseInfo(release.Id, release.Name, projectId)).ToList();
 		}

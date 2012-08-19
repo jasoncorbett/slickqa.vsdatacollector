@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Collections.Generic;
+using System.Linq;
 using SlickQA.DataCollector.Models;
 using SlickQA.SlickSharp;
 
@@ -23,11 +24,11 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Repositories
 		public WebTestPlanRepository()
 		{
 			RefreshTestPlans = new Dictionary<string, bool>();
-			TestPlans = new Dictionary<string, List<TestPlan>>();
+			TestPlans = new Dictionary<string, List<TestPlanInfo>>();
 		}
 
 		private Dictionary<string, bool> RefreshTestPlans { get; set; }
-		private Dictionary<string, List<TestPlan>> TestPlans { get; set; }
+		private Dictionary<string, List<TestPlanInfo>> TestPlans { get; set; }
 
 		#region ITestPlanRepository Members
 
@@ -54,7 +55,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Repositories
 			return testPlan.Id;
 		}
 
-		IEnumerable<TestPlan> ITestPlanRepository.GetPlans(string projectId)
+		IEnumerable<TestPlanInfo> ITestPlanRepository.GetPlans(string projectId)
 		{
 			if (RefreshTestPlans[projectId])
 			{
@@ -68,14 +69,19 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Repositories
 			string listUrl = string.Format("testplans?projectid={0}", projectId);
 			if (TestPlans.ContainsKey(projectId))
 			{
-				TestPlans[projectId] = TestPlan.GetList(listUrl);
+				TestPlans[projectId] = ConvertToTestPlanInfo(TestPlan.GetList(listUrl));
 				RefreshTestPlans[projectId] = false;
 			}
 			else
 			{
-				TestPlans.Add(projectId, TestPlan.GetList(listUrl));
+				TestPlans.Add(projectId, ConvertToTestPlanInfo(TestPlan.GetList(listUrl)));
 				RefreshTestPlans.Add(projectId, false);
 			}
+		}
+
+		private List<TestPlanInfo> ConvertToTestPlanInfo(List<TestPlan> testPlans)
+		{
+			return testPlans.Select(t => new TestPlanInfo(t.Id, t.Name, t.ProjectReference.Id, t.CreatedBy)).ToList();
 		}
 
 		#endregion

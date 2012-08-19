@@ -21,7 +21,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming
 	public interface IExecutionNamingView
 	{
 		ExecutionNamingController Controller { set; }
-		void DisplayPlans(IEnumerable<TestPlan> plans);
+		void DisplayPlans(IEnumerable<TestPlanInfo> plans);
 		void EnableAddPlanButton();
 		void EnablePlanComboBox(bool state);
 		void SelectPlan(TestPlanInfo plan);

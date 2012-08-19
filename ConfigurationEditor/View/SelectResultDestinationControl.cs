@@ -116,7 +116,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 
 		private void AddReleaseClick(object sender, EventArgs e)
 		{
-			Controller.AddRelease(_project.SelectedItem as Project);
+			Controller.AddRelease(_project.SelectedItem as ProjectInfo);
 		}
 	}
 }

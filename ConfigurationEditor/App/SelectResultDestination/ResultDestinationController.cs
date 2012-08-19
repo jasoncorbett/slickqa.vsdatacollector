@@ -62,7 +62,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SelectResultDestination
 			AppController.Execute(new AddNewProjectData());
 		}
 
-		public void AddRelease(Project currentProject)
+		public void AddRelease(ProjectInfo currentProject)
 		{
 			AppController.Execute(new AddNewReleaseData(currentProject.Id));
 		}

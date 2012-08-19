@@ -67,6 +67,8 @@
     <Compile Include="Events\SettingsLoadedEvent.cs" />
     <Compile Include="Events\TestPlanAddedEvent.cs" />
     <Compile Include="Events\TestPlansLoadedEvent.cs" />
+    <Compile Include="Repositories\IUrlRepository.cs" />
+    <Compile Include="Repositories\StaticUrlRepository.cs" />
     <Compile Include="Repositories\WebReleaseRepository.cs" />
     <Compile Include="Repositories\ITestPlanRepository.cs" />
     <Compile Include="Repositories\WebTestPlanRepository.cs" />
