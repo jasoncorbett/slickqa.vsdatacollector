@@ -24,32 +24,35 @@ namespace SlickQA.SlickSharp
 	[ItemApiPath("", "Id", 0)]
 	public sealed class TestRun : JsonObject<TestRun>, IJsonObject, IEquatable<TestRun>
 	{
-		[DataMember(Name = "id")]
-		public String Id;
-
-		[DataMember(Name = "testplanId")]
-		public String TestPlanId;
-
-		[DataMember(Name = "name")]
-		public String Name;
+		[DataMember(Name = "build")]
+		public BuildReference BuildReference;
 
 		[DataMember(Name = "config")]
 		public ConfigurationReference ConfigurationReference;
 
-		[DataMember(Name = "runtimeOptions")]
-		public ConfigurationReference runtimeOptions;
+		[DataMember(Name = "dateCreated")]
+		public DateTime Created;
+
+		[IgnoreDataMember] // TODO: Turn this into a real data member once the server side testrun has the appropriate field
+			public bool Finished;
+
+		[DataMember(Name = "id")]
+		public String Id;
+
+		[DataMember(Name = "name")]
+		public String Name;
 
 		[DataMember(Name = "project")]
 		public ProjectReference ProjectReference;
 
-		[DataMember(Name = "dateCreated")]
-		public DateTime Created;
-
 		[DataMember(Name = "release")]
 		public ReleaseReference ReleaseReference;
 
-		[DataMember(Name = "build")]
-		public BuildReference BuildReference;
+		[DataMember(Name = "testplanId")]
+		public String TestPlanId;
+
+		[DataMember(Name = "runtimeOptions")]
+		public ConfigurationReference runtimeOptions;
 
 		#region IEquatable<TestRun> Members
 

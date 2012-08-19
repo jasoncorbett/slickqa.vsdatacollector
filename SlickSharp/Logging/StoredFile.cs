@@ -26,23 +26,23 @@ namespace SlickQA.SlickSharp.Logging
 	[CollectionApiPath("files")]
 	public sealed class StoredFile : JsonObject<StoredFile>, IJsonObject
 	{
-		[DataMember(Name = "id")]
-		public String Id;
-
 		[DataMember(Name = "filename")]
 		public String FileName;
 
-		[DataMember(Name = "uploadDate")]
-		public DateTime UploadDate;
+		[DataMember(Name = "id")]
+		public String Id;
 
-		[DataMember(Name = ("mimetype"))]
-		public String Mimetype;
+		[DataMember(Name = "length")]
+		public int Length;
 
 		[DataMember(Name = "md5")]
 		public String Md5;
 
-		[DataMember(Name = "length")]
-		public int Length;
+		[DataMember(Name = ("mimetype"))]
+		public String Mimetype;
+
+		[DataMember(Name = "uploadDate")]
+		public DateTime UploadDate;
 
 		public StoredFile PostContent(byte[] file)
 		{

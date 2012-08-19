@@ -21,21 +21,34 @@ namespace SlickQA.SlickSharp
 {
 	[DataContract]
 	[CollectionApiPath("testplans")]
-	public sealed class TestPlan : JsonObject<TestPlan>, IJsonObject, IEquatable<TestPlan>
+	public sealed class TestPlan : JsonObject<TestPlan>, IJsonObject
 	{
+		[DataMember(Name = "createdBy")]
+		public String CreatedBy;
+
 		[DataMember(Name = "id")]
 		public String Id;
 
 		[DataMember(Name = "name")]
 		public String Name;
 
-		[DataMember(Name = "createdBy")]
-		public String CreatedBy;
-
 		[DataMember(Name = "project")]
 		public ProjectReference ProjectReference;
 
-		#region IEquatable<TestPlan> Members
+		public override string ToString()
+		{
+			return Name;
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj == null)
+			{
+				return false;
+			}
+			var other = obj as TestPlan;
+			return other != null && Equals(other);
+		}
 
 		public bool Equals(TestPlan other)
 		{
@@ -48,18 +61,6 @@ namespace SlickQA.SlickSharp
 				return other.Id == Id;
 			}
 			return Name != null && other.Name != null && other.Name == Name;
-		}
-
-		#endregion
-
-		public override bool Equals(object obj)
-		{
-			if (obj == null)
-			{
-				return false;
-			}
-			var other = obj as TestPlan;
-			return other != null && Equals(other);
 		}
 
 		public static bool operator ==(TestPlan left, TestPlan right)

@@ -46,11 +46,6 @@ namespace SlickQA.SlickSharp.Utility
 			_dict.Add(item.Key, item.Value);
 		}
 
-		public void Add(DictionaryEntry entry)
-		{
-			_dict.Add(entry.Key.ToString(), entry.Value as T);
-		}
-
 		public IEnumerator<KeyValuePair<String, T>> GetEnumerator()
 		{
 			return _dict.GetEnumerator();
@@ -135,6 +130,11 @@ namespace SlickQA.SlickSharp.Utility
 		}
 
 		#endregion
+
+		public void Add(DictionaryEntry entry)
+		{
+			_dict.Add(entry.Key.ToString(), entry.Value as T);
+		}
 
 		public void GetObjectData(SerializationInfo info, StreamingContext context)
 		{

@@ -24,11 +24,8 @@ namespace SlickQA.SlickSharp
 	[ItemApiPath("", "Id", 0)]
 	public sealed class Configuration : JsonObject<Configuration>, IJsonObject, IEquatable<Configuration>
 	{
-		[DataMember(Name = "id")]
-		public String Id;
-
-		[DataMember(Name = "name")]
-		public String Name;
+		[DataMember(Name = "configurationData")]
+		public LinkedHashMap<String> ConfigurationData;
 
 		[DataMember(Name = "configurationType")]
 		public String ConfigurationType;
@@ -36,8 +33,11 @@ namespace SlickQA.SlickSharp
 		[DataMember(Name = "filename")]
 		public String Filename;
 
-		[DataMember(Name = "configurationData")]
-		public LinkedHashMap<String> ConfigurationData;
+		[DataMember(Name = "id")]
+		public String Id;
+
+		[DataMember(Name = "name")]
+		public String Name;
 
 		#region IEquatable<Configuration> Members
 

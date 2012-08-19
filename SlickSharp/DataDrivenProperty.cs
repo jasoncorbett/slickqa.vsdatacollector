@@ -21,11 +21,11 @@ namespace SlickQA.SlickSharp
 	[DataContract]
 	public class DataDrivenProperty
 	{
-		[DataMember(Name = "name")]
-		public String Name;
-
 		[DataMember(Name = "requirement")]
 		public bool IsRequirement;
+
+		[DataMember(Name = "name")]
+		public String Name;
 
 		[DataMember(Name = "standardValues")]
 		public List<String> StandardValues;

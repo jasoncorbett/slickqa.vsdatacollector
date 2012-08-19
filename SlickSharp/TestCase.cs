@@ -26,39 +26,11 @@ namespace SlickQA.SlickSharp
 	[ItemApiPath("", "Id", 0)]
 	public sealed class Testcase : JsonObject<Testcase>, IJsonObject, IEquatable<Testcase>
 	{
-		[DataMember(Name = "id")]
-		public String Id;
-
-		[DataMember(Name = "name")]
-		public String Name;
-
-		[DataMember(Name = "purpose")]
-		public String Purpose;
-
-		[DataMember(Name = "requirements")]
-		public String Requirements;
-
-		[DataMember(Name = "steps")]
-		public List<Step> Steps;
-
-		[DataMember(Name = "author")]
-		public String Author;
-
-
 		[DataMember(Name = "attributes")]
 		public LinkedHashMap<string> Attributes;
 
-		[DataMember(Name = "automated")]
-		public Boolean IsAutomated;
-
-		[DataMember(Name = "automationPriority")]
-		public int Priority;
-
-		[DataMember(Name = "automationTool")]
-		public String AutomationTool;
-
-		[DataMember(Name = "automationConfiguration")]
-		public String Configuration;
+		[DataMember(Name = "author")]
+		public String Author;
 
 		[DataMember(Name = "automationId")]
 		public String AutomationId;
@@ -66,23 +38,50 @@ namespace SlickQA.SlickSharp
 		[DataMember(Name = "automationKey")]
 		public String AutomationKey;
 
-		[DataMember(Name = "stabilityRating")]
-		public int StabilityRating;
-
-		[DataMember(Name = "tags")]
-		public List<string> Tags;
-
-		[DataMember(Name = "project")]
-		public ProjectReference ProjectReference;
+		[DataMember(Name = "automationTool")]
+		public String AutomationTool;
 
 		[DataMember(Name = "component")]
 		public ComponentReference ComponentReference;
 
+		[DataMember(Name = "automationConfiguration")]
+		public String Configuration;
+
 		[DataMember(Name = "dataDriven")]
 		public List<DataDrivenProperty> DataDrivenProperties;
 
+		[DataMember(Name = "id")]
+		public String Id;
+
+		[DataMember(Name = "automated")]
+		public Boolean IsAutomated;
+
 		[DataMember(Name = "deleted")]
 		public Boolean IsDeleted;
+
+		[DataMember(Name = "name")]
+		public String Name;
+
+		[DataMember(Name = "automationPriority")]
+		public int Priority;
+
+		[DataMember(Name = "project")]
+		public ProjectReference ProjectReference;
+
+		[DataMember(Name = "purpose")]
+		public String Purpose;
+
+		[DataMember(Name = "requirements")]
+		public String Requirements;
+
+		[DataMember(Name = "stabilityRating")]
+		public int StabilityRating;
+
+		[DataMember(Name = "steps")]
+		public List<Step> Steps;
+
+		[DataMember(Name = "tags")]
+		public List<string> Tags;
 
 		#region IEquatable<Testcase> Members
 
