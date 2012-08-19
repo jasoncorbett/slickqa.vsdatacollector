@@ -30,6 +30,8 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Repositories
 		private Dictionary<string, bool> RefreshReleases { get; set; }
 		private Dictionary<string, List<ReleaseInfo>> Releases { get; set; }
 
+		#region IReleaseRepository Members
+
 		public IEnumerable<ReleaseInfo> GetReleases(string projectId)
 		{
 			if (RefreshReleases[projectId])
@@ -54,11 +56,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Repositories
 			}
 		}
 
-		private static List<ReleaseInfo> ConvertToReleaseInfo(IEnumerable<Release> releases, string projectId)
-		{
-			return releases.Select(release => new ReleaseInfo(release.Id, release.Name, projectId)).ToList();
-		}
-
 		public string AddRelease(ReleaseInfo info)
 		{
 			var release = new Release
@@ -69,6 +66,13 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Repositories
 			release.Post();
 			RefreshReleases[info.ProjectId] = true;
 			return release.Id;
+		}
+
+		#endregion
+
+		private static List<ReleaseInfo> ConvertToReleaseInfo(IEnumerable<Release> releases, string projectId)
+		{
+			return releases.Select(release => new ReleaseInfo(release.Id, release.Name, projectId)).ToList();
 		}
 	}
 }

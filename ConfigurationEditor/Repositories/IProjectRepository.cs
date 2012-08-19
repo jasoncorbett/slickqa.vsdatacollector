@@ -14,17 +14,9 @@
 
 using System.Collections.Generic;
 using SlickQA.DataCollector.Models;
-using SlickQA.SlickSharp;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.Repositories
 {
-	public interface IReleaseRepository
-	{
-		string AddRelease(ReleaseInfo info);
-		void Load(string projectId);
-		IEnumerable<ReleaseInfo> GetReleases(string projectId);
-	}
-
 	public interface IProjectRepository
 	{
 		void Load();

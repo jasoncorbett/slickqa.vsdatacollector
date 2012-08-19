@@ -14,7 +14,6 @@
 
 using System.Collections.Generic;
 using SlickQA.DataCollector.Models;
-using SlickQA.SlickSharp;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.Repositories
 {

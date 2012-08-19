@@ -79,11 +79,11 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Repositories
 			}
 		}
 
+		#endregion
+
 		private List<TestPlanInfo> ConvertToTestPlanInfo(List<TestPlan> testPlans)
 		{
 			return testPlans.Select(t => new TestPlanInfo(t.Id, t.Name, t.ProjectReference.Id, t.CreatedBy)).ToList();
 		}
-
-		#endregion
 	}
 }

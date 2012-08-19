@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using SlickQA.DataCollector.Models;
 using SlickQA.SlickSharp;
 
@@ -55,11 +55,11 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Repositories
 			_refreshProjects = false;
 		}
 
+		#endregion
+
 		private static List<ProjectInfo> ConvertToProjectInfo(IEnumerable<Project> projects)
 		{
 			return projects.Select(p => new ProjectInfo(p.Id, p.Name, p.Description, string.Empty, p.Tags)).ToList();
 		}
-
-		#endregion
 	}
 }
