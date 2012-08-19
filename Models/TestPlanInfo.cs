@@ -91,5 +91,10 @@ namespace SlickQA.DataCollector.Models
 
 			return node;
 		}
+
+		public override string ToString()
+		{
+			return Name;
+		}
 	}
 }
