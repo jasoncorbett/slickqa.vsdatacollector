@@ -12,12 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace SlickQA.DataCollector.Models
 {
 	public class TestPlanInfo
 	{
+		private const string TAG_NAME = "Plan";
+
 		public string Id { get; set; }
 		public string Name { get; set; }
 		public string ProjectId { get; set; }
@@ -37,12 +41,39 @@ namespace SlickQA.DataCollector.Models
 			InitializeWithDefaults();
 		}
 
+		private TestPlanInfo(XmlNodeList elements)
+		{
+			try
+			{
+				var element = elements[0];
+				var reader = new XmlNodeReader(element);
+				var s = new XmlSerializer(GetType());
+				var temp = s.Deserialize(reader) as TestPlanInfo;
+				Id = temp.Id;
+				Name = temp.Name;
+				ProjectId = temp.ProjectId;
+			}
+			catch (IndexOutOfRangeException)
+			{
+				InitializeWithDefaults();
+			}
+			catch (InvalidOperationException)
+			{
+				InitializeWithDefaults();
+			}
+		}
+
 		private void InitializeWithDefaults()
 		{
 			Id = string.Empty;
 			Name = string.Empty;
 			ProjectId = string.Empty;
 			CreatedBy = string.Empty;
+		}
+
+		public static TestPlanInfo FromXml(XmlElement configuration)
+		{
+			return new TestPlanInfo(configuration.GetElementsByTagName(TAG_NAME));
 		}
 	}
 }

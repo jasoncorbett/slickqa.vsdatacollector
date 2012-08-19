@@ -26,8 +26,16 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming
 	public class ExecutionNamingController :
 		IEventHandler<ProjectSelectedEvent>,
 		IEventHandler<TestPlansLoadedEvent>,
-		IEventHandler<TestPlanAddedEvent>
+		IEventHandler<TestPlanAddedEvent>,
+		IEventHandler<SettingsLoadedEvent>
 	{
+		private IApplicationController AppController { get; set; }
+		private ITestPlanRepository Repository { get; set; }
+		private ProjectInfo Project { get; set; }
+		private IExecutionNamingView View { get; set; }
+		private TestPlanInfo CurrentTestPlan { get; set; }
+		private TestPlanInfo DefaultTestPlan { get; set; }
+
 		public ExecutionNamingController(IExecutionNamingView view, IApplicationController appController, ITestPlanRepository repository)
 		{
 			View = view;
@@ -35,13 +43,8 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming
 			AppController = appController;
 			Repository = repository;
 			CurrentTestPlan = new TestPlanInfo();
+			DefaultTestPlan = new TestPlanInfo();
 		}
-
-		private IApplicationController AppController { get; set; }
-		private ITestPlanRepository Repository { get; set; }
-		private ProjectInfo Project { get; set; }
-		private IExecutionNamingView View { get; set; }
-		private TestPlanInfo CurrentTestPlan { get; set; }
 
 		public void TestPlanSupplied(TestPlanInfo testPlan)
 		{
@@ -76,6 +79,12 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming
 			View.DisplayPlans(testPlans);
 
 			View.SelectPlan(eventData.TestPlan);
+		}
+
+		public void Handle(SettingsLoadedEvent eventData)
+		{
+			CurrentTestPlan = TestPlanInfo.FromXml(eventData.Settings.Configuration);
+			DefaultTestPlan = TestPlanInfo.FromXml(eventData.Settings.DefaultConfiguration);
 		}
 	}
 }

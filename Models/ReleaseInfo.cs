@@ -12,10 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.Xml;
+using System.Xml.Serialization;
+
 namespace SlickQA.DataCollector.Models
 {
 	public sealed class ReleaseInfo
 	{
+		public const string TAG_NAME = "Release";
+
 		public string Id { get; set; }
 		public string Name { get; private set; }
 		public string ProjectId { get; private set; }
@@ -29,9 +35,41 @@ namespace SlickQA.DataCollector.Models
 
 		public ReleaseInfo()
 		{
-			Id = string.Empty;
-			Name = string.Empty;
-			ProjectId = string.Empty;
+			InitializeWithDefaults();
+		}
+
+		private void InitializeWithDefaults()
+		{
+			Id = String.Empty;
+			Name = String.Empty;
+			ProjectId = String.Empty;
+		}
+
+		public ReleaseInfo(XmlNodeList elements)
+		{
+			try
+			{
+				var element = elements[0];
+				var reader = new XmlNodeReader(element);
+				var s = new XmlSerializer(GetType());
+				var temp = s.Deserialize(reader) as ReleaseInfo;
+				Id = temp.Id;
+				Name = temp.Name;
+				ProjectId = temp.ProjectId;
+			}
+			catch (IndexOutOfRangeException)
+			{
+				InitializeWithDefaults();
+			}
+			catch (InvalidOperationException)
+			{
+				InitializeWithDefaults();
+			}
+		}
+
+		public static ReleaseInfo FromXml(XmlElement configuration)
+		{
+			return new ReleaseInfo(configuration.GetElementsByTagName(TAG_NAME));
 		}
 	}
 }

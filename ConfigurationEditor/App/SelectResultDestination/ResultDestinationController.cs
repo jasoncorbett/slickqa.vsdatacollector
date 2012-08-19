@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Collections.Generic;
+using System.Xml;
 using SlickQA.DataCollector.ConfigurationEditor.AppController;
 using SlickQA.DataCollector.ConfigurationEditor.Commands;
 using SlickQA.DataCollector.ConfigurationEditor.Events;
@@ -26,7 +27,8 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SelectResultDestination
 		IEventHandler<ProjectsLoadedEvent>,
 		IEventHandler<ProjectAddedEvent>,
 		IEventHandler<ProjectSelectedEvent>, 
-		IEventHandler<ReleaseAddedEvent>
+		IEventHandler<ReleaseAddedEvent>,
+		IEventHandler<SettingsLoadedEvent>
 	{
 		public ResultDestinationController(IResultDestinationView view, IApplicationController appController, IProjectRepository projectRepository, IReleaseRepository releaseRepository)
 		{
@@ -35,27 +37,28 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SelectResultDestination
 			AppController = appController;
 			ProjectRepository = projectRepository;
 			ReleaseRepository = releaseRepository;
-			Project = new ProjectInfo();
-			Release = new ReleaseInfo();
+			CurrentProject = new ProjectInfo();
+			CurrentRelease = new ReleaseInfo();
 		}
 
 		private IResultDestinationView View { get; set; }
 		private IApplicationController AppController { get; set; }
 		private IProjectRepository ProjectRepository { get; set; }
 		private IReleaseRepository ReleaseRepository { get; set; }
-		private ProjectInfo Project { get; set; }
-		private ReleaseInfo Release { get; set; }
-
+		private ProjectInfo DefaultProject { get; set; }
+		private ProjectInfo CurrentProject { get; set; }
+		private ReleaseInfo DefaultRelease { get; set; }
+		private ReleaseInfo CurrentRelease { get; set; }
 
 		public void ProjectSupplied(ProjectInfo project)
 		{
-			Project = project;
-			AppController.Raise(new ProjectSelectedEvent(Project));
+			CurrentProject = project;
+			AppController.Raise(new ProjectSelectedEvent(CurrentProject));
 		}
 
 		public void ReleaseSupplied(ReleaseInfo release)
 		{
-			Release = release;
+			CurrentRelease = release;
 		}
 
 		public void AddProject()
@@ -79,14 +82,14 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SelectResultDestination
 
 		public void Handle(ReleaseAddedEvent eventData)
 		{
-			View.LoadReleaseList(ReleaseRepository.GetReleases(Project.Id));
+			View.LoadReleaseList(ReleaseRepository.GetReleases(CurrentProject.Id));
 
 			View.SelectRelease(eventData.Release);
 		}
 
 		public void Handle(ProjectSelectedEvent eventData)
 		{
-			View.LoadReleaseList(ReleaseRepository.GetReleases(Project.Id));
+			View.LoadReleaseList(ReleaseRepository.GetReleases(CurrentProject.Id));
 			View.EnableAddReleaseButton();
 		}
 
@@ -94,6 +97,15 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SelectResultDestination
 		{
 			View.LoadProjectList(ProjectRepository.GetProjects());
 			View.EnableAddProjectButton();
+		}
+
+		public void Handle(SettingsLoadedEvent eventData)
+		{
+			CurrentProject = ProjectInfo.FromXml(eventData.Settings.Configuration);
+			DefaultProject =  ProjectInfo.FromXml(eventData.Settings.DefaultConfiguration);
+
+			CurrentRelease = ReleaseInfo.FromXml(eventData.Settings.Configuration);
+			DefaultRelease = ReleaseInfo.FromXml(eventData.Settings.DefaultConfiguration);
 		}
 	}
 }

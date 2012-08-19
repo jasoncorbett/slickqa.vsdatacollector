@@ -12,13 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace SlickQA.DataCollector.Models
 {
 	public sealed class ProjectInfo
 	{
+		public const string TAG_NAME = "Project";
+
 		public string Id { get; set; }
 		public string Name { get; private set; }
 
@@ -40,11 +44,45 @@ namespace SlickQA.DataCollector.Models
 
 		public ProjectInfo()
 		{
-			Id = string.Empty;
-			Name = string.Empty;
-			Description = string.Empty;
-			ReleaseName = string.Empty;
+			InitializeWithDefaults();
+		}
+
+		private void InitializeWithDefaults()
+		{
+			Id = String.Empty;
+			Name = String.Empty;
+			Description = String.Empty;
+			ReleaseName = String.Empty;
 			Tags = new List<string>();
+		}
+
+		public ProjectInfo(XmlNodeList elements)
+		{
+			try
+			{
+				var element = elements[0];
+				var reader = new XmlNodeReader(element);
+				var s = new XmlSerializer(GetType());
+				var temp = s.Deserialize(reader) as ProjectInfo;
+				Id = temp.Id;
+				Name = temp.Name;
+				Description = String.Empty;
+				ReleaseName = String.Empty;
+				Tags = new List<string>();
+			}
+			catch (IndexOutOfRangeException)
+			{
+				InitializeWithDefaults();
+			}
+			catch (InvalidOperationException)
+			{
+				InitializeWithDefaults();
+			}
+		}
+
+		public static ProjectInfo FromXml(XmlElement configuration)
+		{
+			return new ProjectInfo(configuration.GetElementsByTagName(TAG_NAME));
 		}
 	}
 }

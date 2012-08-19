@@ -25,13 +25,15 @@ using SlickQA.DataCollector.Repositories;
 namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 {
 	public class UrlController : IGetUrlInfo,
-		IEventHandler<UrlValidatedEvent>
+		IEventHandler<UrlValidatedEvent>,
+		IEventHandler<SettingsLoadedEvent>
 	{
 		private static readonly List<string> _schemes = new List<string> {Uri.UriSchemeHttp, Uri.UriSchemeHttps};
 		private IApplicationController AppController { get; set; }
 		private ISetUrlView View { get; set; }
 		private IUrlRepository UrlRepository { get; set; }
-		private UrlInfo CurrentUrlInfo { get; set; }
+		protected UrlInfo DefaultUrl { get; set; }
+		private UrlInfo CurrentUrl { get; set; }
 
 		public UrlController(ISetUrlView view, IApplicationController appController, IUrlRepository repository)
 		{
@@ -39,32 +41,32 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 			View.Controller = this;
 			AppController = appController;
 			UrlRepository = repository;
-			CurrentUrlInfo = new UrlInfo();
+			CurrentUrl = new UrlInfo();
+			DefaultUrl = new UrlInfo();
 		}
-
 
 
 		public void SchemeSupplied(string scheme)
 		{
-			CurrentUrlInfo.Scheme = scheme;
+			CurrentUrl.Scheme = scheme;
 			ValidateUrl();
 		}
 
 		public void HostSupplied(string host)
 		{
-			CurrentUrlInfo.HostName = host;
+			CurrentUrl.HostName = host;
 			ValidateUrl();
 		}
 
 		public void PortSupplied(int port)
 		{
-			CurrentUrlInfo.Port = port;
+			CurrentUrl.Port = port;
 			ValidateUrl();
 		}
 
 		public void SitePathSupplied(string sitePath)
 		{
-			CurrentUrlInfo.SitePath = sitePath;
+			CurrentUrl.SitePath = sitePath;
 			ValidateUrl();
 		}
 
@@ -75,6 +77,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 
 
 		//TODO: Fix URL Load and Config Handling
+
 		public void Load()
 		{
 			View.LoadSchemes(_schemes);
@@ -84,14 +87,14 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 		private void ValidateUrl()
 		{
 			bool validUrl = false;
-			if (CurrentUrlInfo.IsComplete)
+			if (CurrentUrl.IsComplete)
 			{
-				validUrl = TestServerConnection(CurrentUrlInfo);
+				validUrl = TestServerConnection(CurrentUrl);
 			}
 
 			if (validUrl)
 			{
-				AppController.Raise(new UrlValidatedEvent(CurrentUrlInfo));
+				AppController.Raise(new UrlValidatedEvent(CurrentUrl));
 			}
 			View.EnableButton(validUrl);
 		}
@@ -120,6 +123,12 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 		public void Handle(UrlValidatedEvent eventData)
 		{
 			UrlRepository.SetUrl(eventData.UrlInfo);
+		}
+
+		public void Handle(SettingsLoadedEvent eventData)
+		{
+			CurrentUrl = UrlInfo.FromXml(eventData.Settings.Configuration);
+			DefaultUrl = UrlInfo.FromXml(eventData.Settings.DefaultConfiguration);
 		}
 	}
 }

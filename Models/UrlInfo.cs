@@ -13,11 +13,15 @@
 // limitations under the License.
 
 using System;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace SlickQA.DataCollector.Models
 {
 	public sealed class UrlInfo
 	{
+		private const string TAG_NAME = "Url";
+
 		public string Scheme { get; set; }
 		public string HostName { get; set; }
 		public int Port { get; set; }
@@ -26,6 +30,29 @@ namespace SlickQA.DataCollector.Models
 		public UrlInfo()
 		{
 			InitializeWithDefaults();
+		}
+
+		private UrlInfo(XmlNodeList elements)
+		{
+			try
+			{
+				var element = elements[0];
+				var reader = new XmlNodeReader(element);
+				var s = new XmlSerializer(GetType());
+				var temp = s.Deserialize(reader) as UrlInfo;
+				Scheme = temp.Scheme;
+				HostName = temp.HostName;
+				Port = temp.Port;
+				SitePath = temp.SitePath;
+			}
+			catch (IndexOutOfRangeException)
+			{
+				InitializeWithDefaults();
+			}
+			catch (InvalidOperationException)
+			{
+				InitializeWithDefaults();
+			}
 		}
 
 		public string DisplayName
@@ -54,6 +81,11 @@ namespace SlickQA.DataCollector.Models
 			HostName = string.Empty;
 			Port = 8080;
 			SitePath = string.Empty;
+		}
+
+		public static UrlInfo FromXml(XmlElement configuration)
+		{
+			return new UrlInfo(configuration.GetElementsByTagName(TAG_NAME));
 		}
 	}
 }

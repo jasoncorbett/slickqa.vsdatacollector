@@ -16,21 +16,27 @@ using SlickQA.DataCollector.ConfigurationEditor.AppController;
 using SlickQA.DataCollector.ConfigurationEditor.Commands;
 using SlickQA.DataCollector.ConfigurationEditor.Events;
 using SlickQA.DataCollector.EventAggregator;
+using SlickQA.DataCollector.Models;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.App.StartBuildSearch
 {
-	public class BuildSpecifierController : IEventHandler<BuildProviderSelectedEvent>
+	public class BuildSpecifierController :
+		IEventHandler<BuildProviderSelectedEvent>,
+		IEventHandler<SettingsLoadedEvent>
 	{
+		private BuildProviderInfo DefaultProvider { get; set; }
+		private BuildProviderInfo CurrentProvider { get; set; }
+		private IApplicationController AppController { get; set; }
+		private IBuildSpecifierView View { get; set; }
+
 		public BuildSpecifierController(IBuildSpecifierView view, IApplicationController appController)
 		{
 			AppController = appController;
 			View = view;
 			View.Controller = this;
+			CurrentProvider = new BuildProviderInfo();
+			DefaultProvider = new BuildProviderInfo();
 		}
-
-		private IApplicationController AppController { get; set; }
-
-		private IBuildSpecifierView View { get; set; }
 
 		public void Select()
 		{
@@ -52,6 +58,12 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.StartBuildSearch
 			}
 
 			View.SetProviderText(p.Directory+"\\"+ p.AssemblyName + ":" + fullMethodName);
+		}
+
+		public void Handle(SettingsLoadedEvent eventData)
+		{
+			CurrentProvider = BuildProviderInfo.FromXml(eventData.Settings.Configuration);
+			DefaultProvider = BuildProviderInfo.FromXml(eventData.Settings.DefaultConfiguration);
 		}
 	}
 }

@@ -12,12 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Reflection;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace SlickQA.DataCollector.Models
 {
 	public sealed class BuildProviderInfo
 	{
+		private const string TAG_NAME = "BuildProvider";
+
 		public string AssemblyName { get; private set; }
 		public string Directory { get; private set; }
 		public MethodInfo Method { get; private set; }
@@ -27,6 +32,45 @@ namespace SlickQA.DataCollector.Models
 			AssemblyName = assemblyName;
 			Directory = directory;
 			Method = method;
+		}
+
+		private BuildProviderInfo(XmlNodeList elements)
+		{
+			try
+			{
+				var element = elements[0];
+				var reader = new XmlNodeReader(element);
+				var s = new XmlSerializer(GetType());
+				var temp = s.Deserialize(reader) as BuildProviderInfo;
+				AssemblyName = temp.AssemblyName;
+				Directory = temp.Directory;
+				Method = temp.Method;
+			}
+			catch (IndexOutOfRangeException)
+			{
+				InitializeWithDefaults();
+			}
+			catch (InvalidOperationException)
+			{
+				InitializeWithDefaults();
+			}
+		}
+
+		public BuildProviderInfo()
+		{
+			InitializeWithDefaults();
+		}
+
+		private void InitializeWithDefaults()
+		{
+			AssemblyName = string.Empty;
+			Directory = string.Empty;
+			Method = null;
+		}
+
+		public static BuildProviderInfo FromXml(XmlElement configuration)
+		{
+			return new BuildProviderInfo(configuration.GetElementsByTagName(TAG_NAME));
 		}
 	}
 }
