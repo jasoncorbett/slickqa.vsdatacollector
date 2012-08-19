@@ -33,8 +33,10 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.VisualStudio.QualityTools.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.QualityTools.ExecutionCommon, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="StructureMap">
+      <HintPath>..\packages\structuremap.2.6.4.1\lib\net40\StructureMap.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -47,62 +49,229 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConfigurationController.cs" />
-    <Compile Include="ConfigurationEditor.cs">
+    <Compile Include="AppController\ApplicationController.cs" />
+    <Compile Include="AppController\IApplicationController.cs" />
+    <Compile Include="AppController\ICommand.cs" />
+    <Compile Include="App\IGetNewTestPlanInfo.cs" />
+    <Compile Include="App\IGetUrlInfo.cs" />
+    <Compile Include="App\SupplyExecutionNaming\ExecutionNamingController.cs" />
+    <Compile Include="App\SupplyExecutionNaming\IExecutionNamingView.cs" />
+    <Compile Include="App\SupplyTestPlanInfo\INewTestPlanView.cs" />
+    <Compile Include="App\SupplyTestPlanInfo\NewTestPlanController.cs" />
+    <Compile Include="Commands\AddNewProjectData.cs" />
+    <Compile Include="Commands\AddNewTestPlanData.cs" />
+    <Compile Include="Commands\RetrieveTestPlansData.cs" />
+    <Compile Include="Events\ResetEvent.cs" />
+    <Compile Include="Events\SaveDataEvent.cs" />
+    <Compile Include="Events\ServiceProviderLoadedEvent.cs" />
+    <Compile Include="Events\SettingsLoadedEvent.cs" />
+    <Compile Include="Events\TestPlanAddedEvent.cs" />
+    <Compile Include="Events\TestPlansLoadedEvent.cs" />
+    <Compile Include="Repositories\WebReleaseRepository.cs" />
+    <Compile Include="Repositories\ITestPlanRepository.cs" />
+    <Compile Include="Repositories\WebTestPlanRepository.cs" />
+    <Compile Include="Services\AddNewProjectService.cs" />
+    <Compile Include="Commands\AddNewReleaseData.cs" />
+    <Compile Include="Services\AddNewReleaseService.cs" />
+    <Compile Include="Events\AssemblyParsedEvent.cs" />
+    <Compile Include="Events\BuildProviderSelectedEvent.cs" />
+    <Compile Include="Commands\GetAssemblyInfoData.cs" />
+    <Compile Include="Services\GetAssemblyInfoService.cs" />
+    <Compile Include="App\IEditorView.cs" />
+    <Compile Include="App\IGetBuildProviderInfo.cs" />
+    <Compile Include="App\IGetNewProjectInfo.cs" />
+    <Compile Include="App\IGetNewReleaseInfo.cs" />
+    <Compile Include="App\MainEditorController.cs" />
+    <Compile Include="Events\ProjectAddedEvent.cs" />
+    <Compile Include="Events\ProjectSelectedEvent.cs" />
+    <Compile Include="Events\ProjectsLoadedEvent.cs" />
+    <Compile Include="Events\ReleaseAddedEvent.cs" />
+    <Compile Include="App\Result.cs" />
+    <Compile Include="Commands\RetrieveProjectsData.cs" />
+    <Compile Include="Services\RetrieveProjectsService.cs" />
+    <Compile Include="Commands\SelectBuildProviderData.cs" />
+    <Compile Include="Services\RetrieveTestPlansService.cs" />
+    <Compile Include="Services\SelectBuildProviderService.cs" />
+    <Compile Include="App\SelectResultDestination\IResultDestinationView.cs" />
+    <Compile Include="App\SelectResultDestination\ResultDestinationController.cs" />
+    <Compile Include="App\ServiceResult.cs" />
+    <Compile Include="App\StartBuildSearch\BuildSpecifierController.cs" />
+    <Compile Include="App\StartBuildSearch\IBuildSpecifierView.cs" />
+    <Compile Include="App\SupplyBuildProvider\ChooseBuildProviderController.cs" />
+    <Compile Include="App\SupplyBuildProvider\IChooseBuildProviderView.cs" />
+    <Compile Include="App\SupplyProjectInfo\INewProjectView.cs" />
+    <Compile Include="App\SupplyProjectInfo\NewProjectController.cs" />
+    <Compile Include="App\SupplyReleaseInfo\INewReleaseView.cs" />
+    <Compile Include="App\SupplyReleaseInfo\NewReleaseController.cs" />
+    <Compile Include="App\SupplyScreenshotInfo\IScreenshotView.cs" />
+    <Compile Include="App\SupplyScreenshotInfo\ScreenshotController.cs" />
+    <Compile Include="App\SupplyUrlInfo\ISetUrlView.cs" />
+    <Compile Include="App\SupplyUrlInfo\UrlController.cs" />
+    <Compile Include="Events\UrlValidatedEvent.cs" />
+    <Compile Include="IoC Setup\BootStrapper.cs" />
+    <Compile Include="IoC Setup\DefaultRegistry.cs" />
+    <Compile Include="IoC Setup\EventInterceptor.cs" />
+    <Compile Include="Repositories\IProjectRepository.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\WebProjectRepository.cs" />
+    <Compile Include="Services\AddNewTestPlanService.cs" />
+    <Compile Include="View\ChooseBuildProviderForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\ChooseBuildProviderForm.designer.cs">
+      <DependentUpon>ChooseBuildProviderForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\BuildSpecifierControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ConfigurationEditor.Designer.cs">
-      <DependentUpon>ConfigurationEditor.cs</DependentUpon>
+    <Compile Include="View\BuildSpecifierControl.designer.cs">
+      <DependentUpon>BuildSpecifierControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="CreateProjectController.cs" />
-    <Compile Include="CreateReleaseDialog.cs">
+    <Compile Include="View\MainEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\MainEditorControl.Designer.cs">
+      <DependentUpon>MainEditorControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\NewProjectForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CreateReleaseDialog.Designer.cs">
-      <DependentUpon>CreateReleaseDialog.cs</DependentUpon>
+    <Compile Include="View\NewProjectForm.designer.cs">
+      <DependentUpon>NewProjectForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="CreateReleaseController.cs" />
-    <Compile Include="IConfigurationController.cs" />
-    <Compile Include="IConfigurationView.cs" />
-    <Compile Include="ICreateProjectController.cs" />
-    <Compile Include="ICreateProjectView.cs" />
-    <Compile Include="CreateProjectDialog.cs">
+    <Compile Include="View\NewReleaseForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CreateProjectDialog.Designer.cs">
-      <DependentUpon>CreateProjectDialog.cs</DependentUpon>
+    <Compile Include="View\NewReleaseForm.designer.cs">
+      <DependentUpon>NewReleaseForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="ICreateReleaseController.cs" />
-    <Compile Include="ICreateReleaseView.cs" />
-    <Compile Include="NewProjectHandler.cs" />
-    <Compile Include="NewReleaseHandler.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ResetConfigHandler.cs" />
-    <Compile Include="ScreenshotController.cs" />
-    <Compile Include="SelectorController.cs" />
-    <Compile Include="UrlController.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="ConfigurationEditor.resx">
-      <DependentUpon>ConfigurationEditor.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CreateProjectDialog.resx">
-      <DependentUpon>CreateProjectDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CreateReleaseDialog.resx">
-      <DependentUpon>CreateReleaseDialog.cs</DependentUpon>
-    </EmbeddedResource>
+    <Compile Include="View\NewTestPlanForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\NewTestPlanForm.Designer.cs">
+      <DependentUpon>NewTestPlanForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\SelectResultDestinationControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\SelectResultDestinationControl.designer.cs">
+      <DependentUpon>SelectResultDestinationControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\ScreenshotSetter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\ScreenshotSetter.designer.cs">
+      <DependentUpon>ScreenshotSetter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\ExecutionNaming.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\ExecutionNaming.Designer.cs">
+      <DependentUpon>ExecutionNaming.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\UrlSelector.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\UrlSelector.designer.cs">
+      <DependentUpon>UrlSelector.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\slickqa.slicksharp\SlickSharp\SlickSharp.csproj">
       <Project>{4DB0F133-F095-4C10-BF62-0939195F26FB}</Project>
       <Name>SlickSharp</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Configuration\Configuration.csproj">
-      <Project>{5A741FFF-6FFA-4319-B031-EF8F8F7FA307}</Project>
-      <Name>Configuration</Name>
+    <ProjectReference Include="..\EventAggregator\EventAggregator.csproj">
+      <Project>{7FB26462-89AC-4E47-B613-B4B5C0E4AF4E}</Project>
+      <Name>EventAggregator</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Models\Models.csproj">
+      <Project>{16665302-F509-4A5E-A234-746F78082365}</Project>
+      <Name>Models</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="View\ChooseBuildProviderForm.resx">
+      <DependentUpon>ChooseBuildProviderForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\BuildSpecifierControl.es.resx">
+      <DependentUpon>BuildSpecifierControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\BuildSpecifierControl.fr.resx">
+      <DependentUpon>BuildSpecifierControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\BuildSpecifierControl.resx">
+      <DependentUpon>BuildSpecifierControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\MainEditorControl.resx">
+      <DependentUpon>MainEditorControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\NewProjectForm.es.resx">
+      <DependentUpon>NewProjectForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\NewProjectForm.fr.resx">
+      <DependentUpon>NewProjectForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\NewProjectForm.resx">
+      <DependentUpon>NewProjectForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\NewReleaseForm.de.resx">
+      <DependentUpon>NewReleaseForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\NewReleaseForm.es.resx">
+      <DependentUpon>NewReleaseForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\NewReleaseForm.fr.resx">
+      <DependentUpon>NewReleaseForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\NewReleaseForm.resx">
+      <DependentUpon>NewReleaseForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\NewTestPlanForm.de.resx">
+      <DependentUpon>NewTestPlanForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\NewTestPlanForm.es.resx">
+      <DependentUpon>NewTestPlanForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\NewTestPlanForm.fr.resx">
+      <DependentUpon>NewTestPlanForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\NewTestPlanForm.resx">
+      <DependentUpon>NewTestPlanForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\SelectResultDestinationControl.es.resx">
+      <DependentUpon>SelectResultDestinationControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\SelectResultDestinationControl.fr.resx">
+      <DependentUpon>SelectResultDestinationControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\SelectResultDestinationControl.resx">
+      <DependentUpon>SelectResultDestinationControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\ScreenshotSetter.es.resx">
+      <DependentUpon>ScreenshotSetter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\ScreenshotSetter.fr.resx">
+      <DependentUpon>ScreenshotSetter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\ScreenshotSetter.resx">
+      <DependentUpon>ScreenshotSetter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\ExecutionNaming.resx">
+      <DependentUpon>ExecutionNaming.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\UrlSelector.es.resx">
+      <DependentUpon>UrlSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\UrlSelector.fr.resx">
+      <DependentUpon>UrlSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\UrlSelector.resx">
+      <DependentUpon>UrlSelector.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
