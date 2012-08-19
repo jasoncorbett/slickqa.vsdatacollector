@@ -15,6 +15,10 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App
 {
 	public interface IEditorView
 	{
-		MainEditorController Controller { get; set; }
+		MainEditorController Controller { set; }
+		void ClearUrlError();
+		void SetUrlError();
+		void ClearTestPlanError();
+		void SetTestPlanError();
 	}
 }

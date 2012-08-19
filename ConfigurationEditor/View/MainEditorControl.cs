@@ -31,6 +31,26 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 	public partial class MainEditorControl : UserControl, IEditorView, IDataCollectorConfigurationEditor
 	{
 		public MainEditorController Controller { get; set; }
+		public void ClearUrlError()
+		{
+			_errorProvider.SetError(_urlSelector, string.Empty);
+		}
+
+		public void SetUrlError()
+		{
+			_errorProvider.SetError(_urlSelector, "Please supply a valid Slick webserver URL.");
+		}
+
+		public void ClearTestPlanError()
+		{
+			_errorProvider.SetError(_executionNaming, string.Empty);
+		}
+
+		public void SetTestPlanError()
+		{
+			_errorProvider.SetError(_executionNaming, "Please add or select a test plan.");
+		}
+
 		private IContainer IocContainer { get; set; }
 
 		public MainEditorControl()
@@ -53,7 +73,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 			IocContainer.Inject<IBuildSpecifierView>(_buildSpecifierControl);
 			IocContainer.Inject<IScreenshotView>(_screenshotSetter);
 			IocContainer.Inject<IExecutionNamingView>(_executionNaming);
-
 
 			_urlSelector.Controller = IocContainer.GetInstance<UrlController>();
 			_resultDestinationControl.Controller = IocContainer.GetInstance<ResultDestinationController>();

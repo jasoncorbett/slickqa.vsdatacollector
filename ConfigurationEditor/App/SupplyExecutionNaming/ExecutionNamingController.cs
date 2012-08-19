@@ -50,10 +50,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming
 
 		public void TestPlanSupplied(TestPlanInfo testPlan)
 		{
-			CurrentTestPlan.Id = testPlan.Id;
-			CurrentTestPlan.ProjectId = testPlan.ProjectId;
-			CurrentTestPlan.Name = testPlan.Name;
-			CurrentTestPlan.CreatedBy = testPlan.CreatedBy;
+			CurrentTestPlan = testPlan;
 		}
 
 		public void AddTestPlan()
@@ -69,10 +66,20 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming
 
 		public void Handle(TestPlansLoadedEvent eventData)
 		{
-			List<TestPlanInfo> testPlans = Repository.GetPlans(eventData.ProjectId).ToList();
+			var testPlans = Repository.GetPlans(eventData.ProjectId).ToList();
+			
 			View.DisplayPlans(testPlans);
 			View.EnableAddPlanButton();
 			View.EnablePlanComboBox(testPlans.Count != 0);
+			
+			if (testPlans.Count == 0)
+			{
+				AppController.Raise(new TestPlanInvalidatedEvent());
+			}
+			else
+			{
+				AppController.Raise(new TestPlanValidatedEvent());
+			}
 		}
 
 		public void Handle(TestPlanAddedEvent eventData)

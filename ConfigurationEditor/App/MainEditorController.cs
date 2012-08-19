@@ -16,17 +16,24 @@ using System;
 using Microsoft.VisualStudio.TestTools.Execution;
 using SlickQA.DataCollector.ConfigurationEditor.AppController;
 using SlickQA.DataCollector.ConfigurationEditor.Events;
+using SlickQA.DataCollector.EventAggregator;
 using SlickQA.DataCollector.Repositories;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.App
 {
-	public class MainEditorController
+	public class MainEditorController :
+		IEventHandler<UrlValidatedEvent>,
+		IEventHandler<UrlInvalidatedEvent>,
+		IEventHandler<TestPlanValidatedEvent>,
+		IEventHandler<TestPlanInvalidatedEvent>
 	{
 		private IEditorView View { get; set; }
 		private IApplicationController AppController { get; set; }
 		private IProjectRepository ProjectRepository { get; set; }
 		private IServiceProvider ServiceProvider { get; set; }
 		private DataCollectorSettings Settings { get; set; }
+		private bool UrlIsValid { get; set; }
+		private bool TestPlanIsValid { get; set; }
 
 		public MainEditorController(IEditorView view, IApplicationController appController, IProjectRepository repository)
 		{
@@ -47,7 +54,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App
 
 		public bool VerifyData()
 		{
-			return false;
+			return UrlIsValid && TestPlanIsValid;
 		}
 
 		public DataCollectorSettings SaveData()
@@ -59,6 +66,30 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App
 		public void ResetToAgentDefaults()
 		{
 			AppController.Raise(new ResetEvent());
+		}
+
+		public void Handle(UrlValidatedEvent eventData)
+		{
+			UrlIsValid = true;
+			View.ClearUrlError();
+		}
+
+		public void Handle(UrlInvalidatedEvent eventData)
+		{
+			UrlIsValid = false;
+			View.SetUrlError();
+		}
+
+		public void Handle(TestPlanValidatedEvent eventData)
+		{
+			TestPlanIsValid = true;
+			View.ClearTestPlanError();
+		}
+
+		public void Handle(TestPlanInvalidatedEvent eventData)
+		{
+			TestPlanIsValid = false;
+			View.SetTestPlanError();
 		}
 	}
 }

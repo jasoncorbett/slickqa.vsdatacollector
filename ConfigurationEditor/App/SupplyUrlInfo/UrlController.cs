@@ -98,6 +98,10 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 			{
 				AppController.Raise(new UrlValidatedEvent(CurrentUrl));
 			}
+			else
+			{
+				AppController.Raise(new UrlInvalidatedEvent());
+			}
 			View.EnableButton(validUrl);
 		}
 

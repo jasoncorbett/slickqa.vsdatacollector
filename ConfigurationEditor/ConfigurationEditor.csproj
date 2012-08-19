@@ -67,7 +67,10 @@
     <Compile Include="Events\ServiceProviderLoadedEvent.cs" />
     <Compile Include="Events\SettingsLoadedEvent.cs" />
     <Compile Include="Events\TestPlanAddedEvent.cs" />
+    <Compile Include="Events\TestPlanInvalidatedEvent.cs" />
     <Compile Include="Events\TestPlansLoadedEvent.cs" />
+    <Compile Include="Events\TestPlanValidatedEvent.cs" />
+    <Compile Include="Events\UrlInvalidatedEvent.cs" />
     <Compile Include="Services\AddNewProjectService.cs" />
     <Compile Include="Commands\AddNewReleaseData.cs" />
     <Compile Include="Services\AddNewReleaseService.cs" />
