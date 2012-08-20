@@ -19,6 +19,7 @@ using System.Linq;
 using System.Xml;
 using Microsoft.VisualStudio.TestTools.Common;
 using Microsoft.VisualStudio.TestTools.Execution;
+using SlickQA.DataCollector.Models;
 using SlickQA.SlickSharp;
 using SlickQA.SlickSharp.Logging;
 using TestRun = SlickQA.SlickSharp.TestRun;
@@ -30,7 +31,6 @@ namespace SlickQA.DataCollector
 	[DataCollectorConfigurationEditor("configurationeditor://slickqa/SlickDataCollectorConfigurationEditor/0.0.1")]
 	public class SlickCollector : Microsoft.VisualStudio.TestTools.Execution.DataCollector
 	{
-		//private Config _config;
 		private DataCollectionEnvironmentContext _dataCollectionEnvironmentContext;
 
 		private DataCollectionEvents _dataEvents;
@@ -39,17 +39,24 @@ namespace SlickQA.DataCollector
 		private DataCollectionSink _dataSink;
 		private Stack<Result> _results;
 		private TestRun _slickRun;
+		public ProjectInfo ProjectInfo { get; set; }
+		public ReleaseInfo ReleaseInfo { get; set; }
+		public BuildProviderInfo BuildProvider { get; set; }
+		public ScreenshotInfo ScreenshotInfo { get; set; }
+		public TestPlanInfo TestPlanInfo { get; set; }
+		public UrlInfo UrlInfo { get; set; }
+
 
 		public override void Initialize(XmlElement configurationElement, DataCollectionEvents events,
 										DataCollectionSink dataSink, DataCollectionLogger logger,
 										DataCollectionEnvironmentContext environmentContext)
 		{
-			//_config = Config.LoadConfig(configurationElement);
-
-			//if (!_config.Url.IsValid)
-			//{
-			//    throw new UriInvalidException();
-			//}
+			ProjectInfo = ProjectInfo.FromXml(configurationElement);
+			ReleaseInfo = ReleaseInfo.FromXml(configurationElement);
+			BuildProvider = BuildProviderInfo.FromXml(configurationElement);
+			ScreenshotInfo = ScreenshotInfo.FromXml(configurationElement);
+			TestPlanInfo = TestPlanInfo.FromXml(configurationElement);
+			UrlInfo = UrlInfo.FromXml(configurationElement);
 			
 			_dataEvents = events;
 			_dataSink = dataSink;
@@ -105,21 +112,35 @@ namespace SlickQA.DataCollector
 
 		private void OnSessionStart(object sender, SessionStartEventArgs eventArgs)
 		{
-			//var project = _config.ResultDestination.Project;
-			//Release release = _config.ResultDestination.Release;
-			//if (release == null || String.IsNullOrWhiteSpace(release.Id))
-			//{
-			//    throw new ConfigurationErrorsException(String.Format(
-			//        "Specified release name is not valid for the \"{0}\" project.", project));
-			//}
+			var project = new Project {Id = ProjectInfo.Id};
+			project.Get();
 
-			//_slickRun = new TestRun
-			//            {
-			//                ProjectReference = project as Project,
-			//                ReleaseReference = release,
-			//                Name = DateTime.Now.ToString("f")
-			//            };
-			//_slickRun.Post();
+			var release = new Release
+			              {
+			              	Id = ReleaseInfo.Id,
+							ProjectId = ReleaseInfo.ProjectId
+			              };
+			release.Get();
+
+			Build build = null;
+			if (BuildProvider.Method != null)
+			{
+				var buildNumber = BuildProvider.Method.Invoke(null, null) as String;
+
+				build = new Build {Name = buildNumber};
+				build.Get(true);
+			}
+
+			_slickRun = new TestRun
+			            {
+			            	Name = TestPlanInfo.Name,
+			            	ProjectReference = project,
+			            	ReleaseReference = release,
+			            	TestPlanId = TestPlanInfo.Id,
+			            	Created = DateTime.Now,
+			            	BuildReference = build,
+			            };
+			_slickRun.Post();
 		}
 
 		private void OnSessionEnd(object sender, SessionEndEventArgs sessionEndEventArgs)
@@ -129,15 +150,15 @@ namespace SlickQA.DataCollector
 
 		private void OnTestCaseStart(object sender, TestCaseStartEventArgs eventArgs)
 		{
-			string automationKey = eventArgs.TestElement.HumanReadableId;
-			Testcase testcase = Testcase.GetTestCaseByAutomationKey(automationKey);
+			Testcase testcase = Testcase.GetTestCaseByAutomationKey(eventArgs.TestElement.HumanReadableId);
 			if (testcase == null)
 			{
 				testcase = new Testcase
 						   {
-							   AutomationKey = automationKey,
+							   AutomationKey = eventArgs.TestElement.HumanReadableId,
 							   IsAutomated = true,
-							   Name = automationKey,
+							   Name = eventArgs.TestElement.HumanReadableId,
+							   //TODO: Figure out a better method of test naming
 							   ProjectReference = _slickRun.ProjectReference,
 						   };
 				testcase.Post();
@@ -155,11 +176,11 @@ namespace SlickQA.DataCollector
 									 RunStatus = RunStatus.RUNNING.ToString(),
 									 Files = new List<StoredFile>(),
 								 };
-			//if (_config.ScreenshotSettings.PreTest)
-			//{
-			//    StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Pre Test {0}.png", automationKey));
-			//    testResult.Files.Add(file);
-			//}
+			if (ScreenshotInfo.PreTest)
+			{
+				StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Pre Test {0}.png", eventArgs.TestElement.HumanReadableId));
+				testResult.Files.Add(file);
+			}
 
 			testResult.Post();
 			_results.Push(testResult);
@@ -252,11 +273,11 @@ namespace SlickQA.DataCollector
 		{
 			Result testResult = _results.Pop();
 
-			//if (_config.ScreenshotSettings.PostTest)
-			//{
-			//    StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Post Test {0}.png", eventArgs.TestElement.HumanReadableId));
-			//    testResult.Files.Add(file);
-			//}
+			if (ScreenshotInfo.PostTest)
+			{
+				StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Post Test {0}.png", eventArgs.TestElement.HumanReadableId));
+				testResult.Files.Add(file);
+			}
 
 			testResult.Status = OutcomeTranslator.Convert(eventArgs.TestOutcome).ToString();
 			testResult.RunStatus = RunStatus.FINISHED.ToString();
@@ -267,11 +288,12 @@ namespace SlickQA.DataCollector
 		{
 			Result testResult = _results.Peek();
 
-			//if (_config.ScreenshotSettings.OnFailure)
-			//{
-			//    StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Test Failure {0}.png", eventArgs.TestElement.HumanReadableId));
-			//    testResult.Files.Add(file);
-			//}
+			if (!ScreenshotInfo.FailedTest)
+			{
+				return;
+			}
+			StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Test Failure {0}.png", eventArgs.TestElement.HumanReadableId));
+			testResult.Files.Add(file);
 		}
 
 		//private void OnTestCasePause(object sender, TestCasePauseEventArgs testCasePauseEventArgs)
