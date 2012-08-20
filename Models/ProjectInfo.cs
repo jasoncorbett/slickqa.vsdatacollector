@@ -114,5 +114,11 @@ namespace SlickQA.DataCollector.Models
 		{
 			return Name;
 		}
+
+		public override bool Equals(object obj)
+		{
+			var other = obj as ProjectInfo;
+			return other != null && Id.Equals(other.Id);
+		}
 	}
 }
