@@ -107,8 +107,11 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SelectResultDestination
 			CurrentProject = ProjectInfo.FromXml(eventData.Settings.Configuration);
 			DefaultProject = ProjectInfo.FromXml(eventData.Settings.DefaultConfiguration);
 
-			CurrentRelease = ReleaseInfo.FromXml(eventData.Settings.Configuration);
+			var release = ReleaseInfo.FromXml(eventData.Settings.Configuration);
 			DefaultRelease = ReleaseInfo.FromXml(eventData.Settings.DefaultConfiguration);
+
+			View.SelectProject(CurrentProject);
+			View.SelectRelease(release);
 		}
 
 		public void Handle(ResetEvent eventData)
