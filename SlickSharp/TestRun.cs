@@ -31,10 +31,10 @@ namespace SlickQA.SlickSharp
 		public ConfigurationReference ConfigurationReference;
 
 		[DataMember(Name = "dateCreated")]
-		public DateTime Created;
+		public string Created;
 
 		[IgnoreDataMember] // TODO: Turn this into a real data member once the server side testrun has the appropriate field
-			public bool Finished;
+		public bool Finished;
 
 		[DataMember(Name = "id")]
 		public String Id;

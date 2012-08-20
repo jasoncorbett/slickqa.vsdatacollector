@@ -24,7 +24,7 @@ namespace SlickQA.SlickSharp
 	[DataContract]
 	[CollectionApiPath("testcases")]
 	[ItemApiPath("", "Id", 0)]
-	public sealed class Testcase : JsonObject<Testcase>, IJsonObject, IEquatable<Testcase>
+	public sealed class Testcase : JsonObject<Testcase>, IJsonObject
 	{
 		[DataMember(Name = "attributes")]
 		public LinkedHashMap<string> Attributes;
@@ -83,7 +83,12 @@ namespace SlickQA.SlickSharp
 		[DataMember(Name = "tags")]
 		public List<string> Tags;
 
-		#region IEquatable<Testcase> Members
+		public Testcase()
+		{
+			DataDrivenProperties = new List<DataDrivenProperty>();
+			Steps = new List<Step>();
+			Tags = new List<string>();
+		}
 
 		public bool Equals(Testcase other)
 		{
@@ -97,8 +102,6 @@ namespace SlickQA.SlickSharp
 			}
 			return Name != null && other.Name != null && other.Name == Name;
 		}
-
-		#endregion
 
 		public static Testcase GetTestCaseByAutomationId(string automationId)
 		{
@@ -132,24 +135,6 @@ namespace SlickQA.SlickSharp
 			}
 			var other = obj as Testcase;
 			return other != null && Equals(other);
-		}
-
-		public static bool operator ==(Testcase left, Testcase right)
-		{
-			if ((object)left == null || (object)right == null)
-			{
-				return Equals(left, right);
-			}
-			return left.Equals(right);
-		}
-
-		public static bool operator !=(Testcase left, Testcase right)
-		{
-			if (left == null || right == null)
-			{
-				return !Equals(left, right);
-			}
-			return !left.Equals(right);
 		}
 	}
 

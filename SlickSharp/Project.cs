@@ -103,23 +103,5 @@ namespace SlickQA.SlickSharp
 			}
 			return Name != null && other.Name != null && other.Name == Name;
 		}
-
-		public static bool operator ==(Project left, Project right)
-		{
-			if ((object)left == null || (object)right == null)
-			{
-				return Equals(left, right);
-			}
-			return left.Equals(right);
-		}
-
-		public static bool operator !=(Project left, Project right)
-		{
-			if (left == null || right == null)
-			{
-				return !Equals(left, right);
-			}
-			return !left.Equals(right);
-		}
 	}
 }
