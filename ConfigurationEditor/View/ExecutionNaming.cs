@@ -65,11 +65,14 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 			{
 				Plans.Add(testPlan);
 			}
+			_planComboBox.Enabled = false;
 			_planComboBox.SelectedIndex = -1;
-			if (_planComboBox.Items.Count != 0)
+			if (_planComboBox.Items.Count == 0)
 			{
-				_planComboBox.SelectedIndex = 0;
+				return;
 			}
+			_planComboBox.SelectedIndex = 0;
+			_planComboBox.Enabled = true;
 		}
 
 		#endregion
