@@ -22,6 +22,8 @@ using Microsoft.VisualStudio.TestTools.Execution;
 using SlickQA.DataCollector.Models;
 using SlickQA.SlickSharp;
 using SlickQA.SlickSharp.Logging;
+using SlickQA.SlickSharp.Utility;
+using SlickQA.SlickSharp.Web;
 using TestRun = SlickQA.SlickSharp.TestRun;
 
 namespace SlickQA.DataCollector
@@ -39,12 +41,12 @@ namespace SlickQA.DataCollector
 		private DataCollectionSink _dataSink;
 		private Stack<Result> _results;
 		private TestRun _slickRun;
-		public ProjectInfo ProjectInfo { get; set; }
-		public ReleaseInfo ReleaseInfo { get; set; }
-		public BuildProviderInfo BuildProvider { get; set; }
-		public ScreenshotInfo ScreenshotInfo { get; set; }
-		public TestPlanInfo TestPlanInfo { get; set; }
-		public UrlInfo UrlInfo { get; set; }
+		private ProjectInfo ProjectInfo { get; set; }
+		private ReleaseInfo ReleaseInfo { get; set; }
+		private BuildProviderInfo BuildProvider { get; set; }
+		private ScreenshotInfo ScreenshotInfo { get; set; }
+		private TestPlanInfo TestPlanInfo { get; set; }
+		private UrlInfo UrlInfo { get; set; }
 
 
 		public override void Initialize(XmlElement configurationElement, DataCollectionEvents events,
@@ -57,6 +59,11 @@ namespace SlickQA.DataCollector
 			ScreenshotInfo = ScreenshotInfo.FromXml(configurationElement);
 			TestPlanInfo = TestPlanInfo.FromXml(configurationElement);
 			UrlInfo = UrlInfo.FromXml(configurationElement);
+
+			ServerConfig.Scheme = UrlInfo.Scheme;
+			ServerConfig.SlickHost = UrlInfo.HostName;
+			ServerConfig.Port = UrlInfo.Port;
+			ServerConfig.SitePath = UrlInfo.SitePath;
 			
 			_dataEvents = events;
 			_dataSink = dataSink;
@@ -127,8 +134,26 @@ namespace SlickQA.DataCollector
 			{
 				var buildNumber = BuildProvider.Method.Invoke(null, null) as String;
 
-				build = new Build {Name = buildNumber};
+				build = new Build
+				        {
+				        	Name = buildNumber,
+							ProjectId = project.Id,
+							ReleaseId = release.Id
+				        };
 				build.Get(true);
+			}
+
+
+			string hostname = Environment.MachineName;
+			var environmentConfiguration = Configuration.GetEnvironmentConfiguration(hostname);
+			if (environmentConfiguration == null)
+			{
+				environmentConfiguration = new Configuration
+				{
+					Name = hostname,
+					ConfigurationType = "ENVIRONMENT"
+				};
+				environmentConfiguration.Post();
 			}
 
 			_slickRun = new TestRun
@@ -137,8 +162,8 @@ namespace SlickQA.DataCollector
 			            	ProjectReference = project,
 			            	ReleaseReference = release,
 			            	TestPlanId = TestPlanInfo.Id,
-			            	Created = DateTime.Now,
 			            	BuildReference = build,
+							ConfigurationReference = environmentConfiguration,
 			            };
 			_slickRun.Post();
 		}
@@ -163,6 +188,7 @@ namespace SlickQA.DataCollector
 						   };
 				testcase.Post();
 			}
+			testcase.ProjectReference = _slickRun.ProjectReference;
 			UpdateTestCaseWithTestData(testcase, eventArgs.TestElement);
 
 			var testResult = new Result
@@ -248,13 +274,15 @@ namespace SlickQA.DataCollector
 			testcase.Priority = testElement.Priority;
 			testcase.Purpose = testElement.Description;
 
-			var props = testElement.Properties;
-			foreach (DictionaryEntry entry in props)
+			if (testcase.Attributes == null)
 			{
-				if (!testcase.Attributes.ContainsKey(entry.Key.ToString()))
-				{
-					testcase.Attributes.Add(entry);
-				}
+				testcase.Attributes = new LinkedHashMap<string>();
+			}
+
+			var props = testElement.Properties;
+			foreach (var entry in props.Cast<DictionaryEntry>().Where(entry => !testcase.Attributes.ContainsKey(entry.Key.ToString())))
+			{
+				testcase.Attributes.Add(entry);
 			}
 
 			UpdateTags(testcase, testElement);
@@ -265,8 +293,15 @@ namespace SlickQA.DataCollector
 		private static void UpdateTags(Testcase testcase, ITestElement testElement)
 		{
 			var categories = testElement.TestCategories.ToArray();
-			var allTags = testcase.Tags.Union(categories);
-			testcase.Tags = allTags.ToList();
+			if (testcase.Tags != null)
+			{
+				var allTags = testcase.Tags.Union(categories);
+				testcase.Tags = allTags.ToList();				
+			}
+			else
+			{
+				testcase.Tags = categories.ToList();
+			}
 		}
 
 		private void OnTestCaseEnd(object sender, TestCaseEndEventArgs eventArgs)
