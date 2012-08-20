@@ -69,6 +69,8 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 				Releases.Add(release);
 			}
 			_release.Enabled = true;
+			_release.SelectedIndex = -1;
+			_release.SelectedIndex = 0;
 		}
 
 		public void SelectRelease(ReleaseInfo release)
