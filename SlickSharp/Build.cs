@@ -23,6 +23,7 @@ namespace SlickQA.SlickSharp
 	[DataContract]
 	[CollectionApiPath("projects/{ProjectId}/releases/{ReleaseId}/builds")]
 	[ItemApiPath("", "Id", 0)]
+	[ItemApiPath("byname", "Name", 1)]
 	public sealed class Build : JsonObject<Build>, IJsonObject, IEquatable<Build>
 	{
 		[DataMember(Name = "built")]
@@ -33,7 +34,6 @@ namespace SlickQA.SlickSharp
 
 		[DataMember(Name = "name")]
 		public String Name;
-
 
 		[IgnoreDataMember]
 		public string ProjectId { get; set; }
