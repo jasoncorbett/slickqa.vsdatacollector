@@ -37,17 +37,17 @@ namespace SlickQA.DataCollector.Repositories
 			var project = new Project {Id = info.ProjectId};
 			project.Get();
 
-			string createdBy = "Visual Studio Slick Data Collector";
+			const string CREATED_BY_VS = "Visual Studio Slick Data Collector";
 			if (string.IsNullOrWhiteSpace(info.CreatedBy))
 			{
-				createdBy = info.CreatedBy;
+				info.CreatedBy = CREATED_BY_VS;
 			}
 
 			var testPlan = new TestPlan
 			               {
 			               	Name = info.Name,
 							ProjectReference = project,
-							CreatedBy = createdBy,
+							CreatedBy = info.CreatedBy,
 			               };
 			testPlan.Post();
 
