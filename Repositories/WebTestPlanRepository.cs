@@ -38,7 +38,7 @@ namespace SlickQA.DataCollector.Repositories
 			project.Get();
 
 			string createdBy = "Visual Studio Slick Data Collector";
-			if (!string.IsNullOrWhiteSpace(info.CreatedBy))
+			if (string.IsNullOrWhiteSpace(info.CreatedBy))
 			{
 				createdBy = info.CreatedBy;
 			}
