@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using SlickQA.DataCollector.Models;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyBuildProvider
 {
@@ -24,5 +25,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyBuildProvider
 		void Run();
 		void ShowOpenFileDialog();
 		void PopulateTree(Dictionary<Type, List<MethodInfo>> candidateTypes);
+		void SetFilePath(BuildProviderInfo provider);
+		void Select(MethodInfo method);
 	}
 }

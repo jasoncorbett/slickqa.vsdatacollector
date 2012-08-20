@@ -18,6 +18,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App
 {
 	internal interface IGetBuildProviderInfo
 	{
-		Result<BuildProviderInfo> Get();
+		Result<BuildProviderInfo> Get(BuildProviderInfo provider);
 	}
 }

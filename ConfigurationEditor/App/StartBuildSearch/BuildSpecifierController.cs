@@ -42,18 +42,21 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.StartBuildSearch
 
 		public void Select()
 		{
-			AppController.Execute(new SelectBuildProviderData());
+			AppController.Execute(new SelectBuildProviderData(CurrentProvider));
 		}
 
 		public void Handle(BuildProviderSelectedEvent eventData)
 		{
-			View.SetProviderText(eventData.ProviderInfo.ToString());
+			CurrentProvider = eventData.ProviderInfo;
+			View.SetProviderText(CurrentProvider.ToString());
 		}
 
 		public void Handle(SettingsLoadedEvent eventData)
 		{
 			CurrentProvider = BuildProviderInfo.FromXml(eventData.Settings.Configuration);
 			DefaultProvider = BuildProviderInfo.FromXml(eventData.Settings.DefaultConfiguration);
+
+			View.SetProviderText(CurrentProvider.ToString());
 		}
 
 		public void Handle(ResetEvent eventData)

@@ -39,9 +39,14 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyBuildProvider
 
 		#region IGetBuildProviderInfo Members
 
-		public Result<BuildProviderInfo> Get()
+		public Result<BuildProviderInfo> Get(BuildProviderInfo provider)
 		{
-
+			View.SetFilePath(provider);
+			FilePathSupplied(Path.Combine(provider.Directory, provider.AssemblyName));
+			if (provider.Method != null)
+			{
+				View.Select(provider.Method);
+			}
 			View.Run();
 			BuildProviderInfo info = null;
 			if (ServiceResult == ServiceResult.Ok)

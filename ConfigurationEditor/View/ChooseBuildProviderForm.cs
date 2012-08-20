@@ -14,10 +14,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using SlickQA.DataCollector.ConfigurationEditor.App.SupplyBuildProvider;
+using SlickQA.DataCollector.Models;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.View
 {
@@ -61,6 +63,17 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 			}
 
 			_methodTreeView.ExpandAll();
+		}
+
+		public void SetFilePath(BuildProviderInfo provider)
+		{
+			_assemblyTextBox.Text = Path.Combine(provider.Directory, provider.AssemblyName);
+		}
+
+		public void Select(MethodInfo method)
+		{
+			var selectedNode = new TreeNode(method.Name) {Tag = method};
+			_methodTreeView.SelectedNode = selectedNode;
 		}
 
 		private IEnumerable<TreeNode> GetChildren(IEnumerable<MethodInfo> methodInfos)

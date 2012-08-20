@@ -35,7 +35,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Services
 
 		public void Execute(SelectBuildProviderData commandData)
 		{
-			Result<BuildProviderInfo> result = GetBuildProviderInfo.Get();
+			Result<BuildProviderInfo> result = GetBuildProviderInfo.Get(commandData.Provider);
 			if (result.ServiceResult != ServiceResult.Ok)
 			{
 				return;

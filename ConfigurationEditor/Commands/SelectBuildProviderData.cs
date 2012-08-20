@@ -11,9 +11,18 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+using SlickQA.DataCollector.Models;
+
 namespace SlickQA.DataCollector.ConfigurationEditor.Commands
 {
 	public sealed class SelectBuildProviderData
 	{
+		public BuildProviderInfo Provider { get; set; }
+
+		public SelectBuildProviderData(BuildProviderInfo provider)
+		{
+			Provider = provider;
+		}
 	}
 }
