@@ -23,6 +23,8 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyProjectInfo
 		{
 			View = view;
 			View.Controller = this;
+			ProjectDescription = string.Empty;
+			ProjectTags = string.Empty;
 		}
 
 		private ServiceResult ServiceResult { get; set; }
