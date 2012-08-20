@@ -46,6 +46,15 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyReleaseInfo
 		public void ReleaseNameSupplied(string releaseName)
 		{
 			ReleaseName = releaseName;
+			if (string.IsNullOrWhiteSpace(ReleaseName))
+			{
+				View.SetReleaseNameError();
+			}
+			else
+			{
+				View.ClearReleaseNameError();
+			}
+			View.UpdateOkEnabledState();
 		}
 
 		public void Create()

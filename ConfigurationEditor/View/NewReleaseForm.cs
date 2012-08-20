@@ -34,6 +34,26 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 			ShowDialog(ParentAppWindow);
 		}
 
+		public void SetReleaseNameError()
+		{
+			_errorProvider.SetError(_release, "Please provide a release name.");
+		}
+
+		public void ClearReleaseNameError()
+		{
+			_errorProvider.SetError(_release, string.Empty);
+		}
+
+		public void UpdateOkEnabledState()
+		{
+			_okButton.Enabled = !ErrorsOnPage();
+		}
+
+		private bool ErrorsOnPage()
+		{
+			return !string.IsNullOrWhiteSpace(_errorProvider.GetError(_release));
+		}
+
 		private void ReleaseTextChanged(object sender, EventArgs e)
 		{
 			Controller.ReleaseNameSupplied(_release.Text);

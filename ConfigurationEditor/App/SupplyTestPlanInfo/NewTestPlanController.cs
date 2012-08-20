@@ -57,6 +57,16 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyTestPlanInfo
 		public void PlanNameSupplied(string planName)
 		{
 			PlanName = planName;
+			if (string.IsNullOrWhiteSpace(PlanName))
+			{
+				View.SetPlanNameError();
+			}
+			else
+			{
+				View.ClearPlanNameError();
+			}
+
+			View.UpdateOkEnabledState();
 		}
 
 		public void CreatorSupplied(string creator)

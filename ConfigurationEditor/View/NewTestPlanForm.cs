@@ -31,7 +31,27 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 
 		public void Run()
 		{
-			Show(ParentAppWindow);
+			ShowDialog(ParentAppWindow);
+		}
+
+		public void SetPlanNameError()
+		{
+			_errorProvider.SetError(_planName, "Please enter a plan name");
+		}
+
+		public void ClearPlanNameError()
+		{
+			_errorProvider.SetError(_planName, string.Empty);
+		}
+
+		public void UpdateOkEnabledState()
+		{
+			_okButton.Enabled = !ErrorsOnPage();
+		}
+
+		private bool ErrorsOnPage()
+		{
+			return !string.IsNullOrWhiteSpace(_errorProvider.GetError(_planName));
 		}
 
 		private void PlanNameTextChanged(object sender, EventArgs e)

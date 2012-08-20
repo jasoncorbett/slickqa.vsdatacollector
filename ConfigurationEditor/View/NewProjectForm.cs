@@ -34,6 +34,36 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 			ShowDialog(ParentAppWindow);
 		}
 
+		public void ClearReleaseNameError()
+		{
+			_errorProvider.SetError(_releaseName, string.Empty);
+		}
+
+		public void SetReleaseNameError()
+		{
+			_errorProvider.SetError(_releaseName, "Please provide a name for the first release in the project.");
+		}
+
+		public void SetProjectNameError()
+		{
+			_errorProvider.SetError(_projectName, "Please provide a project name.");
+		}
+
+		public void ClearProjectNameError()
+		{
+			_errorProvider.SetError(_projectName, string.Empty);
+		}
+
+		public void UpdateOkEnabledState()
+		{
+			_okButton.Enabled = !ErrorsOnPage();
+		}
+
+		private bool ErrorsOnPage()
+		{
+			return !string.IsNullOrWhiteSpace(_errorProvider.GetError(_projectName)) || !string.IsNullOrWhiteSpace(_errorProvider.GetError(_releaseName));
+		}
+
 		private void ProjectNameTextChanged(object sender, EventArgs e)
 		{
 			Controller.ProjectNameSupplied(_projectName.Text);

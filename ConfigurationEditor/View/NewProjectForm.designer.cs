@@ -30,7 +30,7 @@
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NewProjectForm));
-			this._createButton = new System.Windows.Forms.Button();
+			this._okButton = new System.Windows.Forms.Button();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._projectName = new System.Windows.Forms.TextBox();
 			this._projectDescription = new System.Windows.Forms.TextBox();
@@ -44,17 +44,17 @@
 			((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
 			this.SuspendLayout();
 			// 
-			// _createButton
+			// _okButton
 			// 
-			resources.ApplyResources(this._createButton, "_createButton");
-			this._createButton.CausesValidation = false;
-			this._createButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this._errorProvider.SetError(this._createButton, resources.GetString("_createButton.Error"));
-			this._errorProvider.SetIconAlignment(this._createButton, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("_createButton.IconAlignment"))));
-			this._errorProvider.SetIconPadding(this._createButton, ((int)(resources.GetObject("_createButton.IconPadding"))));
-			this._createButton.Name = "_createButton";
-			this._createButton.UseVisualStyleBackColor = true;
-			this._createButton.Click += new System.EventHandler(this.CreateButtonClick);
+			resources.ApplyResources(this._okButton, "_okButton");
+			this._okButton.CausesValidation = false;
+			this._okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+			this._errorProvider.SetError(this._okButton, resources.GetString("_okButton.Error"));
+			this._errorProvider.SetIconAlignment(this._okButton, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("_okButton.IconAlignment"))));
+			this._errorProvider.SetIconPadding(this._okButton, ((int)(resources.GetObject("_okButton.IconPadding"))));
+			this._okButton.Name = "_okButton";
+			this._okButton.UseVisualStyleBackColor = true;
+			this._okButton.Click += new System.EventHandler(this.CreateButtonClick);
 			// 
 			// _cancelButton
 			// 
@@ -145,7 +145,7 @@
 			// 
 			// NewProjectForm
 			// 
-			this.AcceptButton = this._createButton;
+			this.AcceptButton = this._okButton;
 			resources.ApplyResources(this, "$this");
 			this.AccessibleRole = System.Windows.Forms.AccessibleRole.Dialog;
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -160,7 +160,7 @@
 			this.Controls.Add(this._projectDescription);
 			this.Controls.Add(this._projectName);
 			this.Controls.Add(this._cancelButton);
-			this.Controls.Add(this._createButton);
+			this.Controls.Add(this._okButton);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -176,7 +176,7 @@
 
 		#endregion
 
-		private System.Windows.Forms.Button _createButton;
+		private System.Windows.Forms.Button _okButton;
 		private System.Windows.Forms.Button _cancelButton;
 		private System.Windows.Forms.TextBox _projectName;
 		private System.Windows.Forms.TextBox _projectDescription;

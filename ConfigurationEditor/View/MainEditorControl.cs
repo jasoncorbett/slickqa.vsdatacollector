@@ -48,7 +48,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 
 		public void SetTestPlanError()
 		{
-			_errorProvider.SetError(_executionNaming, "Please add or select a test plan.");
+			_errorProvider.SetError(_executionNaming, "Please add a test plan.");
 		}
 
 		private IContainer IocContainer { get; set; }

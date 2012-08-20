@@ -120,7 +120,11 @@
   <data name="_cancelButton.Text" xml:space="preserve">
     <value>Cancelar</value>
   </data>
-  <data name="_createButton.Text" xml:space="preserve">
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="_okButton.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>BottomLeft</value>
+  </data>
+  <data name="_okButton.Text" xml:space="preserve">
     <value>&amp;OK</value>
   </data>
 </root>

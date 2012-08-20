@@ -17,5 +17,8 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyTestPlanInfo
 	{
 		NewTestPlanController Controller { set; }
 		void Run();
+		void SetPlanNameError();
+		void ClearPlanNameError();
+		void UpdateOkEnabledState();
 	}
 }

@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NewTestPlanForm));
 			this._nameLabel = new System.Windows.Forms.Label();
 			this._planName = new System.Windows.Forms.TextBox();
@@ -35,6 +36,8 @@
 			this._creatorName = new System.Windows.Forms.TextBox();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._okButton = new System.Windows.Forms.Button();
+			this._errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+			((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// _nameLabel
@@ -61,19 +64,24 @@
 			// 
 			// _cancelButton
 			// 
-			resources.ApplyResources(this._cancelButton, "_cancelButton");
 			this._cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			resources.ApplyResources(this._cancelButton, "_cancelButton");
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this.CancelButtonClick);
 			// 
 			// _okButton
 			// 
-			resources.ApplyResources(this._okButton, "_okButton");
 			this._okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+			resources.ApplyResources(this._okButton, "_okButton");
 			this._okButton.Name = "_okButton";
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this.OkButtonClick);
+			// 
+			// _errorProvider
+			// 
+			this._errorProvider.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
+			this._errorProvider.ContainerControl = this;
 			// 
 			// NewTestPlanForm
 			// 
@@ -86,6 +94,7 @@
 			this.Controls.Add(this._planName);
 			this.Controls.Add(this._nameLabel);
 			this.Name = "NewTestPlanForm";
+			((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -99,5 +108,6 @@
 		private System.Windows.Forms.TextBox _creatorName;
 		private System.Windows.Forms.Button _cancelButton;
 		private System.Windows.Forms.Button _okButton;
+		private System.Windows.Forms.ErrorProvider _errorProvider;
 	}
 }

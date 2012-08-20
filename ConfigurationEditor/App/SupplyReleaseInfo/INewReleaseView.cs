@@ -17,5 +17,8 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyReleaseInfo
 	{
 		NewReleaseController Controller { get; set; }
 		void Run();
+		void SetReleaseNameError();
+		void ClearReleaseNameError();
+		void UpdateOkEnabledState();
 	}
 }

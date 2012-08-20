@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ChooseBuildProviderForm));
 			this._openFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this._methodTreeView = new System.Windows.Forms.TreeView();
@@ -36,6 +37,8 @@
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._okButton = new System.Windows.Forms.Button();
 			this._browse = new System.Windows.Forms.Button();
+			this._errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+			((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// _openFileDialog
@@ -82,6 +85,10 @@
 			this._browse.UseVisualStyleBackColor = true;
 			this._browse.Click += new System.EventHandler(this.BrowseClick);
 			// 
+			// _errorProvider
+			// 
+			this._errorProvider.ContainerControl = this;
+			// 
 			// ChooseBuildProviderForm
 			// 
 			resources.ApplyResources(this, "$this");
@@ -93,6 +100,7 @@
 			this.Controls.Add(this.directoryLabel);
 			this.Controls.Add(this._methodTreeView);
 			this.Name = "ChooseBuildProviderForm";
+			((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -107,5 +115,6 @@
 		private System.Windows.Forms.Button _cancelButton;
 		private System.Windows.Forms.Button _okButton;
 		private System.Windows.Forms.Button _browse;
+		private System.Windows.Forms.ErrorProvider _errorProvider;
 	}
 }

@@ -17,5 +17,10 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyProjectInfo
 	{
 		NewProjectController Controller { set; }
 		void Run();
+		void ClearReleaseNameError();
+		void SetReleaseNameError();
+		void SetProjectNameError();
+		void ClearProjectNameError();
+		void UpdateOkEnabledState();
 	}
 }

@@ -50,6 +50,16 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyProjectInfo
 		public void ProjectNameSupplied(string projectName)
 		{
 			ProjectName = projectName;
+			if (string.IsNullOrWhiteSpace(ProjectName))
+			{
+				View.SetProjectNameError();
+			}
+			else
+			{
+				View.ClearProjectNameError();
+			}
+
+			View.UpdateOkEnabledState();
 		}
 
 		public void ProjectDescriptionSupplied(string projectDescription)
@@ -60,6 +70,16 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyProjectInfo
 		public void ReleaseNameSupplied(string releaseName)
 		{
 			ReleaseName = releaseName;
+			if (string.IsNullOrWhiteSpace(ReleaseName))
+			{
+				View.SetReleaseNameError();
+			}
+			else
+			{
+				View.ClearReleaseNameError();
+			}
+
+			View.UpdateOkEnabledState();
 		}
 
 		public void ProjectTagsSupplied(string projectTags)
