@@ -193,19 +193,19 @@ namespace SlickQA.DataCollector
 
 			var testResult = new Result
 								 {
-									 Hostname = Environment.MachineName,
-									 ProjectReference = _slickRun.ProjectReference,
-									 ReleaseReference = _slickRun.ReleaseReference,
 									 TestRunReference = _slickRun,
 									 TestcaseReference = testcase,
+									 ProjectReference = _slickRun.ProjectReference,
+									 ReleaseReference = _slickRun.ReleaseReference,
+									 BuildReference = _slickRun.BuildReference,
+									 Hostname = Environment.MachineName,
 									 Status = ResultStatus.NO_RESULT.ToString(),
-									 RunStatus = RunStatus.RUNNING.ToString(),
-									 Files = new List<StoredFile>(),
 								 };
 			if (ScreenshotInfo.PreTest)
 			{
 				StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Pre Test {0}.png", eventArgs.TestElement.HumanReadableId));
-				testResult.Files.Add(file);
+
+				testResult.Files = new List<StoredFile> {file};
 			}
 
 			testResult.Post();
@@ -311,6 +311,10 @@ namespace SlickQA.DataCollector
 			if (ScreenshotInfo.PostTest)
 			{
 				StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Post Test {0}.png", eventArgs.TestElement.HumanReadableId));
+				if (testResult.Files == null)
+				{
+					testResult.Files = new List<StoredFile>();
+				}
 				testResult.Files.Add(file);
 			}
 
@@ -328,6 +332,10 @@ namespace SlickQA.DataCollector
 				return;
 			}
 			StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Test Failure {0}.png", eventArgs.TestElement.HumanReadableId));
+			if (testResult.Files == null)
+			{
+				testResult.Files = new List<StoredFile>();
+			}
 			testResult.Files.Add(file);
 		}
 
