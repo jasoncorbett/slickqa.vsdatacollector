@@ -20,6 +20,7 @@ namespace SlickQA.DataCollector.Repositories
 	public interface IReleaseRepository
 	{
 		string AddRelease(ReleaseInfo info);
+		void Load(string projectId);
 		IEnumerable<ReleaseInfo> GetReleases(string projectId);
 	}
 }

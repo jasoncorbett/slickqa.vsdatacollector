@@ -65,6 +65,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.IoC_Setup
 			For<ICommand<GetAssemblyInfoData>>().Use<GetAssemblyInfoService>();
 			For<ICommand<RetrieveTestPlansData>>().Use<RetrieveTestPlansService>();
 			For<ICommand<AddNewTestPlanData>>().Use<AddNewTestPlanService>();
+			For<ICommand<RetrieveReleasesData>>().Use<RetrieveReleasesService>();
 
 			//Repositories
 			For<IUrlRepository>().Singleton().Use<StaticUrlRepository>();

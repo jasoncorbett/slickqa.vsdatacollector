@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System.Collections.Generic;
-using System.Xml;
 using SlickQA.DataCollector.ConfigurationEditor.AppController;
 using SlickQA.DataCollector.ConfigurationEditor.Commands;
 using SlickQA.DataCollector.ConfigurationEditor.Events;
@@ -91,7 +90,9 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SelectResultDestination
 
 		public void Handle(ProjectSelectedEvent eventData)
 		{
-			View.LoadReleaseList(ReleaseRepository.GetReleases(CurrentProject.Id));
+			AppController.Execute(new RetrieveReleasesData(eventData.Project.Id));
+
+			View.LoadReleaseList(ReleaseRepository.GetReleases(eventData.Project.Id));
 			View.EnableAddReleaseButton();
 		}
 

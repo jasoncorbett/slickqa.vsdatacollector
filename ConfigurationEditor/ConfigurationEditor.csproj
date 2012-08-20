@@ -60,8 +60,10 @@
     <Compile Include="App\SupplyTestPlanInfo\NewTestPlanController.cs" />
     <Compile Include="Commands\AddNewProjectData.cs" />
     <Compile Include="Commands\AddNewTestPlanData.cs" />
+    <Compile Include="Commands\RetrieveReleasesData.cs" />
     <Compile Include="Commands\RetrieveTestPlansData.cs" />
     <Compile Include="ConfigExtensions.cs" />
+    <Compile Include="Events\ReleasesLoadedEvent.cs" />
     <Compile Include="Events\ResetEvent.cs" />
     <Compile Include="Events\SaveDataEvent.cs" />
     <Compile Include="Events\ServiceProviderLoadedEvent.cs" />
@@ -91,6 +93,7 @@
     <Compile Include="Commands\RetrieveProjectsData.cs" />
     <Compile Include="Services\RetrieveProjectsService.cs" />
     <Compile Include="Commands\SelectBuildProviderData.cs" />
+    <Compile Include="Services\RetrieveReleasesService.cs" />
     <Compile Include="Services\RetrieveTestPlansService.cs" />
     <Compile Include="Services\SelectBuildProviderService.cs" />
     <Compile Include="App\SelectResultDestination\IResultDestinationView.cs" />
