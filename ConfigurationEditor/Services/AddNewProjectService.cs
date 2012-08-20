@@ -54,6 +54,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Services
 
 			string releaseId = ReleaseRepository.AddRelease(releaseInfo);
 			releaseInfo.Id = releaseId;
+			ReleaseRepository.MakeDefault(releaseInfo);
 
 			AppController.Raise(new ProjectAddedEvent(info));
 			AppController.Raise(new ReleaseAddedEvent(releaseInfo));

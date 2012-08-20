@@ -41,6 +41,13 @@ namespace SlickQA.DataCollector.Repositories
 			return Releases[projectId];
 		}
 
+		public void MakeDefault(ReleaseInfo releaseInfo)
+		{
+			var release = new Release {Id = releaseInfo.Id, ProjectId = releaseInfo.ProjectId};
+			release.Get();
+			release.SetAsDefault();
+		}
+
 		public string AddRelease(ReleaseInfo info)
 		{
 			var release = new Release

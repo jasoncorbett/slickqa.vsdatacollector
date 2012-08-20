@@ -22,5 +22,6 @@ namespace SlickQA.DataCollector.Repositories
 		string AddRelease(ReleaseInfo info);
 		void Load(string projectId);
 		IEnumerable<ReleaseInfo> GetReleases(string projectId);
+		void MakeDefault(ReleaseInfo releaseInfo);
 	}
 }
