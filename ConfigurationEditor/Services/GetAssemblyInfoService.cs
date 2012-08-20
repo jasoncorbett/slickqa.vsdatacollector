@@ -34,6 +34,11 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Services
 
 		public void Execute(GetAssemblyInfoData commandData)
 		{
+			if (string.IsNullOrWhiteSpace(commandData.AssemblyPath))
+			{
+				return;
+			}
+
 			var candidateTypes = new Dictionary<Type, List<MethodInfo>>();
 
 			IEnumerable<Type> types = GetAssemblyTypes(commandData);
