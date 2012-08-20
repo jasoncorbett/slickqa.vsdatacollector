@@ -15,23 +15,24 @@
 using System;
 using System.Windows.Forms;
 using SlickQA.DataCollector.ConfigurationEditor.App.SupplyScreenshotInfo;
+using SlickQA.DataCollector.Models;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.View
 {
 	public sealed partial class ScreenshotSetter : UserControl, IScreenshotView
 	{
-		public ScreenshotController Controller { get; set; }
+		public ScreenshotController Controller { private get; set; }
 
 		public ScreenshotSetter()
 		{
 			InitializeComponent();
 		}
 
-		public void Update(bool preTest, bool postTest, bool failedTest)
+		public void Update(ScreenshotInfo currentScreenshot)
 		{
-			_pretestScreenshot.Checked = preTest;
-			_posttestScreenshot.Checked = postTest;
-			_failScreenshot.Checked = failedTest;
+			_pretestScreenshot.Checked = currentScreenshot.PreTest;
+			_posttestScreenshot.Checked = currentScreenshot.PostTest;
+			_failScreenshot.Checked = currentScreenshot.FailedTest;
 		}
 
 		private void PretestScreenshotCheckedChanged(object sender, EventArgs e)

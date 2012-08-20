@@ -11,11 +11,14 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+using SlickQA.DataCollector.Models;
+
 namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyScreenshotInfo
 {
 	public interface IScreenshotView
 	{
 		ScreenshotController Controller { set; }
-		void Update(bool preTest, bool postTest, bool failedTest);
+		void Update(ScreenshotInfo currentScreenshot);
 	}
 }
