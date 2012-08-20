@@ -18,6 +18,7 @@ using System.Xml.Serialization;
 
 namespace SlickQA.DataCollector.Models
 {
+	[XmlRoot(TAG_NAME)]
 	public sealed class UrlInfo
 	{
 		public const string TAG_NAME = "Url";
@@ -106,13 +107,18 @@ namespace SlickQA.DataCollector.Models
 
 		public XmlNode ToXmlNode()
 		{
-			XmlNode node = new XmlDocument();
-			var writer = node.CreateNavigator().AppendChild();
+			var doc = new XmlDocument();
 
-			var s = new XmlSerializer(GetType());
-			s.Serialize(writer, this);
+			var nav = doc.CreateNavigator();
+			using (XmlWriter writer = nav.AppendChild())
+			{
+				var ser = new XmlSerializer(GetType());
+				ser.Serialize(writer, this);
+			}
+			XmlNode retVal = doc.FirstChild;
+			doc.RemoveChild(retVal);
 
-			return node;
+			return retVal;
 		}
 	}
 }

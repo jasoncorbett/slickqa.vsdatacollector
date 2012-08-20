@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
 using SlickQA.DataCollector.Models;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
@@ -22,8 +21,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 		UrlController Controller { set; }
 
 		void EnableButton(bool state);
-		void LoadSchemes(List<string> schemes);
-		void SetPort(int portNumber);
 		void Update(UrlInfo url);
 	}
 }

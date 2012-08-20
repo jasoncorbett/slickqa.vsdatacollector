@@ -30,7 +30,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 		IEventHandler<ResetEvent>,
 		IEventHandler<SaveDataEvent>
 	{
-		private static readonly List<string> _schemes = new List<string> {Uri.UriSchemeHttp, Uri.UriSchemeHttps};
 		private IApplicationController AppController { get; set; }
 		private ISetUrlView View { get; set; }
 		private IUrlRepository UrlRepository { get; set; }
@@ -77,16 +76,12 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 			AppController.Execute(new RetrieveProjectsData());
 		}
 
-
-		//TODO: Fix URL Load and Config Handling
-
 		public void Load()
 		{
-			View.LoadSchemes(_schemes);
-			View.SetPort(8080);
+			View.Update(CurrentUrl);
 		}
 
-		private void ValidateUrl()
+		private bool ValidateUrl()
 		{
 			bool validUrl = false;
 			if (CurrentUrl.IsComplete)
@@ -103,6 +98,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 				AppController.Raise(new UrlInvalidatedEvent());
 			}
 			View.EnableButton(validUrl);
+			return validUrl;
 		}
 
 		private bool TestServerConnection(UrlInfo urlInfo)
@@ -136,6 +132,10 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 			CurrentUrl = UrlInfo.FromXml(eventData.Settings.Configuration);
 			DefaultUrl = UrlInfo.FromXml(eventData.Settings.DefaultConfiguration);
 
+			if (ValidateUrl())
+			{
+				GetProjects();
+			}
 			View.Update(CurrentUrl);
 		}
 

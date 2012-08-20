@@ -19,19 +19,20 @@ using System.Xml.Serialization;
 
 namespace SlickQA.DataCollector.Models
 {
+	[XmlRoot(TAG_NAME)]
 	public sealed class ProjectInfo
 	{
 		public const string TAG_NAME = "Project";
 
 		public string Id { get; set; }
-		public string Name { get; private set; }
+		public string Name { get; set; }
 
 		[XmlIgnore]
-		public string Description { get; private set; }
+		public string Description { get; set; }
 		[XmlIgnore]
-		public string ReleaseName { get; private set; }
+		public string ReleaseName { get; set; }
 		[XmlIgnore]
-		public List<string> Tags { get; private set; }
+		public List<string> Tags { get; set; }
 
 		public ProjectInfo(string id, string name, string description, string releaseName, List<string> tags)
 		{
@@ -95,13 +96,18 @@ namespace SlickQA.DataCollector.Models
 
 		public XmlNode ToXmlNode()
 		{
-			XmlNode node = new XmlDocument();
-			var writer = node.CreateNavigator().AppendChild();
+			var doc = new XmlDocument();
 
-			var s = new XmlSerializer(GetType());
-			s.Serialize(writer, this);
+			var nav = doc.CreateNavigator();
+			using (XmlWriter writer = nav.AppendChild())
+			{
+				var ser = new XmlSerializer(GetType());
+				ser.Serialize(writer, this);
+			}
+			XmlNode retVal = doc.FirstChild;
+			doc.RemoveChild(retVal);
 
-			return node;
+			return retVal;
 		}
 
 		public override string ToString()

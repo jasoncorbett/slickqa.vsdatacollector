@@ -92,8 +92,10 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming
 
 		public void Handle(SettingsLoadedEvent eventData)
 		{
-			CurrentTestPlan = TestPlanInfo.FromXml(eventData.Settings.Configuration);
+			var testPlan = TestPlanInfo.FromXml(eventData.Settings.Configuration);
 			DefaultTestPlan = TestPlanInfo.FromXml(eventData.Settings.DefaultConfiguration);
+
+			View.SelectPlan(testPlan);
 		}
 
 		public void Handle(ResetEvent eventData)

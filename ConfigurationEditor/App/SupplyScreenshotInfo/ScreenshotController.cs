@@ -53,6 +53,8 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyScreenshotInfo
 		{
 			CurrentScreenshot = ScreenshotInfo.FromXml(eventData.Settings.Configuration);
 			DefaultScreenshot = ScreenshotInfo.FromXml(eventData.Settings.DefaultConfiguration);
+
+			View.Update(CurrentScreenshot);
 		}
 
 		public void Handle(ResetEvent eventData)
@@ -65,7 +67,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyScreenshotInfo
 		public void Handle(SaveDataEvent eventData)
 		{
 			var config = eventData.Settings.Configuration;
-
 			config.UpdateTagWithNewValue(ScreenshotInfo.TAG_NAME, CurrentScreenshot.ToXmlNode());
 		}
 	}

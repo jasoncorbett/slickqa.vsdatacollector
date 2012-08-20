@@ -67,21 +67,21 @@
 			resources.ApplyResources(this._port, "_port");
 			this._port.AccessibleRole = System.Windows.Forms.AccessibleRole.Dial;
 			this._port.Maximum = new decimal(new int[] {
-			65535,
-			0,
-			0,
-			0});
+            65535,
+            0,
+            0,
+            0});
 			this._port.Minimum = new decimal(new int[] {
-			1,
-			0,
-			0,
-			0});
+            1,
+            0,
+            0,
+            0});
 			this._port.Name = "_port";
 			this._port.Value = new decimal(new int[] {
-			1,
-			0,
-			0,
-			0});
+            1,
+            0,
+            0,
+            0});
 			this._port.ValueChanged += new System.EventHandler(this.PortValueChanged);
 			// 
 			// _sitePathSlash
@@ -122,6 +122,9 @@
 			this._scheme.AccessibleRole = System.Windows.Forms.AccessibleRole.DropList;
 			this._scheme.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._scheme.FormattingEnabled = true;
+			this._scheme.Items.AddRange(new object[] {
+            resources.GetString("_scheme.Items"),
+            resources.GetString("_scheme.Items1")});
 			this._scheme.Name = "_scheme";
 			this._scheme.SelectedIndexChanged += new System.EventHandler(this.SchemeSelectedIndexChanged);
 			// 

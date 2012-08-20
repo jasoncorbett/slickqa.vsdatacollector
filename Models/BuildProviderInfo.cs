@@ -13,25 +13,58 @@
 // limitations under the License.
 
 using System;
+using System.IO;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Serialization;
 
 namespace SlickQA.DataCollector.Models
 {
+	[XmlRoot(TAG_NAME)]
 	public sealed class BuildProviderInfo
 	{
 		public const string TAG_NAME = "BuildProvider";
 
-		public string AssemblyName { get; private set; }
-		public string Directory { get; private set; }
-		public MethodInfo Method { get; private set; }
+		public string AssemblyName { get; set; }
+		public string Directory { get; set; }
+		public string TypeName { get; set; }
+		public string MethodName { get; set; }
+
+		private MethodInfo _method;
+
+		[XmlIgnore]
+		public MethodInfo Method
+		{
+			get { return _method; }
+			set
+			{
+				_method = value;
+				UpdateFromMethod(_method);
+			}
+		}
 
 		public BuildProviderInfo(string assemblyName, string directory, MethodInfo method)
 		{
 			AssemblyName = assemblyName;
 			Directory = directory;
 			Method = method;
+		}
+
+		private void UpdateFromMethod(MethodInfo method)
+		{
+			if (method != null)
+			{
+				if (method.DeclaringType != null)
+				{
+					TypeName = method.DeclaringType.FullName;
+				}
+				MethodName = method.Name;
+			}
+			else
+			{
+				TypeName = string.Empty;
+				MethodName = string.Empty;
+			}
 		}
 
 		private BuildProviderInfo(XmlNodeList elements)
@@ -46,7 +79,35 @@ namespace SlickQA.DataCollector.Models
 					var temp = s.Deserialize(reader) as BuildProviderInfo;
 					AssemblyName = temp.AssemblyName;
 					Directory = temp.Directory;
-					Method = temp.Method;
+					TypeName = temp.TypeName;
+					MethodName = temp.MethodName;
+
+
+					//TODO: Load from CWD
+					string assemblyFile = null;
+					var tempPath = Path.Combine(Environment.CurrentDirectory, AssemblyName);
+					if (File.Exists(tempPath))
+					{
+						assemblyFile = tempPath;
+					}
+					else
+					{
+						var path = Path.Combine(Directory, AssemblyName);
+						if (File.Exists(path))
+						{
+							assemblyFile = path;
+						}
+					}
+
+					if (assemblyFile != null)
+					{
+						var assembly = Assembly.LoadFrom(assemblyFile);
+						if (!string.IsNullOrWhiteSpace(TypeName))
+						{
+							var type = assembly.GetType(TypeName);
+							Method = type.GetMethod(MethodName);
+						}
+					}
 				}
 				else
 				{
@@ -83,32 +144,42 @@ namespace SlickQA.DataCollector.Models
 
 		private string FullMethodName()
 		{
-			string fullMethodName;
-			if (Method.DeclaringType != null)
+			if (Method != null)
 			{
-				fullMethodName = Method.DeclaringType.FullName + "." + Method.Name;
+				string fullMethodName;
+				if (Method.DeclaringType != null)
+				{
+					fullMethodName = Method.DeclaringType.FullName + "." + Method.Name;
+				}
+				else
+				{
+					fullMethodName = Method.Name;
+				}
+				return fullMethodName;
 			}
-			else
-			{
-				fullMethodName = Method.Name;
-			}
-			return fullMethodName;
+			return string.Empty;
 		}
 
 		public override string ToString()
 		{
-			return string.Format("{0}\\{1}:{2}", Directory, AssemblyName, FullMethodName());
+			var name = string.Format(@"{0}\{1}:{2}", Directory, AssemblyName, FullMethodName());
+			return @"\:" == name ? string.Empty : name;
 		}
 
 		public XmlNode ToXmlNode()
 		{
-			XmlNode node = new XmlDocument();
-			var writer = node.CreateNavigator().AppendChild();
+			var doc = new XmlDocument();
 
-			var s = new XmlSerializer(GetType());
-			s.Serialize(writer, this);
+			var nav = doc.CreateNavigator();
+			using (XmlWriter writer = nav.AppendChild())
+			{
+				var ser = new XmlSerializer(GetType());
+				ser.Serialize(writer, this);
+			}
+			XmlNode retVal = doc.FirstChild;
+			doc.RemoveChild(retVal);
 
-			return node;
+			return retVal;
 		}
 	}
 }

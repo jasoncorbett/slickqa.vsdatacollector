@@ -18,9 +18,14 @@ using System.Xml.Serialization;
 
 namespace SlickQA.DataCollector.Models
 {
+	[XmlRoot(TAG_NAME)]
 	public class ScreenshotInfo
 	{
 		public const string TAG_NAME = "Screenshot";
+
+		public bool PreTest { get; set; }
+		public bool PostTest { get; set; }
+		public bool FailedTest { get; set; }
 
 		public ScreenshotInfo()
 		{
@@ -71,10 +76,6 @@ namespace SlickQA.DataCollector.Models
 			FailedTest = true;
 		}
 
-		public bool PreTest { get; set; }
-		public bool PostTest { get; set; }
-		public bool FailedTest { get; set; }
-
 		public static ScreenshotInfo FromXml(XmlElement configuration)
 		{
 			return new ScreenshotInfo(configuration.GetElementsByTagName(TAG_NAME));
@@ -82,13 +83,18 @@ namespace SlickQA.DataCollector.Models
 
 		public XmlNode ToXmlNode()
 		{
-			XmlNode node = new XmlDocument();
-			var writer = node.CreateNavigator().AppendChild();
+			var doc = new XmlDocument();
 
-			var s = new XmlSerializer(GetType());
-			s.Serialize(writer, this);
+			var nav = doc.CreateNavigator();
+			using (XmlWriter writer = nav.AppendChild())
+			{
+				var ser = new XmlSerializer(GetType());
+				ser.Serialize(writer, this);
+			}
+			XmlNode retVal = doc.FirstChild;
+			doc.RemoveChild(retVal);
 
-			return node;
+			return retVal;
 		}
 	}
 }

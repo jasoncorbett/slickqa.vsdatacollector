@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 using SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo;
 using SlickQA.DataCollector.Models;
@@ -36,18 +35,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 			_getProjects.Enabled = state;
 		}
 
-		public void LoadSchemes(List<string> schemes)
-		{
-			_scheme.DataSource = schemes;
-			_scheme.DisplayMember = null;
-			_scheme.ValueMember = null;
-		}
-
-		public void SetPort(int portNumber)
-		{
-			_port.Value = portNumber;
-		}
-
 		public void Update(UrlInfo url)
 		{
 			_scheme.SelectedItem = url.Scheme;
@@ -61,11 +48,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 		private void SchemeSelectedIndexChanged(object sender, EventArgs e)
 		{
 			Controller.SchemeSupplied(_scheme.SelectedItem as string);
-		}
-
-		private void HostTextChanged(object sender, EventArgs e)
-		{
-			
 		}
 
 		private void PortValueChanged(object sender, EventArgs e)
