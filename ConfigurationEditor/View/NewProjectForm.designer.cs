@@ -46,102 +46,73 @@
 			// 
 			// _okButton
 			// 
-			resources.ApplyResources(this._okButton, "_okButton");
 			this._okButton.CausesValidation = false;
 			this._okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this._errorProvider.SetError(this._okButton, resources.GetString("_okButton.Error"));
-			this._errorProvider.SetIconAlignment(this._okButton, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("_okButton.IconAlignment"))));
-			this._errorProvider.SetIconPadding(this._okButton, ((int)(resources.GetObject("_okButton.IconPadding"))));
+			resources.ApplyResources(this._okButton, "_okButton");
 			this._okButton.Name = "_okButton";
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this.CreateButtonClick);
 			// 
 			// _cancelButton
 			// 
-			resources.ApplyResources(this._cancelButton, "_cancelButton");
 			this._cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this._errorProvider.SetError(this._cancelButton, resources.GetString("_cancelButton.Error"));
-			this._errorProvider.SetIconAlignment(this._cancelButton, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("_cancelButton.IconAlignment"))));
-			this._errorProvider.SetIconPadding(this._cancelButton, ((int)(resources.GetObject("_cancelButton.IconPadding"))));
+			resources.ApplyResources(this._cancelButton, "_cancelButton");
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this.CancelButtonClick);
 			// 
 			// _projectName
 			// 
-			resources.ApplyResources(this._projectName, "_projectName");
 			this._errorProvider.SetError(this._projectName, resources.GetString("_projectName.Error"));
-			this._errorProvider.SetIconAlignment(this._projectName, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("_projectName.IconAlignment"))));
-			this._errorProvider.SetIconPadding(this._projectName, ((int)(resources.GetObject("_projectName.IconPadding"))));
+			resources.ApplyResources(this._projectName, "_projectName");
 			this._projectName.Name = "_projectName";
 			this._projectName.TextChanged += new System.EventHandler(this.ProjectNameTextChanged);
 			// 
 			// _projectDescription
 			// 
-			resources.ApplyResources(this._projectDescription, "_projectDescription");
 			this._projectDescription.CausesValidation = false;
-			this._errorProvider.SetError(this._projectDescription, resources.GetString("_projectDescription.Error"));
-			this._errorProvider.SetIconAlignment(this._projectDescription, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("_projectDescription.IconAlignment"))));
-			this._errorProvider.SetIconPadding(this._projectDescription, ((int)(resources.GetObject("_projectDescription.IconPadding"))));
+			resources.ApplyResources(this._projectDescription, "_projectDescription");
 			this._projectDescription.Name = "_projectDescription";
 			this._projectDescription.TextChanged += new System.EventHandler(this.ProjectDescriptionTextChanged);
 			// 
 			// _releaseName
 			// 
-			resources.ApplyResources(this._releaseName, "_releaseName");
 			this._errorProvider.SetError(this._releaseName, resources.GetString("_releaseName.Error"));
-			this._errorProvider.SetIconAlignment(this._releaseName, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("_releaseName.IconAlignment"))));
-			this._errorProvider.SetIconPadding(this._releaseName, ((int)(resources.GetObject("_releaseName.IconPadding"))));
+			resources.ApplyResources(this._releaseName, "_releaseName");
 			this._releaseName.Name = "_releaseName";
 			this._releaseName.TextChanged += new System.EventHandler(this.ReleaseNameTextChanged);
 			// 
 			// _projectTags
 			// 
-			resources.ApplyResources(this._projectTags, "_projectTags");
 			this._projectTags.CausesValidation = false;
-			this._errorProvider.SetError(this._projectTags, resources.GetString("_projectTags.Error"));
-			this._errorProvider.SetIconAlignment(this._projectTags, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("_projectTags.IconAlignment"))));
-			this._errorProvider.SetIconPadding(this._projectTags, ((int)(resources.GetObject("_projectTags.IconPadding"))));
+			resources.ApplyResources(this._projectTags, "_projectTags");
 			this._projectTags.Name = "_projectTags";
 			this._projectTags.TextChanged += new System.EventHandler(this.ProjectTagsTextChanged);
 			// 
 			// _nameLabel
 			// 
 			resources.ApplyResources(this._nameLabel, "_nameLabel");
-			this._errorProvider.SetError(this._nameLabel, resources.GetString("_nameLabel.Error"));
-			this._errorProvider.SetIconAlignment(this._nameLabel, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("_nameLabel.IconAlignment"))));
-			this._errorProvider.SetIconPadding(this._nameLabel, ((int)(resources.GetObject("_nameLabel.IconPadding"))));
 			this._nameLabel.Name = "_nameLabel";
 			// 
 			// _descriptionLabel
 			// 
 			resources.ApplyResources(this._descriptionLabel, "_descriptionLabel");
-			this._errorProvider.SetError(this._descriptionLabel, resources.GetString("_descriptionLabel.Error"));
-			this._errorProvider.SetIconAlignment(this._descriptionLabel, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("_descriptionLabel.IconAlignment"))));
-			this._errorProvider.SetIconPadding(this._descriptionLabel, ((int)(resources.GetObject("_descriptionLabel.IconPadding"))));
 			this._descriptionLabel.Name = "_descriptionLabel";
 			// 
 			// _releaseLabel
 			// 
 			resources.ApplyResources(this._releaseLabel, "_releaseLabel");
-			this._errorProvider.SetError(this._releaseLabel, resources.GetString("_releaseLabel.Error"));
-			this._errorProvider.SetIconAlignment(this._releaseLabel, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("_releaseLabel.IconAlignment"))));
-			this._errorProvider.SetIconPadding(this._releaseLabel, ((int)(resources.GetObject("_releaseLabel.IconPadding"))));
 			this._releaseLabel.Name = "_releaseLabel";
 			// 
 			// _tagsLabel
 			// 
 			resources.ApplyResources(this._tagsLabel, "_tagsLabel");
-			this._errorProvider.SetError(this._tagsLabel, resources.GetString("_tagsLabel.Error"));
-			this._errorProvider.SetIconAlignment(this._tagsLabel, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("_tagsLabel.IconAlignment"))));
-			this._errorProvider.SetIconPadding(this._tagsLabel, ((int)(resources.GetObject("_tagsLabel.IconPadding"))));
 			this._tagsLabel.Name = "_tagsLabel";
 			// 
 			// _errorProvider
 			// 
 			this._errorProvider.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
 			this._errorProvider.ContainerControl = this;
-			resources.ApplyResources(this._errorProvider, "_errorProvider");
 			// 
 			// NewProjectForm
 			// 
