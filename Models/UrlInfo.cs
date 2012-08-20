@@ -37,17 +37,20 @@ namespace SlickQA.DataCollector.Models
 			try
 			{
 				var element = elements[0];
-				var reader = new XmlNodeReader(element);
-				var s = new XmlSerializer(GetType());
-				var temp = s.Deserialize(reader) as UrlInfo;
-				Scheme = temp.Scheme;
-				HostName = temp.HostName;
-				Port = temp.Port;
-				SitePath = temp.SitePath;
-			}
-			catch (IndexOutOfRangeException)
-			{
-				InitializeWithDefaults();
+				if (element != null)
+				{
+					var reader = new XmlNodeReader(element);
+					var s = new XmlSerializer(GetType());
+					var temp = s.Deserialize(reader) as UrlInfo;
+					Scheme = temp.Scheme;
+					HostName = temp.HostName;
+					Port = temp.Port;
+					SitePath = temp.SitePath;					
+				}
+				else
+				{
+					InitializeWithDefaults();
+				}
 			}
 			catch (InvalidOperationException)
 			{
