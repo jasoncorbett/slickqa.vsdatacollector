@@ -22,7 +22,7 @@ namespace SlickQA.SlickSharp
 	[DataContract]
 	[CollectionApiPath("configurations")]
 	[ItemApiPath("", "Id", 0)]
-	public sealed class Configuration : JsonObject<Configuration>, IJsonObject, IEquatable<Configuration>
+	public sealed class Configuration : JsonObject<Configuration>, IJsonObject
 	{
 		[DataMember(Name = "configurationData")]
 		public LinkedHashMap<String> ConfigurationData;
@@ -39,7 +39,17 @@ namespace SlickQA.SlickSharp
 		[DataMember(Name = "name")]
 		public String Name;
 
-		#region IEquatable<Configuration> Members
+		public static Configuration GetEnvironmentConfiguration(string name)
+		{
+			try
+			{
+				return GetList("configurations?configurationType=ENVIRONMENT&name=" + name)[0];
+			}
+			catch
+			{
+				return null;
+			}
+		}
 
 		public bool Equals(Configuration other)
 		{
@@ -54,20 +64,6 @@ namespace SlickQA.SlickSharp
 			return Name != null && other.Name != null && other.Name == Name;
 		}
 
-		#endregion
-
-		public static Configuration GetEnvironmentConfiguration(string name)
-		{
-			try
-			{
-				return GetList("configurations?configurationType=ENVIRONMENT&name=" + name)[0];
-			}
-			catch
-			{
-				return null;
-			}
-		}
-
 		public override bool Equals(object obj)
 		{
 			if (obj == null)
@@ -76,24 +72,6 @@ namespace SlickQA.SlickSharp
 			}
 			var other = obj as Configuration;
 			return other != null && Equals(other);
-		}
-
-		public static bool operator ==(Configuration left, Configuration right)
-		{
-			if ((object)left == null || (object)right == null)
-			{
-				return Equals(left, right);
-			}
-			return left.Equals(right);
-		}
-
-		public static bool operator !=(Configuration left, Configuration right)
-		{
-			if (left == null || right == null)
-			{
-				return !Equals(left, right);
-			}
-			return !left.Equals(right);
 		}
 	}
 }

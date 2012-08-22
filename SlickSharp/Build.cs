@@ -24,7 +24,7 @@ namespace SlickQA.SlickSharp
 	[CollectionApiPath("projects/{ProjectId}/releases/{ReleaseId}/builds")]
 	[ItemApiPath("", "Id", 0)]
 	[ItemApiPath("byname", "Name", 1)]
-	public sealed class Build : JsonObject<Build>, IJsonObject, IEquatable<Build>
+	public sealed class Build : JsonObject<Build>, IJsonObject
 	{
 		[DataMember(Name = "built")]
 		public String Built;
@@ -41,7 +41,16 @@ namespace SlickQA.SlickSharp
 		[IgnoreDataMember]
 		public string ReleaseId { get; set; }
 
-		#region IEquatable<Build> Members
+		public void SetAsDefault()
+		{
+			Uri uri =
+				UriBuilder.FullUri(UriBuilder.NormalizePath(this, "projects/{ProjectId}/releases/{ReleaseId}/setdefaultbuild/{Id}"));
+			IHttpWebRequest httpWebRequest = RequestFactory.Create(uri);
+			httpWebRequest.Method = "GET";
+			using (httpWebRequest.GetResponse())
+			{
+			}
+		}
 
 		public bool Equals(Build other)
 		{
@@ -56,19 +65,6 @@ namespace SlickQA.SlickSharp
 			return Name != null && other.Name != null && other.Name == Name;
 		}
 
-		#endregion
-
-		public void SetAsDefault()
-		{
-			Uri uri =
-				UriBuilder.FullUri(UriBuilder.NormalizePath(this, "projects/{ProjectId}/releases/{ReleaseId}/setdefaultbuild/{Id}"));
-			IHttpWebRequest httpWebRequest = RequestFactory.Create(uri);
-			httpWebRequest.Method = "GET";
-			using (httpWebRequest.GetResponse())
-			{
-			}
-		}
-
 		public override bool Equals(object obj)
 		{
 			if (obj == null)
@@ -78,24 +74,5 @@ namespace SlickQA.SlickSharp
 			var other = obj as Build;
 			return other != null && Equals(other);
 		}
-
-		public static bool operator ==(Build left, Build right)
-		{
-			if ((object)left == null || (object)right == null)
-			{
-				return Equals(left, right);
-			}
-			return left.Equals(right);
-		}
-
-		public static bool operator !=(Build left, Build right)
-		{
-			if (left == null || right == null)
-			{
-				return !Equals(left, right);
-			}
-			return !left.Equals(right);
-		}
-
 	}
 }

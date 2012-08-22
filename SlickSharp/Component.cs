@@ -21,7 +21,7 @@ namespace SlickQA.SlickSharp
 	[DataContract]
 	[CollectionApiPath("projects/{ProjectId}/components")]
 	[ItemApiPath("", "Id", 0)]
-	public sealed class Component : JsonObject<Component>, IJsonObject, IEquatable<Component>
+	public sealed class Component : JsonObject<Component>, IJsonObject
 	{
 		[DataMember(Name = "code")]
 		public String Code;
@@ -38,8 +38,6 @@ namespace SlickQA.SlickSharp
 		[IgnoreDataMember]
 		public String ProjectId;
 
-		#region IEquatable<Component> Members
-
 		public bool Equals(Component other)
 		{
 			if (other == null)
@@ -53,8 +51,6 @@ namespace SlickQA.SlickSharp
 			return Name != null && other.Name != null && other.Name == Name;
 		}
 
-		#endregion
-
 		public override bool Equals(object obj)
 		{
 			if (obj == null)
@@ -63,24 +59,6 @@ namespace SlickQA.SlickSharp
 			}
 			var other = obj as Component;
 			return other != null && Equals(other);
-		}
-
-		public static bool operator ==(Component left, Component right)
-		{
-			if ((object)left == null || (object)right == null)
-			{
-				return Equals(left, right);
-			}
-			return left.Equals(right);
-		}
-
-		public static bool operator !=(Component left, Component right)
-		{
-			if (left == null || right == null)
-			{
-				return !Equals(left, right);
-			}
-			return !left.Equals(right);
 		}
 	}
 }

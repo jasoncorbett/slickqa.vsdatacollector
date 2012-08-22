@@ -22,7 +22,7 @@ namespace SlickQA.SlickSharp
 	[DataContract]
 	[CollectionApiPath("testruns")]
 	[ItemApiPath("", "Id", 0)]
-	public sealed class TestRun : JsonObject<TestRun>, IJsonObject, IEquatable<TestRun>
+	public sealed class TestRun : JsonObject<TestRun>, IJsonObject
 	{
 		[DataMember(Name = "build")]
 		public BuildReference BuildReference;
@@ -48,13 +48,11 @@ namespace SlickQA.SlickSharp
 		[DataMember(Name = "release")]
 		public ReleaseReference ReleaseReference;
 
+		[DataMember(Name = "runtimeOptions")]
+		public ConfigurationReference RuntimeOptions;
+
 		[DataMember(Name = "testplanId")]
 		public String TestPlanId;
-
-		[DataMember(Name = "runtimeOptions")]
-		public ConfigurationReference runtimeOptions;
-
-		#region IEquatable<TestRun> Members
 
 		public bool Equals(TestRun other)
 		{
@@ -69,8 +67,6 @@ namespace SlickQA.SlickSharp
 			return Name != null && other.Name != null && other.Name == Name;
 		}
 
-		#endregion
-
 		public override bool Equals(object obj)
 		{
 			if (obj == null)
@@ -79,24 +75,6 @@ namespace SlickQA.SlickSharp
 			}
 			var other = obj as TestRun;
 			return other != null && Equals(other);
-		}
-
-		public static bool operator ==(TestRun left, TestRun right)
-		{
-			if ((object)left == null || (object)right == null)
-			{
-				return Equals(left, right);
-			}
-			return left.Equals(right);
-		}
-
-		public static bool operator !=(TestRun left, TestRun right)
-		{
-			if (left == null || right == null)
-			{
-				return !Equals(left, right);
-			}
-			return !left.Equals(right);
 		}
 	}
 }

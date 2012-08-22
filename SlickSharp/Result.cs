@@ -27,7 +27,7 @@ namespace SlickQA.SlickSharp
 	[DataContract]
 	[CollectionApiPath("results")]
 	[ItemApiPath("", "Id", 0)]
-	public sealed class Result : JsonObject<Result>, IJsonObject, IEquatable<Result>
+	public sealed class Result : JsonObject<Result>, IJsonObject
 	{
 		[DataMember(Name = "attributes")]
 		public Dictionary<String, String> Attributes;
@@ -89,23 +89,6 @@ namespace SlickQA.SlickSharp
 		[DataMember(Name = "testcase")]
 		public TestcaseReference TestcaseReference;
 
-		#region IEquatable<Result> Members
-
-		public bool Equals(Result other)
-		{
-			if (other == null)
-			{
-				return false;
-			}
-			if (Id != null && other.Id != null)
-			{
-				return other.Id == Id;
-			}
-			return false;
-		}
-
-		#endregion
-
 		public void AddToLog(List<LogEntry> logaddon)
 		{
 			Uri uri = UriBuilder.FullUri(UriBuilder.NormalizePath(this, "results/{Id}/log"));
@@ -123,6 +106,19 @@ namespace SlickQA.SlickSharp
 			}
 		}
 
+		public bool Equals(Result other)
+		{
+			if (other == null)
+			{
+				return false;
+			}
+			if (Id != null && other.Id != null)
+			{
+				return other.Id == Id;
+			}
+			return false;
+		}
+
 		public override bool Equals(object obj)
 		{
 			if (obj == null)
@@ -131,24 +127,6 @@ namespace SlickQA.SlickSharp
 			}
 			var other = obj as Result;
 			return other != null && Equals(other);
-		}
-
-		public static bool operator ==(Result left, Result right)
-		{
-			if ((object)left == null || (object)right == null)
-			{
-				return Equals(left, right);
-			}
-			return left.Equals(right);
-		}
-
-		public static bool operator !=(Result left, Result right)
-		{
-			if (left == null || right == null)
-			{
-				return !Equals(left, right);
-			}
-			return !left.Equals(right);
 		}
 	}
 }

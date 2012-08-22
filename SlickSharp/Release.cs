@@ -25,7 +25,7 @@ namespace SlickQA.SlickSharp
 	[CollectionApiPath("projects/{ProjectId}/releases")]
 	[ItemApiPath("", "Id", 0)]
 	[ItemApiPath("byname", "Name", 1)]
-	public sealed class Release : JsonObject<Release>, IJsonObject, IEquatable<Release>
+	public sealed class Release : JsonObject<Release>, IJsonObject
 	{
 		[DataMember(Name = "builds")]
 		public List<Build> Builds;
@@ -50,23 +50,6 @@ namespace SlickQA.SlickSharp
 		[IgnoreDataMember]
 		public string ProjectId { get; set; }
 
-		#region IEquatable<Release> Members
-
-		public bool Equals(Release other)
-		{
-			if (other == null)
-			{
-				return false;
-			}
-			if (Id != null && other.Id != null)
-			{
-				return other.Id == Id;
-			}
-			return Name != null && other.Name != null && other.Name == Name;
-		}
-
-		#endregion
-
 		public void SetAsDefault()
 		{
 			Uri uri = UriBuilder.FullUri(UriBuilder.NormalizePath(this, "projects/{ProjectId}/setdefaultrelease/{Id}"));
@@ -83,6 +66,19 @@ namespace SlickQA.SlickSharp
 			return Name;
 		}
 
+		public bool Equals(Release other)
+		{
+			if (other == null)
+			{
+				return false;
+			}
+			if (Id != null && other.Id != null)
+			{
+				return other.Id == Id;
+			}
+			return Name != null && other.Name != null && other.Name == Name;
+		}
+
 		public override bool Equals(object obj)
 		{
 			if (obj == null)
@@ -91,24 +87,6 @@ namespace SlickQA.SlickSharp
 			}
 			var other = obj as Release;
 			return other != null && Equals(other);
-		}
-
-		public static bool operator ==(Release left, Release right)
-		{
-			if ((object)left == null || (object)right == null)
-			{
-				return Equals(left, right);
-			}
-			return left.Equals(right);
-		}
-
-		public static bool operator !=(Release left, Release right)
-		{
-			if (left == null || right == null)
-			{
-				return !Equals(left, right);
-			}
-			return !left.Equals(right);
 		}
 	}
 }
