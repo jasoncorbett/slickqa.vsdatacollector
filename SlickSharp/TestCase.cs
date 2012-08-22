@@ -78,7 +78,7 @@ namespace SlickQA.SlickSharp
 		public int StabilityRating;
 
 		[DataMember(Name = "steps")]
-		public List<Step> Steps;
+		public List<TestStep> Steps;
 
 		[DataMember(Name = "tags")]
 		public List<string> Tags;
@@ -86,21 +86,8 @@ namespace SlickQA.SlickSharp
 		public Testcase()
 		{
 			DataDrivenProperties = new List<DataDrivenProperty>();
-			Steps = new List<Step>();
+			Steps = new List<TestStep>();
 			Tags = new List<string>();
-		}
-
-		public bool Equals(Testcase other)
-		{
-			if (other == null)
-			{
-				return false;
-			}
-			if (Id != null && other.Id != null)
-			{
-				return other.Id == Id;
-			}
-			return Name != null && other.Name != null && other.Name == Name;
 		}
 
 		public static Testcase GetTestCaseByAutomationId(string automationId)
@@ -127,6 +114,19 @@ namespace SlickQA.SlickSharp
 			}
 		}
 
+		public bool Equals(Testcase other)
+		{
+			if (other == null)
+			{
+				return false;
+			}
+			if (Id != null && other.Id != null)
+			{
+				return other.Id == Id;
+			}
+			return Name != null && other.Name != null && other.Name == Name;
+		}
+
 		public override bool Equals(object obj)
 		{
 			if (obj == null)
@@ -136,9 +136,5 @@ namespace SlickQA.SlickSharp
 			var other = obj as Testcase;
 			return other != null && Equals(other);
 		}
-	}
-
-	public class Step
-	{
 	}
 }

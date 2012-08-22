@@ -18,7 +18,7 @@ using System.Runtime.Serialization;
 namespace SlickQA.SlickSharp
 {
 	[DataContract]
-	class TestStep
+	public class TestStep
 	{
 		[DataMember(Name = "expectedResult")]
 		public String ExpectedResult;
