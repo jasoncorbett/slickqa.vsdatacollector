@@ -59,7 +59,7 @@
     <Compile Include="BuildEquals.cs" />
     <Compile Include="ConvertFromReference.cs" />
     <Compile Include="ConfigurationEquals.cs" />
-    <Compile Include="JsonRequest.cs" />
+    <Compile Include="JsonRequestTest.cs" />
     <Compile Include="ReleaseEquals.cs" />
     <Compile Include="ResultEquals.cs" />
     <Compile Include="TestcaseEquals.cs" />

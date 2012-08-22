@@ -19,21 +19,21 @@ using SlickQA.SlickSharp.Web;
 namespace SlickQA.SlickSharp.Test
 {
 	[TestClass]
-	public class JsonRequestTest
+	public sealed class JsonRequestTest
 	{
 		[TestMethod]
 		public void Uses_correct_content_type()
 		{
 			var req = new DummyWebRequest();
 
-			var jsonReq = new JsonRequest(req);
+			new JsonRequest(req);
 
 			Assert.AreEqual("application/json", req.ContentType);
 		}
 
 		#region Nested type: DummyWebRequest
 
-		private class DummyWebRequest : WebRequest
+		private sealed class DummyWebRequest : WebRequest
 		{
 			public override string ContentType { get; set; }
 		}
