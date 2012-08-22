@@ -50,7 +50,6 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AttributeConversion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResultTranslator.cs" />
   </ItemGroup>
