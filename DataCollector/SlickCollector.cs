@@ -15,10 +15,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Xml;
 using Microsoft.VisualStudio.TestTools.Common;
 using Microsoft.VisualStudio.TestTools.Execution;
+using SlickQA.DataCollector.Attributes;
 using SlickQA.DataCollector.Models;
 using SlickQA.SlickSharp;
 using SlickQA.SlickSharp.Logging;
@@ -38,9 +41,12 @@ namespace SlickQA.DataCollector
 		private DataCollectionEvents _dataEvents;
 
 		private DataCollectionLogger _dataLogger;
-		private DataCollectionSink _dataSink;
-		private Stack<Result> _results;
+
+		private Stack<Tuple<Result, Stopwatch>> _results;
 		private TestRun _slickRun;
+
+		private DataCollectionSink DataSink { get; set; }
+
 		private ProjectInfo ProjectInfo { get; set; }
 		private ReleaseInfo ReleaseInfo { get; set; }
 		private BuildProviderInfo BuildProvider { get; set; }
@@ -66,11 +72,11 @@ namespace SlickQA.DataCollector
 			ServerConfig.SitePath = UrlInfo.SitePath;
 			
 			_dataEvents = events;
-			_dataSink = dataSink;
+			DataSink = dataSink;
 			_dataLogger = logger;
 			_dataCollectionEnvironmentContext = environmentContext;
 
-			_results = new Stack<Result>();
+			_results = new Stack<Tuple<Result, Stopwatch>>();
 
 			_dataEvents.TestCaseStart += OnTestCaseStart;
 			_dataEvents.TestCaseEnd += OnTestCaseEnd;
@@ -145,7 +151,7 @@ namespace SlickQA.DataCollector
 
 
 			string hostname = Environment.MachineName;
-			var environmentConfiguration = Configuration.GetEnvironmentConfiguration(hostname);
+			Configuration environmentConfiguration = Configuration.GetEnvironmentConfiguration(hostname);
 			if (environmentConfiguration == null)
 			{
 				environmentConfiguration = new Configuration
@@ -175,21 +181,43 @@ namespace SlickQA.DataCollector
 
 		private void OnTestCaseStart(object sender, TestCaseStartEventArgs eventArgs)
 		{
-			Testcase testcase = Testcase.GetTestCaseByAutomationKey(eventArgs.TestElement.HumanReadableId);
+			ITestElement testElement = eventArgs.TestElement;
+			string testcaseId = testElement.GetAttributeValue<TestCaseIdAttribute>();
+
+			Component component = GetComponent(testElement);
+			string name = GetTestName(testElement);
+
+			Testcase testcase = Testcase.GetTestCaseByAutomationKey(testElement.HumanReadableId);
 			if (testcase == null)
 			{
 				testcase = new Testcase
 						   {
-							   AutomationKey = eventArgs.TestElement.HumanReadableId,
+							   AutomationId = testcaseId,
+							   AutomationKey = testElement.HumanReadableId,
 							   IsAutomated = true,
-							   Name = eventArgs.TestElement.HumanReadableId,
-							   //TODO: Figure out a better method of test naming
+							   Name = name,
 							   ProjectReference = _slickRun.ProjectReference,
 						   };
 				testcase.Post();
 			}
 			testcase.ProjectReference = _slickRun.ProjectReference;
-			UpdateTestCaseWithTestData(testcase, eventArgs.TestElement);
+			testcase.ComponentReference = component;
+			testcase.Purpose = testElement.Description;
+
+			if (testcase.Attributes == null)
+			{
+				testcase.Attributes = new LinkedHashMap<string>();
+			}
+
+			Hashtable props = testElement.Properties;
+			foreach (DictionaryEntry entry in props.Cast<DictionaryEntry>().Where(entry => !testcase.Attributes.ContainsKey(entry.Key.ToString())))
+			{
+				testcase.Attributes.Add(entry);
+			}
+
+			UpdateTags(testcase, testElement);
+
+			testcase.Put();
 
 			var testResult = new Result
 								 {
@@ -200,102 +228,51 @@ namespace SlickQA.DataCollector
 									 BuildReference = _slickRun.BuildReference,
 									 Hostname = Environment.MachineName,
 									 Status = ResultStatus.NO_RESULT.ToString(),
+									 ComponentReference = testcase.ComponentReference,
 								 };
 			if (ScreenshotInfo.PreTest)
 			{
-				StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Pre Test {0}.png", eventArgs.TestElement.HumanReadableId));
+				StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Pre Test {0}.png", testElement.HumanReadableId));
 
 				testResult.Files = new List<StoredFile> {file};
 			}
 
 			testResult.Post();
-			_results.Push(testResult);
+			var timer = new Stopwatch();
+			timer.Start();
+
+			_results.Push(new Tuple<Result, Stopwatch>(testResult, timer));
 		}
 
-		private void UpdateTestCaseWithTestData(Testcase testcase, ITestElement testElement)
+		private static string GetTestName(ITestElement testElement)
 		{
-			//testcase.Attributes;
-			//testcase.Author;
-			//testcase.AutomationId;
-			//testcase.AutomationTool;
-			//testcase.ComponentReference;
-			//testcase.Configuration;
-			//testcase.DataDrivenProperties;
-			//testcase.IsDeleted;
-			//testcase.Name;
-			//testcase.Priority;
-			//testcase.ProjectReference;
-			//testcase.Requirements;
-			//testcase.StabilityRating;
-			//testcase.Steps;
-
-			//testElement.AbortRunOnAgentFailure;
-			//testElement.Adapter;
-			//testElement.AgentAttributes;
-			//testElement.CanBeAggregated;
-			//testElement.CategoryId;
-			//testElement.ControllerPlugin;
-			//testElement.Copy;
-			//testElement.CreatedByUI;
-			//testElement.CssIteration;
-			//testElement.CssProjectStructure;
-			//testElement.DeploymentItems;
-			//testElement.Enabled;
-			//testElement.ErrorMessageForNonRunnable;
-			//testElement.ExecutionId;
-			//testElement.Groups;
-			//testElement.HumanReadableId;
-			//testElement.Id;
-			//testElement.IsAutomated;
-			//testElement.IsGroupable;
-			//testElement.IsModified;
-			//testElement.IsRunOnRestart;
-			//testElement.IsRunnable;
-			//testElement.Link;
-			//testElement.Name;
-			//testElement.Owner;
-			//testElement.ParentExecId;
-			//testElement.Priority;
-			//testElement.ProjectData;
-			//testElement.projectId;
-			//testElement.ProjectRelativePath;
-			
-			//testElement.ReadOnly;
-			//testElement.SolutionName;
-			//testElement.SourceFileName;
-			//testElement.Storage;
-			//testElement.TestCategories;
-			//testElement.TestType;
-			//testElement.Timeout;
-			//testElement.UserData;
-			//testElement.VisibleProperties;
-			//testElement.WorkItemIds;
-
-			testcase.Priority = testElement.Priority;
-			testcase.Purpose = testElement.Description;
-
-			if (testcase.Attributes == null)
+			string testName = testElement.GetAttributeValue<TestNameAttribute>();
+			string name = testElement.HumanReadableId;
+			if (!string.IsNullOrWhiteSpace(testName))
 			{
-				testcase.Attributes = new LinkedHashMap<string>();
+				name = testName;
 			}
+			return name;
+		}
 
-			var props = testElement.Properties;
-			foreach (var entry in props.Cast<DictionaryEntry>().Where(entry => !testcase.Attributes.ContainsKey(entry.Key.ToString())))
+		private Component GetComponent(ITestElement testElement)
+		{
+			string testedFeature = testElement.GetAttributeValue<TestedFeatureAttribute>();
+			Component component = null;
+			if (!string.IsNullOrWhiteSpace(testedFeature))
 			{
-				testcase.Attributes.Add(entry);
+				component = new Component {Name = testedFeature, ProjectId = _slickRun.ProjectReference.Id};
+				component.Get(true);
 			}
-
-			UpdateTags(testcase, testElement);
-
-			testcase.Put();
+			return component;
 		}
 
 		private static void UpdateTags(Testcase testcase, ITestElement testElement)
 		{
-			var categories = testElement.TestCategories.ToArray();
+			string[] categories = testElement.TestCategories.ToArray();
 			if (testcase.Tags != null)
 			{
-				var allTags = testcase.Tags.Union(categories);
+				IEnumerable<string> allTags = testcase.Tags.Union(categories);
 				testcase.Tags = allTags.ToList();				
 			}
 			else
@@ -306,7 +283,10 @@ namespace SlickQA.DataCollector
 
 		private void OnTestCaseEnd(object sender, TestCaseEndEventArgs eventArgs)
 		{
-			Result testResult = _results.Pop();
+			Tuple<Result,Stopwatch> result = _results.Pop();
+			Result testResult = result.Item1;
+			Stopwatch timer = result.Item2;
+			timer.Stop();
 
 			if (ScreenshotInfo.PostTest)
 			{
@@ -319,13 +299,14 @@ namespace SlickQA.DataCollector
 			}
 
 			testResult.Status = OutcomeTranslator.Convert(eventArgs.TestOutcome).ToString();
-			testResult.RunStatus = RunStatus.FINISHED.ToString();
+			testResult.RunLength = timer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture);
 			testResult.Put();
 		}
 
 		private void OnTestCaseFailed(object sender, TestCaseFailedEventArgs eventArgs)
 		{
-			Result testResult = _results.Peek();
+			Tuple<Result,Stopwatch> result = _results.Peek();
+			Result testResult = result.Item1;
 
 			if (!ScreenshotInfo.FailedTest)
 			{
