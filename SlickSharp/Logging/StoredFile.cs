@@ -42,9 +42,9 @@ namespace SlickQA.SlickSharp.Logging
 		public String Mimetype;
 
 		[DataMember(Name = "uploadDate")]
-		public DateTime UploadDate;
+		public string UploadDate;
 
-		public StoredFile PostContent(byte[] file)
+		public void PostContent(byte[] file)
 		{
 			Uri uri = UriBuilder.FullUri(UriBuilder.NormalizePath(this, "files/{Id}/content"));
 			var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
@@ -59,7 +59,8 @@ namespace SlickQA.SlickSharp.Logging
 			{
 				using (Stream stream = response.GetResponseStream())
 				{
-					return StreamConverter<StoredFile>.ReadFromStream(stream);
+					StreamConverter<StoredFile>.ReadFromStream(stream);
+					return;
 				}
 			}
 		}
