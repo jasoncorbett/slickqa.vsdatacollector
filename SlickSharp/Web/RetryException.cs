@@ -1,4 +1,4 @@
-﻿// Copyright 2012 AccessData Group, LLC.
+// Copyright 2012 AccessData Group, LLC.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,26 +13,10 @@
 // limitations under the License.
 
 using System;
-using System.Net;
 
 namespace SlickQA.SlickSharp.Web
 {
-	public static class RequestFactory
+	public sealed class RetryException : Exception
 	{
-		static RequestFactory()
-		{
-			Factory = uri =>
-			          {
-			          	var request = WebRequest.Create(uri) as HttpWebRequest;
-			          	return new JsonRequest(request);
-			          };
-		}
-
-		public static Func<Uri, IHttpWebRequest> Factory { private get; set; }
-
-		public static IHttpWebRequest Create(Uri uri)
-		{
-			return Factory(uri);
-		}
 	}
 }

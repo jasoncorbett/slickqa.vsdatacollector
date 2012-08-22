@@ -53,6 +53,10 @@ namespace SlickQA.SlickSharp.Web
 				{
 					throw new TimeoutException("Timed out connecting to server.", e);
 				}
+				if (e.Status == WebExceptionStatus.KeepAliveFailure)
+				{
+					throw new RetryException();
+				}
 
 				var resp = e.Response as HttpWebResponse;
 				if (resp != null && resp.StatusCode == HttpStatusCode.NotFound)

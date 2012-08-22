@@ -27,8 +27,10 @@ namespace SlickQA.SlickSharp
 	[DataContract]
 	public abstract class JsonObject<T> where T : class, IJsonObject
 	{
+		private const int MAX_ATTEMPTS = 3;
+
 		//TODO: Test with base Exception thrown
-		public void Get(bool createIfNotFound = false)
+		public void Get(bool createIfNotFound = false, int attempts = 0)
 		{
 			Uri uri = UriBuilder.RetrieveGetUri(this);
 			IHttpWebRequest httpWebRequest = RequestFactory.Create(uri);
@@ -36,7 +38,6 @@ namespace SlickQA.SlickSharp
 
 			// at times we don't get a good response back from slick when the GET should succeed
 			//  because of this we try 3 times, just to be sure
-			int attempts = 0;
 			Exception ex = null;
 			while (attempts <= 3)
 			{
@@ -53,6 +54,10 @@ namespace SlickQA.SlickSharp
 						Post();
 					}
 					return;
+				}
+				catch (RetryException)
+				{
+					Get(createIfNotFound, attempts);
 				}
 				catch (Exception e)
 				{
@@ -84,37 +89,86 @@ namespace SlickQA.SlickSharp
 			}
 		}
 
-		private static List<T> RetrieiveList(Uri uri)
+		private static List<T> RetrieiveList(Uri uri, int attempts = 0)
 		{
-			IHttpWebRequest httpWebRequest = RequestFactory.Create(uri);
-			httpWebRequest.Method = WebRequestMethods.Http.Get;
+			try
+			{
+				IHttpWebRequest httpWebRequest = RequestFactory.Create(uri);
+				httpWebRequest.Method = WebRequestMethods.Http.Get;
 
-			return StreamConverter<T>.ReadListResponse(httpWebRequest);
+				return StreamConverter<T>.ReadListResponse(httpWebRequest);
+			}
+			catch (RetryException)
+			{
+				if (attempts > MAX_ATTEMPTS)
+				{
+					throw;
+				}
+
+				attempts++;
+				return RetrieiveList(uri, attempts);
+			}
 		}
 
 		public void Post()
 		{
 			Uri uri = UriBuilder.FullUri(UriBuilder.GetListPath(this));
 
-			IHttpWebRequest httpWebRequest = RequestFactory.Create(uri);
-			httpWebRequest.Method = WebRequestMethods.Http.Post;
+			Post(uri);
+		}
 
-			StreamConverter<T>.WriteRequestStream(httpWebRequest, this);
+		private void Post(Uri uri, int attempts = 0)
+		{
+			try
+			{
+				IHttpWebRequest httpWebRequest = RequestFactory.Create(uri);
+				httpWebRequest.Method = WebRequestMethods.Http.Post;
 
-			T temp = StreamConverter<T>.ReadResponse(httpWebRequest);
-			ApplyChanges(temp);
+				StreamConverter<T>.WriteRequestStream(httpWebRequest, this);
+
+				T temp = StreamConverter<T>.ReadResponse(httpWebRequest);
+				ApplyChanges(temp);
+
+			}
+			catch (RetryException)
+			{
+				if (attempts > MAX_ATTEMPTS)
+				{
+					throw;
+				}
+				attempts++;
+				Post(uri, attempts);
+			}
 		}
 
 		public void Put()
 		{
 			Uri uri = UriBuilder.RetrieveGetUri(this);
-			IHttpWebRequest httpWebRequest = RequestFactory.Create(uri);
-			httpWebRequest.Method = WebRequestMethods.Http.Put;
+			Put(uri);
+		}
 
-			StreamConverter<T>.WriteRequestStream(httpWebRequest, this);
-			T temp = StreamConverter<T>.ReadResponse(httpWebRequest);
+		private void Put(Uri uri, int attempts = 0)
+		{
+			try
+			{
+				IHttpWebRequest httpWebRequest = RequestFactory.Create(uri);
+				httpWebRequest.Method = WebRequestMethods.Http.Put;
 
-			ApplyChanges(temp);
+				StreamConverter<T>.WriteRequestStream(httpWebRequest, this);
+				T temp = StreamConverter<T>.ReadResponse(httpWebRequest);
+
+				ApplyChanges(temp);
+
+			}
+			catch (RetryException)
+			{
+				if (attempts > MAX_ATTEMPTS)
+				{
+					throw;
+				}
+				attempts++;
+				Put(uri, attempts);
+			}
 		}
 
 		private void ApplyChanges(T temp)

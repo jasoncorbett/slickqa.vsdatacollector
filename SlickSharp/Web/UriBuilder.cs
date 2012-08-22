@@ -74,18 +74,19 @@ namespace SlickQA.SlickSharp.Web
 					value = field.GetValue(searchObject);
 				}
 
-				if (IsNonDefaultValue(value))
+				if (!IsNonDefaultValue(value))
 				{
-					if (String.IsNullOrWhiteSpace(item.ApiPath))
-					{
-						getPath = value.ToString();
-					}
-					else
-					{
-						getPath = item.ApiPath + "/" + value;
-					}
-					break;
+					continue;
 				}
+				if (String.IsNullOrWhiteSpace(item.ApiPath))
+				{
+					getPath = value.ToString();
+				}
+				else
+				{
+					getPath = item.ApiPath + "/" + value;
+				}
+				break;
 			}
 			return getPath;
 		}

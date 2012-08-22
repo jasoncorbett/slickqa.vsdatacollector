@@ -79,6 +79,7 @@
     <Compile Include="Release.cs" />
     <Compile Include="Result.cs" />
     <Compile Include="RunStatus.cs" />
+    <Compile Include="Web\RetryException.cs" />
     <Compile Include="Web\ServerConfig.cs" />
     <Compile Include="ResultStatus.cs" />
     <Compile Include="Testcase.cs" />
