@@ -20,14 +20,17 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 {
 	public sealed partial class NewProjectForm : Form, INewProjectView
 	{
-		private IWin32Window ParentAppWindow { get; set; }
-		public NewProjectController Controller { private get; set; }
-
 		public NewProjectForm(IWin32Window owner)
 		{
 			InitializeComponent();
 			ParentAppWindow = owner;
 		}
+
+		private IWin32Window ParentAppWindow { get; set; }
+
+		#region INewProjectView Members
+
+		public NewProjectController Controller { private get; set; }
 
 		public void Run()
 		{
@@ -58,6 +61,8 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 		{
 			_okButton.Enabled = !ErrorsOnPage();
 		}
+
+		#endregion
 
 		private bool ErrorsOnPage()
 		{

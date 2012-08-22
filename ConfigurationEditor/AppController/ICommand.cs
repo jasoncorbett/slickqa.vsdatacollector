@@ -17,7 +17,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.AppController
 	{
 	}
 
-	public interface ICommand<T> : ICommand
+	public interface ICommand<in T> : ICommand
 	{
 		void Execute(T commandData);
 	}

@@ -60,8 +60,6 @@ namespace SlickQA.DataCollector.Repositories
 			return release.Id;
 		}
 
-		#endregion
-
 		public void Load(string projectId)
 		{
 			string listUrl = string.Format("projects/{0}/releases", projectId);
@@ -76,6 +74,8 @@ namespace SlickQA.DataCollector.Repositories
 				RefreshReleases.Add(projectId, false);
 			}
 		}
+
+		#endregion
 
 		private static List<ReleaseInfo> ConvertToReleaseInfo(IEnumerable<Release> releases, string projectId)
 		{

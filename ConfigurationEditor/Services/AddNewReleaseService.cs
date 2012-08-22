@@ -23,17 +23,15 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Services
 {
 	class AddNewReleaseService : ICommand<AddNewReleaseData>
 	{
-		public AddNewReleaseService(IGetNewReleaseInfo getNewReleaseInfo, IProjectRepository projectRepository, IApplicationController appController, IReleaseRepository releaseRepository)
+		public AddNewReleaseService(IGetNewReleaseInfo getNewReleaseInfo, IApplicationController appController, IReleaseRepository releaseRepository)
 		{
 			GetNewReleaseInfo = getNewReleaseInfo;
-			ProjectRepository = projectRepository;
 			AppController = appController;
 			ReleaseRepository = releaseRepository;
 		}
 
 		private IReleaseRepository ReleaseRepository { get; set; }
 		private IGetNewReleaseInfo GetNewReleaseInfo { get; set; }
-		private IProjectRepository ProjectRepository { get; set; }
 		private IApplicationController AppController { get; set; }
 
 		#region ICommand<AddNewReleaseData> Members

@@ -13,13 +13,9 @@
 // limitations under the License.
 namespace SlickQA.DataCollector.ConfigurationEditor.App
 {
-	public class Result<T>
+	public sealed class Result<T>
 	{
-		public Result(ServiceResult serviceResult) : this(serviceResult, default(T))
-		{
-		}
-
-		public Result(ServiceResult serviceResult, T data)
+		public Result(ServiceResult serviceResult, T data = default(T))
 		{
 			ServiceResult = serviceResult;
 			Data = data;

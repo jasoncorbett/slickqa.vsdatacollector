@@ -19,7 +19,7 @@ using SlickQA.SlickSharp;
 namespace SlickQA.DataCollector.Test
 {
 	[TestClass]
-	public class ResultTranslator
+	public sealed class ResultTranslator
 	{
 
 		[TestMethod]

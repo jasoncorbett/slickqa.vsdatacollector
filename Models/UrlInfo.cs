@@ -13,8 +13,10 @@
 // limitations under the License.
 
 using System;
+using System.Diagnostics;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Xml.XPath;
 
 namespace SlickQA.DataCollector.Models
 {
@@ -22,11 +24,6 @@ namespace SlickQA.DataCollector.Models
 	public sealed class UrlInfo
 	{
 		public const string TAG_NAME = "Url";
-
-		public string Scheme { get; set; }
-		public string HostName { get; set; }
-		public int Port { get; set; }
-		public string SitePath { get; set; }
 
 		public UrlInfo()
 		{
@@ -37,12 +34,13 @@ namespace SlickQA.DataCollector.Models
 		{
 			try
 			{
-				var element = elements[0];
+				XmlNode element = elements[0];
 				if (element != null)
 				{
 					var reader = new XmlNodeReader(element);
 					var s = new XmlSerializer(GetType());
 					var temp = s.Deserialize(reader) as UrlInfo;
+					Debug.Assert(temp != null, "temp != null");
 					Scheme = temp.Scheme;
 					HostName = temp.HostName;
 					Port = temp.Port;
@@ -71,6 +69,11 @@ namespace SlickQA.DataCollector.Models
 			Port = port;
 			SitePath = sitePath;
 		}
+
+		public string Scheme { get; set; }
+		public string HostName { get; set; }
+		public int Port { get; set; }
+		public string SitePath { get; set; }
 
 		public string DisplayName
 		{
@@ -109,7 +112,7 @@ namespace SlickQA.DataCollector.Models
 		{
 			var doc = new XmlDocument();
 
-			var nav = doc.CreateNavigator();
+			XPathNavigator nav = doc.CreateNavigator();
 			using (XmlWriter writer = nav.AppendChild())
 			{
 				var ser = new XmlSerializer(GetType());

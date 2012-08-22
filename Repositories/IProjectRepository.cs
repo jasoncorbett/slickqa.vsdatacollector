@@ -21,6 +21,6 @@ namespace SlickQA.DataCollector.Repositories
 	{
 		void Load();
 		string AddProject(ProjectInfo info);
-		IList<ProjectInfo> GetProjects();
+		IEnumerable<ProjectInfo> GetProjects();
 	}
 }

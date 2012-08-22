@@ -28,7 +28,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 
 		#region ISetUrlView Members
 
-		public UrlController Controller { get; set; }
+		public UrlController Controller { private get; set; }
 
 		public void EnableButton(bool state)
 		{

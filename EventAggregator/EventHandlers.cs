@@ -72,12 +72,12 @@ namespace SlickQA.DataCollector.EventAggregator
 
 		internal void Handle<T>(T eventData)
 		{
-			IList<EventHandlerOptions> handlers = GetEventHandlers<T>();
+			IEnumerable<EventHandlerOptions> handlers = GetEventHandlers<T>();
 			foreach (var handlerOptions in handlers)
 			{
 				try
 				{
-					IEventHandler<T> eventHandler = handlerOptions.EventHandler as IEventHandler<T>;
+					var eventHandler = handlerOptions.EventHandler as IEventHandler<T>;
 					if (eventHandler != null)
 					{
 						eventHandler.Handle(eventData);
@@ -108,19 +108,16 @@ namespace SlickQA.DataCollector.EventAggregator
 			}
 		}
 
-		private IList<EventHandlerOptions> GetEventHandlers<T>()
+		private IEnumerable<EventHandlerOptions> GetEventHandlers<T>()
 		{
 			var handleType = typeof(T);
 			IList<EventHandlerOptions> handlers = new List<EventHandlerOptions>();
 
 			if (Handlers.ContainsKey(handleType))
 			{
-				foreach (var handler in Handlers[handleType])
+				foreach (var handler in Handlers[handleType].Where(handler => handler != null))
 				{
-					if (handler != null)
-					{
-						handlers.Add(handler);
-					}
+					handlers.Add(handler);
 				}
 			}
 

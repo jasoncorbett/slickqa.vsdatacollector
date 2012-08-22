@@ -13,10 +13,12 @@
 // limitations under the License.
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Xml.XPath;
 
 namespace SlickQA.DataCollector.Models
 {
@@ -24,24 +26,7 @@ namespace SlickQA.DataCollector.Models
 	public sealed class BuildProviderInfo
 	{
 		public const string TAG_NAME = "BuildProvider";
-
-		public string AssemblyName { get; set; }
-		public string Directory { get; set; }
-		public string TypeName { get; set; }
-		public string MethodName { get; set; }
-
 		private MethodInfo _method;
-
-		[XmlIgnore]
-		public MethodInfo Method
-		{
-			get { return _method; }
-			set
-			{
-				_method = value;
-				UpdateFromMethod(_method);
-			}
-		}
 
 		public BuildProviderInfo(string assemblyName, string directory, MethodInfo method)
 		{
@@ -50,33 +35,17 @@ namespace SlickQA.DataCollector.Models
 			Method = method;
 		}
 
-		private void UpdateFromMethod(MethodInfo method)
-		{
-			if (method != null)
-			{
-				if (method.DeclaringType != null)
-				{
-					TypeName = method.DeclaringType.FullName;
-				}
-				MethodName = method.Name;
-			}
-			else
-			{
-				TypeName = string.Empty;
-				MethodName = string.Empty;
-			}
-		}
-
 		private BuildProviderInfo(XmlNodeList elements)
 		{
 			try
 			{
-				var element = elements[0];
+				XmlNode element = elements[0];
 				if (element != null)
 				{
 					var reader = new XmlNodeReader(element);
 					var s = new XmlSerializer(GetType());
 					var temp = s.Deserialize(reader) as BuildProviderInfo;
+					Debug.Assert(temp != null, "temp != null");
 					AssemblyName = temp.AssemblyName;
 					Directory = temp.Directory;
 					TypeName = temp.TypeName;
@@ -85,14 +54,14 @@ namespace SlickQA.DataCollector.Models
 
 					//TODO: Load from CWD
 					string assemblyFile = null;
-					var tempPath = Path.Combine(Environment.CurrentDirectory, AssemblyName);
+					string tempPath = Path.Combine(Environment.CurrentDirectory, AssemblyName);
 					if (File.Exists(tempPath))
 					{
 						assemblyFile = tempPath;
 					}
 					else
 					{
-						var path = Path.Combine(Directory, AssemblyName);
+						string path = Path.Combine(Directory, AssemblyName);
 						if (File.Exists(path))
 						{
 							assemblyFile = path;
@@ -101,10 +70,10 @@ namespace SlickQA.DataCollector.Models
 
 					if (assemblyFile != null)
 					{
-						var assembly = Assembly.LoadFrom(assemblyFile);
+						Assembly assembly = Assembly.LoadFrom(assemblyFile);
 						if (!string.IsNullOrWhiteSpace(TypeName))
 						{
-							var type = assembly.GetType(TypeName);
+							Type type = assembly.GetType(TypeName);
 							Method = type.GetMethod(MethodName);
 						}
 					}
@@ -128,6 +97,39 @@ namespace SlickQA.DataCollector.Models
 		public BuildProviderInfo(BuildProviderInfo other)
 			:this(other.AssemblyName, other.Directory, other.Method)
 		{
+		}
+
+		public string AssemblyName { get; set; }
+		public string Directory { get; set; }
+		public string TypeName { get; set; }
+		public string MethodName { get; set; }
+
+		[XmlIgnore]
+		public MethodInfo Method
+		{
+			get { return _method; }
+			set
+			{
+				_method = value;
+				UpdateFromMethod(_method);
+			}
+		}
+
+		private void UpdateFromMethod(MethodInfo method)
+		{
+			if (method != null)
+			{
+				if (method.DeclaringType != null)
+				{
+					TypeName = method.DeclaringType.FullName;
+				}
+				MethodName = method.Name;
+			}
+			else
+			{
+				TypeName = string.Empty;
+				MethodName = string.Empty;
+			}
 		}
 
 		private void InitializeWithDefaults()
@@ -162,7 +164,7 @@ namespace SlickQA.DataCollector.Models
 
 		public override string ToString()
 		{
-			var name = string.Format(@"{0}\{1}:{2}", Directory, AssemblyName, FullMethodName());
+			string name = string.Format(@"{0}\{1}:{2}", Directory, AssemblyName, FullMethodName());
 			return @"\:" == name ? string.Empty : name;
 		}
 
@@ -170,7 +172,7 @@ namespace SlickQA.DataCollector.Models
 		{
 			var doc = new XmlDocument();
 
-			var nav = doc.CreateNavigator();
+			XPathNavigator nav = doc.CreateNavigator();
 			using (XmlWriter writer = nav.AppendChild())
 			{
 				var ser = new XmlSerializer(GetType());

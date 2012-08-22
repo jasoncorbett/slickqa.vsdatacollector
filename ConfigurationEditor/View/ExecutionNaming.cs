@@ -41,7 +41,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 
 		#region IExecutionNamingView Members
 
-		public ExecutionNamingController Controller { set; get; }
+		public ExecutionNamingController Controller { set; private get; }
 
 		public void EnableAddPlanButton()
 		{

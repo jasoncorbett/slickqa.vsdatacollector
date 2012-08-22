@@ -25,6 +25,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Events
 			CandidateTypes = candidateTypes;
 		}
 
-		public Dictionary<Type, List<MethodInfo>> CandidateTypes { get; set; }
+		public Dictionary<Type, List<MethodInfo>> CandidateTypes { get; private set; }
 	}
 }

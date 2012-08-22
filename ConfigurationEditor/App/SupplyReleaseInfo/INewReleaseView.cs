@@ -15,7 +15,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyReleaseInfo
 {
 	public interface INewReleaseView
 	{
-		NewReleaseController Controller { get; set; }
+		NewReleaseController Controller { set; }
 		void Run();
 		void SetReleaseNameError();
 		void ClearReleaseNameError();

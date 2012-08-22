@@ -1,6 +1,6 @@
 ﻿namespace SlickQA.DataCollector.ConfigurationEditor.View
 {
-	partial class MainEditorControl
+	sealed partial class MainEditorControl
 	{
 		/// <summary> 
 		/// Required designer variable.

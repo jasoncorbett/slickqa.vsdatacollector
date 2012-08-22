@@ -1,6 +1,6 @@
 ﻿namespace SlickQA.DataCollector.ConfigurationEditor.View
 {
-	partial class NewTestPlanForm
+	sealed partial class NewTestPlanForm
 	{
 		/// <summary>
 		/// Required designer variable.

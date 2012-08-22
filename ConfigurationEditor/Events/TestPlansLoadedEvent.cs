@@ -20,6 +20,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Events
 			ProjectId = projectId;
 		}
 
-		public string ProjectId { get; set; }
+		public string ProjectId { get; private set; }
 	}
 }

@@ -25,14 +25,17 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 {
 	public sealed partial class ChooseBuildProviderForm : Form, IChooseBuildProviderView
 	{
-		private IWin32Window ParentAppWindow { get; set; }
-		public ChooseBuildProviderController Controller { private get; set; }
-
 		public ChooseBuildProviderForm(IWin32Window owner)
 		{
 			InitializeComponent();
 			ParentAppWindow = owner;
 		}
+
+		private IWin32Window ParentAppWindow { get; set; }
+
+		#region IChooseBuildProviderView Members
+
+		public ChooseBuildProviderController Controller { private get; set; }
 
 		public void Run()
 		{
@@ -76,12 +79,14 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 			_methodTreeView.SelectedNode = selectedNode;
 		}
 
-		private IEnumerable<TreeNode> GetChildren(IEnumerable<MethodInfo> methodInfos)
+		#endregion
+
+		private static IEnumerable<TreeNode> GetChildren(IEnumerable<MethodInfo> methodInfos)
 		{
 			return methodInfos.Select(info => new TreeNode(info.Name) {Tag = info}).ToList();
 		}
 
-		private TreeNode GetNode(Type key)
+		private static TreeNode GetNode(Type key)
 		{
 			var node = new TreeNode(key.FullName) {Tag = key};
 			return node;

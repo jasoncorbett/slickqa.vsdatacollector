@@ -16,13 +16,13 @@ using SlickQA.DataCollector.Models;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.Events
 {
-	public class TestPlanAddedEvent
+	public sealed class TestPlanAddedEvent
 	{
 		public TestPlanAddedEvent(TestPlanInfo testPlan)
 		{
 			TestPlan = testPlan;
 		}
 
-		public TestPlanInfo TestPlan { get; set; }
+		public TestPlanInfo TestPlan { get; private set; }
 	}
 }

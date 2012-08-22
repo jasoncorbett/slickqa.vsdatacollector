@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Xml;
 using SlickQA.DataCollector.ConfigurationEditor.Events;
 using SlickQA.DataCollector.EventAggregator;
 using SlickQA.DataCollector.Models;
@@ -23,16 +24,49 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyScreenshotInfo
 		IEventHandler<ResetEvent>,
 		IEventHandler<SaveDataEvent>
 	{
-		private ScreenshotInfo CurrentScreenshot { get; set; }
-		private ScreenshotInfo DefaultScreenshot { get; set; }
-		private IScreenshotView View { get; set; }
-
 		public ScreenshotController(IScreenshotView view)
 		{
 			CurrentScreenshot = new ScreenshotInfo();
 			View = view;
 			View.Controller = this;
 		}
+
+		private ScreenshotInfo CurrentScreenshot { get; set; }
+		private ScreenshotInfo DefaultScreenshot { get; set; }
+		private IScreenshotView View { get; set; }
+
+		#region IEventHandler<ResetEvent> Members
+
+		public void Handle(ResetEvent eventData)
+		{
+			CurrentScreenshot = new ScreenshotInfo(DefaultScreenshot);
+
+			View.Update(CurrentScreenshot);
+		}
+
+		#endregion
+
+		#region IEventHandler<SaveDataEvent> Members
+
+		public void Handle(SaveDataEvent eventData)
+		{
+			XmlElement config = eventData.Settings.Configuration;
+			config.UpdateTagWithNewValue(ScreenshotInfo.TAG_NAME, CurrentScreenshot.ToXmlNode());
+		}
+
+		#endregion
+
+		#region IEventHandler<SettingsLoadedEvent> Members
+
+		public void Handle(SettingsLoadedEvent eventData)
+		{
+			CurrentScreenshot = ScreenshotInfo.FromXml(eventData.Settings.Configuration);
+			DefaultScreenshot = ScreenshotInfo.FromXml(eventData.Settings.DefaultConfiguration);
+
+			View.Update(CurrentScreenshot);
+		}
+
+		#endregion
 
 		public void PretestSettingSupplied(bool preTestState)
 		{
@@ -47,27 +81,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyScreenshotInfo
 		public void FailureSettingSupplied(bool failedTestState)
 		{
 			CurrentScreenshot.FailedTest = failedTestState;
-		}
-
-		public void Handle(SettingsLoadedEvent eventData)
-		{
-			CurrentScreenshot = ScreenshotInfo.FromXml(eventData.Settings.Configuration);
-			DefaultScreenshot = ScreenshotInfo.FromXml(eventData.Settings.DefaultConfiguration);
-
-			View.Update(CurrentScreenshot);
-		}
-
-		public void Handle(ResetEvent eventData)
-		{
-			CurrentScreenshot = new ScreenshotInfo(DefaultScreenshot);
-
-			View.Update(CurrentScreenshot);
-		}
-
-		public void Handle(SaveDataEvent eventData)
-		{
-			var config = eventData.Settings.Configuration;
-			config.UpdateTagWithNewValue(ScreenshotInfo.TAG_NAME, CurrentScreenshot.ToXmlNode());
 		}
 	}
 }

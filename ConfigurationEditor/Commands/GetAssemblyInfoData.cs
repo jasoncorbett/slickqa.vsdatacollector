@@ -20,6 +20,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Commands
 			AssemblyPath = filePath;
 		}
 
-		public string AssemblyPath { get; set; }
+		public string AssemblyPath { get; private set; }
 	}
 }

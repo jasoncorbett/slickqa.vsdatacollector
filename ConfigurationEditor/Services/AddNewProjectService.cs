@@ -36,6 +36,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Services
 		private IReleaseRepository ReleaseRepository { get; set; }
 		private IApplicationController AppController { get; set; }
 
+		#region ICommand<AddNewProjectData> Members
 
 		public void Execute(AddNewProjectData commandData)
 		{
@@ -59,5 +60,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Services
 			AppController.Raise(new ProjectAddedEvent(info));
 			AppController.Raise(new ReleaseAddedEvent(releaseInfo));
 		}
+
+		#endregion
 	}
 }

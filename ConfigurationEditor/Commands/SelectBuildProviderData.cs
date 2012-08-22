@@ -18,11 +18,11 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Commands
 {
 	public sealed class SelectBuildProviderData
 	{
-		public BuildProviderInfo Provider { get; set; }
-
 		public SelectBuildProviderData(BuildProviderInfo provider)
 		{
 			Provider = provider;
 		}
+
+		public BuildProviderInfo Provider { get; private set; }
 	}
 }

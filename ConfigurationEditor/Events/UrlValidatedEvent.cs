@@ -23,6 +23,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Events
 			UrlInfo = urlInfo;
 		}
 
-		public UrlInfo UrlInfo { get; set; }
+		public UrlInfo UrlInfo { get; private set; }
 	}
 }

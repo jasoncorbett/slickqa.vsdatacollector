@@ -40,7 +40,7 @@ namespace SlickQA.DataCollector.Repositories
 			return project.Id;
 		}
 
-		public IList<ProjectInfo> GetProjects()
+		public IEnumerable<ProjectInfo> GetProjects()
 		{
 			if (_refreshProjects)
 			{

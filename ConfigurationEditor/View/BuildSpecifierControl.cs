@@ -27,7 +27,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 
 		#region IBuildSpecifierView Members
 
-		public BuildSpecifierController Controller { get; set; }
+		public BuildSpecifierController Controller { private get; set; }
 		public void SetProviderText(string provider)
 		{
 			_buildProviderText.Text = provider;

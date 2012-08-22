@@ -15,7 +15,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.StartBuildSearch
 {
 	public interface IBuildSpecifierView
 	{
-		BuildSpecifierController Controller { get; set; }
+		BuildSpecifierController Controller { set; }
 		void SetProviderText(string provider);
 	}
 }

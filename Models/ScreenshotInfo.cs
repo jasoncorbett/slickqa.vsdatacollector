@@ -13,19 +13,17 @@
 // limitations under the License.
 
 using System;
+using System.Diagnostics;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Xml.XPath;
 
 namespace SlickQA.DataCollector.Models
 {
 	[XmlRoot(TAG_NAME)]
-	public class ScreenshotInfo
+	public sealed class ScreenshotInfo
 	{
 		public const string TAG_NAME = "Screenshot";
-
-		public bool PreTest { get; set; }
-		public bool PostTest { get; set; }
-		public bool FailedTest { get; set; }
 
 		public ScreenshotInfo()
 		{
@@ -36,12 +34,13 @@ namespace SlickQA.DataCollector.Models
 		{
 			try
 			{
-				var element = elements[0];
+				XmlNode element = elements[0];
 				if (element != null)
 				{
 					var reader = new XmlNodeReader(element);
 					var s = new XmlSerializer(GetType());
 					var temp = s.Deserialize(reader) as ScreenshotInfo;
+					Debug.Assert(temp != null, "temp != null");
 					PreTest = temp.PreTest;
 					PostTest = temp.PostTest;
 					FailedTest = temp.FailedTest;
@@ -69,6 +68,10 @@ namespace SlickQA.DataCollector.Models
 			FailedTest = failedTest;
 		}
 
+		public bool PreTest { get; set; }
+		public bool PostTest { get; set; }
+		public bool FailedTest { get; set; }
+
 		private void InitializeWithDefaults()
 		{
 			PreTest = false;
@@ -85,7 +88,7 @@ namespace SlickQA.DataCollector.Models
 		{
 			var doc = new XmlDocument();
 
-			var nav = doc.CreateNavigator();
+			XPathNavigator nav = doc.CreateNavigator();
 			using (XmlWriter writer = nav.AppendChild())
 			{
 				var ser = new XmlSerializer(GetType());

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Xml;
 using SlickQA.DataCollector.ConfigurationEditor.AppController;
 using SlickQA.DataCollector.ConfigurationEditor.Commands;
 using SlickQA.DataCollector.ConfigurationEditor.Events;
@@ -26,11 +27,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.StartBuildSearch
 		IEventHandler<ResetEvent>,
 		IEventHandler<SaveDataEvent>
 	{
-		private BuildProviderInfo DefaultProvider { get; set; }
-		private BuildProviderInfo CurrentProvider { get; set; }
-		private IApplicationController AppController { get; set; }
-		private IBuildSpecifierView View { get; set; }
-
 		public BuildSpecifierController(IBuildSpecifierView view, IApplicationController appController)
 		{
 			AppController = appController;
@@ -40,16 +36,44 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.StartBuildSearch
 			DefaultProvider = new BuildProviderInfo();
 		}
 
-		public void Select()
-		{
-			AppController.Execute(new SelectBuildProviderData(CurrentProvider));
-		}
+		private BuildProviderInfo DefaultProvider { get; set; }
+		private BuildProviderInfo CurrentProvider { get; set; }
+		private IApplicationController AppController { get; set; }
+		private IBuildSpecifierView View { get; set; }
+
+		#region IEventHandler<BuildProviderSelectedEvent> Members
 
 		public void Handle(BuildProviderSelectedEvent eventData)
 		{
 			CurrentProvider = eventData.ProviderInfo;
 			View.SetProviderText(CurrentProvider.ToString());
 		}
+
+		#endregion
+
+		#region IEventHandler<ResetEvent> Members
+
+		public void Handle(ResetEvent eventData)
+		{
+			CurrentProvider = new BuildProviderInfo(DefaultProvider);
+
+			View.SetProviderText(CurrentProvider.ToString());
+		}
+
+		#endregion
+
+		#region IEventHandler<SaveDataEvent> Members
+
+		public void Handle(SaveDataEvent eventData)
+		{
+			XmlElement config = eventData.Settings.Configuration;
+
+			config.UpdateTagWithNewValue(BuildProviderInfo.TAG_NAME, CurrentProvider.ToXmlNode());
+		}
+
+		#endregion
+
+		#region IEventHandler<SettingsLoadedEvent> Members
 
 		public void Handle(SettingsLoadedEvent eventData)
 		{
@@ -59,18 +83,11 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.StartBuildSearch
 			View.SetProviderText(CurrentProvider.ToString());
 		}
 
-		public void Handle(ResetEvent eventData)
+		#endregion
+
+		public void Select()
 		{
-			CurrentProvider = new BuildProviderInfo(DefaultProvider);
-
-			View.SetProviderText(CurrentProvider.ToString());
-		}
-
-		public void Handle(SaveDataEvent eventData)
-		{
-			var config = eventData.Settings.Configuration;
-
-			config.UpdateTagWithNewValue(BuildProviderInfo.TAG_NAME, CurrentProvider.ToXmlNode());
+			AppController.Execute(new SelectBuildProviderData(CurrentProvider));
 		}
 	}
 }

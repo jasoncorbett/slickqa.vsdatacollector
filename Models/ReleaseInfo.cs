@@ -13,8 +13,10 @@
 // limitations under the License.
 
 using System;
+using System.Diagnostics;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Xml.XPath;
 
 namespace SlickQA.DataCollector.Models
 {
@@ -22,10 +24,6 @@ namespace SlickQA.DataCollector.Models
 	public sealed class ReleaseInfo
 	{
 		public const string TAG_NAME = "Release";
-
-		public string Id { get; set; }
-		public string Name { get; set; }
-		public string ProjectId { get; set; }
 
 		public ReleaseInfo(string id, string name, string projectId)
 		{
@@ -39,23 +37,17 @@ namespace SlickQA.DataCollector.Models
 			InitializeWithDefaults();
 		}
 
-		private void InitializeWithDefaults()
-		{
-			Id = String.Empty;
-			Name = String.Empty;
-			ProjectId = String.Empty;
-		}
-
 		public ReleaseInfo(XmlNodeList elements)
 		{
 			try
 			{
-				var element = elements[0];
+				XmlNode element = elements[0];
 				if (element != null)
 				{
 					var reader = new XmlNodeReader(element);
 					var s = new XmlSerializer(GetType());
 					var temp = s.Deserialize(reader) as ReleaseInfo;
+					Debug.Assert(temp != null, "temp != null");
 					Id = temp.Id;
 					Name = temp.Name;
 					ProjectId = temp.ProjectId;
@@ -76,6 +68,17 @@ namespace SlickQA.DataCollector.Models
 		{
 		}
 
+		public string Id { get; set; }
+		public string Name { get; set; }
+		public string ProjectId { get; set; }
+
+		private void InitializeWithDefaults()
+		{
+			Id = String.Empty;
+			Name = String.Empty;
+			ProjectId = String.Empty;
+		}
+
 		public static ReleaseInfo FromXml(XmlElement configuration)
 		{
 			return new ReleaseInfo(configuration.GetElementsByTagName(TAG_NAME));
@@ -85,7 +88,7 @@ namespace SlickQA.DataCollector.Models
 		{
 			var doc = new XmlDocument();
 
-			var nav = doc.CreateNavigator();
+			XPathNavigator nav = doc.CreateNavigator();
 			using (XmlWriter writer = nav.AppendChild())
 			{
 				var ser = new XmlSerializer(GetType());

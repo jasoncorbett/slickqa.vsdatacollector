@@ -23,6 +23,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Events
 			Project = project;
 		}
 
-		public ProjectInfo Project { get; set; }
+		public ProjectInfo Project { get; private set; }
 	}
 }

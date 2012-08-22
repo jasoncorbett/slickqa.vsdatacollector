@@ -13,21 +13,17 @@
 // limitations under the License.
 
 using System;
+using System.Diagnostics;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Xml.XPath;
 
 namespace SlickQA.DataCollector.Models
 {
 	[XmlRoot(TAG_NAME)]
-	public class TestPlanInfo
+	public sealed class TestPlanInfo
 	{
 		public const string TAG_NAME = "Plan";
-
-		public string Id { get; set; }
-		public string Name { get; set; }
-		public string ProjectId { get; set; }
-		[XmlIgnore]
-		public string CreatedBy { get; set; }
 
 		public TestPlanInfo(string id, string name, string projectId, string createdBy)
 		{
@@ -46,12 +42,13 @@ namespace SlickQA.DataCollector.Models
 		{
 			try
 			{
-				var element = elements[0];
+				XmlNode element = elements[0];
 				if (element != null)
 				{
 					var reader = new XmlNodeReader(element);
 					var s = new XmlSerializer(GetType());
 					var temp = s.Deserialize(reader) as TestPlanInfo;
+					Debug.Assert(temp != null, "temp != null");
 					Id = temp.Id;
 					Name = temp.Name;
 					ProjectId = temp.ProjectId;
@@ -72,6 +69,12 @@ namespace SlickQA.DataCollector.Models
 		{
 		}
 
+		public string Id { get; set; }
+		public string Name { get; set; }
+		public string ProjectId { get; set; }
+		[XmlIgnore]
+		public string CreatedBy { get; set; }
+
 		private void InitializeWithDefaults()
 		{
 			Id = string.Empty;
@@ -89,7 +92,7 @@ namespace SlickQA.DataCollector.Models
 		{
 			var doc = new XmlDocument();
 
-			var nav = doc.CreateNavigator();
+			XPathNavigator nav = doc.CreateNavigator();
 			using (XmlWriter writer = nav.AppendChild())
 			{
 				var ser = new XmlSerializer(GetType());

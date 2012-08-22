@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Collections.Generic;
+using System.Xml;
 using SlickQA.DataCollector.ConfigurationEditor.AppController;
 using SlickQA.DataCollector.ConfigurationEditor.Commands;
 using SlickQA.DataCollector.ConfigurationEditor.Events;
@@ -51,6 +52,93 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SelectResultDestination
 		private ReleaseInfo DefaultRelease { get; set; }
 		private ReleaseInfo CurrentRelease { get; set; }
 
+		#region IEventHandler<ProjectAddedEvent> Members
+
+		public void Handle(ProjectAddedEvent eventData)
+		{
+			IEnumerable<ProjectInfo> projectList = ProjectRepository.GetProjects();
+			View.LoadProjectList(projectList);
+
+			
+			View.SelectProject(eventData.Project);
+		}
+
+		#endregion
+
+		#region IEventHandler<ProjectSelectedEvent> Members
+
+		public void Handle(ProjectSelectedEvent eventData)
+		{
+			AppController.Execute(new RetrieveReleasesData(eventData.Project.Id));
+
+			View.LoadReleaseList(ReleaseRepository.GetReleases(eventData.Project.Id));
+			View.EnableAddReleaseButton();
+		}
+
+		#endregion
+
+		#region IEventHandler<ProjectsLoadedEvent> Members
+
+		public void Handle(ProjectsLoadedEvent eventData)
+		{
+			View.LoadProjectList(ProjectRepository.GetProjects());
+			View.EnableAddProjectButton();
+		}
+
+		#endregion
+
+		#region IEventHandler<ReleaseAddedEvent> Members
+
+		public void Handle(ReleaseAddedEvent eventData)
+		{
+			View.LoadReleaseList(ReleaseRepository.GetReleases(CurrentProject.Id));
+
+			View.SelectRelease(eventData.Release);
+		}
+
+		#endregion
+
+		#region IEventHandler<ResetEvent> Members
+
+		public void Handle(ResetEvent eventData)
+		{
+			CurrentProject = new ProjectInfo(DefaultProject);
+			View.SelectProject(CurrentProject);
+
+			CurrentRelease = new ReleaseInfo(DefaultRelease);
+			View.SelectRelease(CurrentRelease);
+		}
+
+		#endregion
+
+		#region IEventHandler<SaveDataEvent> Members
+
+		public void Handle(SaveDataEvent eventData)
+		{
+			XmlElement config = eventData.Settings.Configuration;
+
+			config.UpdateTagWithNewValue(ProjectInfo.TAG_NAME, CurrentProject.ToXmlNode());
+			config.UpdateTagWithNewValue(ReleaseInfo.TAG_NAME, CurrentRelease.ToXmlNode());
+		}
+
+		#endregion
+
+		#region IEventHandler<SettingsLoadedEvent> Members
+
+		public void Handle(SettingsLoadedEvent eventData)
+		{
+			CurrentProject = ProjectInfo.FromXml(eventData.Settings.Configuration);
+			DefaultProject = ProjectInfo.FromXml(eventData.Settings.DefaultConfiguration);
+
+			ReleaseInfo release = ReleaseInfo.FromXml(eventData.Settings.Configuration);
+			DefaultRelease = ReleaseInfo.FromXml(eventData.Settings.DefaultConfiguration);
+
+			View.SelectProject(CurrentProject);
+			View.SelectRelease(release);
+		}
+
+		#endregion
+
 		public void ProjectSupplied(ProjectInfo project)
 		{
 			CurrentProject = project;
@@ -70,65 +158,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SelectResultDestination
 		public void AddRelease(ProjectInfo currentProject)
 		{
 			AppController.Execute(new AddNewReleaseData(currentProject.Id));
-		}
-
-		public void Handle(ProjectAddedEvent eventData)
-		{
-			IList<ProjectInfo> projectList = ProjectRepository.GetProjects();
-			View.LoadProjectList(projectList);
-
-			
-			View.SelectProject(eventData.Project);
-		}
-
-		public void Handle(ReleaseAddedEvent eventData)
-		{
-			View.LoadReleaseList(ReleaseRepository.GetReleases(CurrentProject.Id));
-
-			View.SelectRelease(eventData.Release);
-		}
-
-		public void Handle(ProjectSelectedEvent eventData)
-		{
-			AppController.Execute(new RetrieveReleasesData(eventData.Project.Id));
-
-			View.LoadReleaseList(ReleaseRepository.GetReleases(eventData.Project.Id));
-			View.EnableAddReleaseButton();
-		}
-
-		public void Handle(ProjectsLoadedEvent eventData)
-		{
-			View.LoadProjectList(ProjectRepository.GetProjects());
-			View.EnableAddProjectButton();
-		}
-
-		public void Handle(SettingsLoadedEvent eventData)
-		{
-			CurrentProject = ProjectInfo.FromXml(eventData.Settings.Configuration);
-			DefaultProject = ProjectInfo.FromXml(eventData.Settings.DefaultConfiguration);
-
-			var release = ReleaseInfo.FromXml(eventData.Settings.Configuration);
-			DefaultRelease = ReleaseInfo.FromXml(eventData.Settings.DefaultConfiguration);
-
-			View.SelectProject(CurrentProject);
-			View.SelectRelease(release);
-		}
-
-		public void Handle(ResetEvent eventData)
-		{
-			CurrentProject = new ProjectInfo(DefaultProject);
-			View.SelectProject(CurrentProject);
-
-			CurrentRelease = new ReleaseInfo(DefaultRelease);
-			View.SelectRelease(CurrentRelease);
-		}
-
-		public void Handle(SaveDataEvent eventData)
-		{
-			var config = eventData.Settings.Configuration;
-
-			config.UpdateTagWithNewValue(ProjectInfo.TAG_NAME, CurrentProject.ToXmlNode());
-			config.UpdateTagWithNewValue(ReleaseInfo.TAG_NAME, CurrentRelease.ToXmlNode());
 		}
 	}
 }

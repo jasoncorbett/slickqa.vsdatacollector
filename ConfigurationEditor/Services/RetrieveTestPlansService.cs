@@ -27,8 +27,8 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Services
 			Repository = repository;
 		}
 
-		public ITestPlanRepository Repository { get; set; }
-		public IApplicationController AppController { get; set; }
+		private ITestPlanRepository Repository { get; set; }
+		private IApplicationController AppController { get; set; }
 
 		#region ICommand<RetrieveTestPlansData> Members
 

@@ -28,9 +28,46 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 {
 
 	[DataCollectorConfigurationEditorTypeUri("configurationeditor://slickqa/SlickDataCollectorConfigurationEditor/0.0.1")]
-	public partial class MainEditorControl : UserControl, IEditorView, IDataCollectorConfigurationEditor
+	public sealed partial class MainEditorControl : UserControl, IEditorView, IDataCollectorConfigurationEditor
 	{
-		public MainEditorController Controller { get; set; }
+		public MainEditorControl()
+		{
+			InitializeComponent();
+
+			ConfigureIoCContainer();
+
+			Controller = IocContainer.GetInstance<MainEditorController>();
+		}
+
+		private IContainer IocContainer { get; set; }
+
+		#region IDataCollectorConfigurationEditor Members
+
+		public void Initialize(IServiceProvider serviceProvider, DataCollectorSettings settings)
+		{
+			Controller.Initialize(serviceProvider, settings);
+		}
+
+		public bool VerifyData()
+		{
+			return Controller.VerifyData();
+		}
+
+		public DataCollectorSettings SaveData()
+		{
+			return Controller.SaveData();
+		}
+
+		public void ResetToAgentDefaults()
+		{
+			Controller.ResetToAgentDefaults();
+		}
+
+		#endregion
+
+		#region IEditorView Members
+
+		public MainEditorController Controller { private get; set; }
 		public void ClearUrlError()
 		{
 			_errorProvider.SetError(_urlSelector, string.Empty);
@@ -51,16 +88,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 			_errorProvider.SetError(_executionNaming, "Please add a test plan.");
 		}
 
-		private IContainer IocContainer { get; set; }
-
-		public MainEditorControl()
-		{
-			InitializeComponent();
-
-			ConfigureIoCContainer();
-
-			Controller = IocContainer.GetInstance<MainEditorController>();
-		}
+		#endregion
 
 		private void ConfigureIoCContainer()
 		{
@@ -79,26 +107,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 			_buildSpecifierControl.Controller = IocContainer.GetInstance<BuildSpecifierController>();
 			_screenshotSetter.Controller = IocContainer.GetInstance<ScreenshotController>();
 			_executionNaming.Controller = IocContainer.GetInstance<ExecutionNamingController>();
-		}
-
-		public void Initialize(IServiceProvider serviceProvider, DataCollectorSettings settings)
-		{
-			Controller.Initialize(serviceProvider, settings);
-		}
-
-		public bool VerifyData()
-		{
-			return Controller.VerifyData();
-		}
-
-		public DataCollectorSettings SaveData()
-		{
-			return Controller.SaveData();
-		}
-
-		public void ResetToAgentDefaults()
-		{
-			Controller.ResetToAgentDefaults();
 		}
 	}
 }

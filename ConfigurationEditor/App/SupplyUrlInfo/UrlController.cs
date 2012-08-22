@@ -13,8 +13,9 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
+using System.Xml;
 using SlickQA.DataCollector.ConfigurationEditor.AppController;
 using SlickQA.DataCollector.ConfigurationEditor.Commands;
 using SlickQA.DataCollector.ConfigurationEditor.Events;
@@ -30,12 +31,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 		IEventHandler<ResetEvent>,
 		IEventHandler<SaveDataEvent>
 	{
-		private IApplicationController AppController { get; set; }
-		private ISetUrlView View { get; set; }
-		private IUrlRepository UrlRepository { get; set; }
-		protected UrlInfo DefaultUrl { get; set; }
-		private UrlInfo CurrentUrl { get; set; }
-
 		public UrlController(ISetUrlView view, IApplicationController appController, IUrlRepository repository)
 		{
 			View = view;
@@ -46,6 +41,58 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 			DefaultUrl = new UrlInfo();
 		}
 
+		private IApplicationController AppController { get; set; }
+		private ISetUrlView View { get; set; }
+		private IUrlRepository UrlRepository { get; set; }
+		private UrlInfo DefaultUrl { get; set; }
+		private UrlInfo CurrentUrl { get; set; }
+
+		#region IEventHandler<ResetEvent> Members
+
+		public void Handle(ResetEvent eventData)
+		{
+			CurrentUrl = new UrlInfo(DefaultUrl);
+
+			View.Update(CurrentUrl);
+		}
+
+		#endregion
+
+		#region IEventHandler<SaveDataEvent> Members
+
+		public void Handle(SaveDataEvent eventData)
+		{
+			XmlElement config = eventData.Settings.Configuration;
+
+			config.UpdateTagWithNewValue(UrlInfo.TAG_NAME, CurrentUrl.ToXmlNode());
+		}
+
+		#endregion
+
+		#region IEventHandler<SettingsLoadedEvent> Members
+
+		public void Handle(SettingsLoadedEvent eventData)
+		{
+			CurrentUrl = UrlInfo.FromXml(eventData.Settings.Configuration);
+			DefaultUrl = UrlInfo.FromXml(eventData.Settings.DefaultConfiguration);
+
+			if (ValidateUrl())
+			{
+				GetProjects();
+			}
+			View.Update(CurrentUrl);
+		}
+
+		#endregion
+
+		#region IEventHandler<UrlValidatedEvent> Members
+
+		public void Handle(UrlValidatedEvent eventData)
+		{
+			UrlRepository.SetUrl(eventData.UrlInfo);
+		}
+
+		#endregion
 
 		public void SchemeSupplied(string scheme)
 		{
@@ -101,7 +148,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 			return validUrl;
 		}
 
-		private bool TestServerConnection(UrlInfo urlInfo)
+		private static bool TestServerConnection(UrlInfo urlInfo)
 		{
 			const string TEST_API = "api/updates";
 
@@ -109,6 +156,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 			{
 				var uri = new Uri(urlInfo.DisplayName + TEST_API);
 				var request = WebRequest.Create(uri) as HttpWebRequest;
+				Debug.Assert(request != null, "request != null");
 				request.Method = "GET";
 				request.Timeout = 200; // Short timeout to keep the gui responsive.
 				using (request.GetResponse())
@@ -120,37 +168,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 			{
 				return false;
 			}
-		}
-
-		public void Handle(UrlValidatedEvent eventData)
-		{
-			UrlRepository.SetUrl(eventData.UrlInfo);
-		}
-
-		public void Handle(SettingsLoadedEvent eventData)
-		{
-			CurrentUrl = UrlInfo.FromXml(eventData.Settings.Configuration);
-			DefaultUrl = UrlInfo.FromXml(eventData.Settings.DefaultConfiguration);
-
-			if (ValidateUrl())
-			{
-				GetProjects();
-			}
-			View.Update(CurrentUrl);
-		}
-
-		public void Handle(ResetEvent eventData)
-		{
-			CurrentUrl = new UrlInfo(DefaultUrl);
-
-			View.Update(CurrentUrl);
-		}
-
-		public void Handle(SaveDataEvent eventData)
-		{
-			var config = eventData.Settings.Configuration;
-
-			config.UpdateTagWithNewValue(UrlInfo.TAG_NAME, CurrentUrl.ToXmlNode());
 		}
 	}
 }

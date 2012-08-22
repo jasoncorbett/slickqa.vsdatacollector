@@ -37,6 +37,15 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyBuildProvider
 		private IChooseBuildProviderView View { get; set; }
 		private IApplicationController AppController { get; set; }
 
+		#region IEventHandler<AssemblyParsedEvent> Members
+
+		public void Handle(AssemblyParsedEvent eventData)
+		{
+			View.PopulateTree(eventData.CandidateTypes);
+		}
+
+		#endregion
+
 		#region IGetBuildProviderInfo Members
 
 		public Result<BuildProviderInfo> Get(BuildProviderInfo provider)
@@ -86,11 +95,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyBuildProvider
 		{
 			AssemblyPath = filePath;
 			AppController.Execute(new GetAssemblyInfoData(filePath));
-		}
-
-		public void Handle(AssemblyParsedEvent eventData)
-		{
-			View.PopulateTree(eventData.CandidateTypes);
 		}
 	}
 }

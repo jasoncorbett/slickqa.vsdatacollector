@@ -81,7 +81,7 @@ namespace SlickQA.DataCollector.Repositories
 
 		#endregion
 
-		private List<TestPlanInfo> ConvertToTestPlanInfo(List<TestPlan> testPlans)
+		private static List<TestPlanInfo> ConvertToTestPlanInfo(IEnumerable<TestPlan> testPlans)
 		{
 			return testPlans.Select(t => new TestPlanInfo(t.Id, t.Name, t.ProjectReference.Id, t.CreatedBy)).ToList();
 		}

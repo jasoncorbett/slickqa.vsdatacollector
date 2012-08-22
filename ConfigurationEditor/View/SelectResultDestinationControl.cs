@@ -40,7 +40,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 
 		#region IResultDestinationView Members
 
-		public ResultDestinationController Controller { get; set; }
+		public ResultDestinationController Controller { private get; set; }
 
 		public void LoadProjectList(IEnumerable<ProjectInfo> projectList)
 		{

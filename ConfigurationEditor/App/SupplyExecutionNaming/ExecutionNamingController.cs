@@ -14,6 +14,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using SlickQA.DataCollector.ConfigurationEditor.AppController;
 using SlickQA.DataCollector.ConfigurationEditor.Commands;
 using SlickQA.DataCollector.ConfigurationEditor.Events;
@@ -31,13 +32,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming
 		IEventHandler<ResetEvent>,
 		IEventHandler<SaveDataEvent>
 	{
-		private IApplicationController AppController { get; set; }
-		private ITestPlanRepository Repository { get; set; }
-		private ProjectInfo Project { get; set; }
-		private IExecutionNamingView View { get; set; }
-		private TestPlanInfo CurrentTestPlan { get; set; }
-		private TestPlanInfo DefaultTestPlan { get; set; }
-
 		public ExecutionNamingController(IExecutionNamingView view, IApplicationController appController, ITestPlanRepository repository)
 		{
 			View = view;
@@ -48,15 +42,14 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming
 			DefaultTestPlan = new TestPlanInfo();
 		}
 
-		public void TestPlanSupplied(TestPlanInfo testPlan)
-		{
-			CurrentTestPlan = testPlan;
-		}
+		private IApplicationController AppController { get; set; }
+		private ITestPlanRepository Repository { get; set; }
+		private ProjectInfo Project { get; set; }
+		private IExecutionNamingView View { get; set; }
+		private TestPlanInfo CurrentTestPlan { get; set; }
+		private TestPlanInfo DefaultTestPlan { get; set; }
 
-		public void AddTestPlan()
-		{
-			AppController.Execute(new AddNewTestPlanData(Project.Id));
-		}
+		#region IEventHandler<ProjectSelectedEvent> Members
 
 		public void Handle(ProjectSelectedEvent eventData)
 		{
@@ -64,9 +57,59 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming
 			AppController.Execute(new RetrieveTestPlansData(Project.Id));
 		}
 
+		#endregion
+
+		#region IEventHandler<ResetEvent> Members
+
+		public void Handle(ResetEvent eventData)
+		{
+			CurrentTestPlan = new TestPlanInfo(DefaultTestPlan);
+
+			View.SelectPlan(CurrentTestPlan);
+		}
+
+		#endregion
+
+		#region IEventHandler<SaveDataEvent> Members
+
+		public void Handle(SaveDataEvent eventData)
+		{
+			XmlElement config = eventData.Settings.Configuration;
+
+			config.UpdateTagWithNewValue(TestPlanInfo.TAG_NAME, CurrentTestPlan.ToXmlNode());
+		}
+
+		#endregion
+
+		#region IEventHandler<SettingsLoadedEvent> Members
+
+		public void Handle(SettingsLoadedEvent eventData)
+		{
+			TestPlanInfo testPlan = TestPlanInfo.FromXml(eventData.Settings.Configuration);
+			DefaultTestPlan = TestPlanInfo.FromXml(eventData.Settings.DefaultConfiguration);
+
+			View.SelectPlan(testPlan);
+		}
+
+		#endregion
+
+		#region IEventHandler<TestPlanAddedEvent> Members
+
+		public void Handle(TestPlanAddedEvent eventData)
+		{
+			List<TestPlanInfo> testPlans = Repository.GetPlans(Project.Id).ToList();
+			View.DisplayPlans(testPlans);
+
+			View.SelectPlan(eventData.TestPlan);
+		}
+
+		#endregion
+
+		#region IEventHandler<TestPlansLoadedEvent> Members
+
 		public void Handle(TestPlansLoadedEvent eventData)
 		{
-			var testPlans = Repository.GetPlans(eventData.ProjectId).ToList();
+			List<TestPlanInfo> testPlans = Repository.GetPlans(eventData.ProjectId).ToList();
 			
 			View.DisplayPlans(testPlans);
 			View.EnableAddPlanButton();
@@ -82,34 +125,16 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming
 			}
 		}
 
-		public void Handle(TestPlanAddedEvent eventData)
-		{
-			List<TestPlanInfo> testPlans = Repository.GetPlans(Project.Id).ToList();
-			View.DisplayPlans(testPlans);
+		#endregion
 
-			View.SelectPlan(eventData.TestPlan);
+		public void TestPlanSupplied(TestPlanInfo testPlan)
+		{
+			CurrentTestPlan = testPlan;
 		}
 
-		public void Handle(SettingsLoadedEvent eventData)
+		public void AddTestPlan()
 		{
-			var testPlan = TestPlanInfo.FromXml(eventData.Settings.Configuration);
-			DefaultTestPlan = TestPlanInfo.FromXml(eventData.Settings.DefaultConfiguration);
-
-			View.SelectPlan(testPlan);
-		}
-
-		public void Handle(ResetEvent eventData)
-		{
-			CurrentTestPlan = new TestPlanInfo(DefaultTestPlan);
-
-			View.SelectPlan(CurrentTestPlan);
-		}
-
-		public void Handle(SaveDataEvent eventData)
-		{
-			var config = eventData.Settings.Configuration;
-
-			config.UpdateTagWithNewValue(TestPlanInfo.TAG_NAME, CurrentTestPlan.ToXmlNode());
+			AppController.Execute(new AddNewTestPlanData(Project.Id));
 		}
 	}
 }

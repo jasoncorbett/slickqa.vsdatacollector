@@ -28,7 +28,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Services
 			AppController = appController;
 		}
 
-		protected IApplicationController AppController { get; set; }
+		private IApplicationController AppController { get; set; }
 
 		#region ICommand<GetAssemblyInfoData> Members
 
@@ -63,7 +63,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Services
 
 		#endregion
 
-		private static List<MethodInfo> GetMethodsWithStringReturnAndNoArguments(Type type)
+		private static List<MethodInfo> GetMethodsWithStringReturnAndNoArguments(IReflect type)
 		{
 			var retVal = new List<MethodInfo>();
 

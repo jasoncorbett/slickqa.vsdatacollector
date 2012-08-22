@@ -23,6 +23,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Events
 			Release = releaseId;
 		}
 
-		public ReleaseInfo Release { get; set; }
+		public ReleaseInfo Release { get; private set; }
 	}
 }

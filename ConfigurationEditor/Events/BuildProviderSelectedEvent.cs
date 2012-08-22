@@ -23,6 +23,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Events
 			ProviderInfo = info;
 		}
 
-		public BuildProviderInfo ProviderInfo { get; set; }
+		public BuildProviderInfo ProviderInfo { get; private set; }
 	}
 }

@@ -21,12 +21,14 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 {
 	public sealed partial class ScreenshotSetter : UserControl, IScreenshotView
 	{
-		public ScreenshotController Controller { private get; set; }
-
 		public ScreenshotSetter()
 		{
 			InitializeComponent();
 		}
+
+		#region IScreenshotView Members
+
+		public ScreenshotController Controller { private get; set; }
 
 		public void Update(ScreenshotInfo currentScreenshot)
 		{
@@ -34,6 +36,8 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 			_posttestScreenshot.Checked = currentScreenshot.PostTest;
 			_failScreenshot.Checked = currentScreenshot.FailedTest;
 		}
+
+		#endregion
 
 		private void PretestScreenshotCheckedChanged(object sender, EventArgs e)
 		{

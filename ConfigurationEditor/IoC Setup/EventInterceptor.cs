@@ -22,6 +22,8 @@ namespace SlickQA.DataCollector.ConfigurationEditor.IoC_Setup
 {
 	sealed class EventInterceptor : TypeInterceptor
 	{
+		#region TypeInterceptor Members
+
 		public object Process(object target, IContext context)
 		{
 			var publisher = context.GetInstance<IEventPublisher>();
@@ -33,5 +35,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.IoC_Setup
 		{
 			return type.ImplementsInterfaceTemplate(typeof(IEventHandler<>));
 		}
+
+		#endregion
 	}
 }

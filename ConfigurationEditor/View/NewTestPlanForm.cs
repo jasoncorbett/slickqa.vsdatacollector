@@ -18,16 +18,19 @@ using SlickQA.DataCollector.ConfigurationEditor.App.SupplyTestPlanInfo;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.View
 {
-	public partial class NewTestPlanForm : Form, INewTestPlanView
+	public sealed partial class NewTestPlanForm : Form, INewTestPlanView
 	{
-		private IWin32Window ParentAppWindow { get; set; }
-		public NewTestPlanController Controller { set; get; }
-
 		public NewTestPlanForm(IWin32Window owner)
 		{
 			InitializeComponent();
 			ParentAppWindow = owner;
 		}
+
+		private IWin32Window ParentAppWindow { get; set; }
+
+		#region INewTestPlanView Members
+
+		public NewTestPlanController Controller { set; private get; }
 
 		public void Run()
 		{
@@ -48,6 +51,8 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 		{
 			_okButton.Enabled = !ErrorsOnPage();
 		}
+
+		#endregion
 
 		private bool ErrorsOnPage()
 		{

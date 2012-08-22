@@ -20,7 +20,7 @@
 
 namespace SlickQA.DataCollector.EventAggregator
 {
-	public interface IEventHandler<T>
+	public interface IEventHandler<in T>
 	{
 		void Handle(T eventData);
 	}
