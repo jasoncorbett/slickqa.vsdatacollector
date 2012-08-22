@@ -38,7 +38,7 @@ namespace SlickQA.SlickSharp.ObjectReferences
 
 		public static implicit operator TestRunReference(TestRun testRun)
 		{
-			return new TestRunReference(testRun);
+			return testRun == null ? null : new TestRunReference(testRun);
 		}
 
 		public static implicit operator TestRun(TestRunReference testRunReference)

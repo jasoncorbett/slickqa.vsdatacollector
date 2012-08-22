@@ -51,7 +51,7 @@ namespace SlickQA.SlickSharp.ObjectReferences
 
 		public static implicit operator TestcaseReference(Testcase testcase)
 		{
-			return new TestcaseReference(testcase);
+			return testcase == null ? null : new TestcaseReference(testcase);
 		}
 
 		public static implicit operator Testcase(TestcaseReference testcaseReference)

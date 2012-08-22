@@ -38,7 +38,7 @@ namespace SlickQA.SlickSharp.ObjectReferences
 
 		public static implicit operator ProjectReference(Project project)
 		{
-			return new ProjectReference(project);
+			return project == null ? null : new ProjectReference(project);
 		}
 
 		public static implicit operator Project(ProjectReference projectReference)

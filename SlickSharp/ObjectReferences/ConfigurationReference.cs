@@ -42,15 +42,17 @@ namespace SlickQA.SlickSharp.ObjectReferences
 
 		public static implicit operator ConfigurationReference(Configuration configuration)
 		{
-			return new ConfigurationReference(configuration);
+			return configuration == null ? null : new ConfigurationReference(configuration);
 		}
 
 		public static implicit operator Configuration(ConfigurationReference reference)
 		{
-			var conf = new Configuration();
-			conf.Id = reference.ConfigId;
-			conf.Filename = reference.FileName;
-			conf.Name = reference.Name;
+			var conf = new Configuration
+			           {
+			           	Id = reference.ConfigId,
+						Filename = reference.FileName,
+						Name = reference.Name
+			           };
 			conf.Get();
 			return conf;
 		}

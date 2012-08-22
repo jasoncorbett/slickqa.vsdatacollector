@@ -46,7 +46,7 @@ namespace SlickQA.SlickSharp.ObjectReferences
 
 		public static implicit operator ResultReference(Result result)
 		{
-			return new ResultReference(result);
+			return result == null ? null : new ResultReference(result);
 		}
 
 		public static implicit operator Result(ResultReference resultReference)

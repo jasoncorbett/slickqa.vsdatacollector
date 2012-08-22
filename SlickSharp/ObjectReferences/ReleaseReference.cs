@@ -34,7 +34,7 @@ namespace SlickQA.SlickSharp.ObjectReferences
 
 		public static implicit operator ReleaseReference(Release release)
 		{
-			return new ReleaseReference(release);
+			return release == null ? null : new ReleaseReference(release);
 		}
 	}
 }

@@ -38,7 +38,7 @@ namespace SlickQA.SlickSharp.ObjectReferences
 
 		public static implicit operator ComponentReference(Component component)
 		{
-			return new ComponentReference(component);
+			return component == null ? null : new ComponentReference(component);
 		}
 	}
 }

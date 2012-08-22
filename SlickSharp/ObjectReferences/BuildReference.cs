@@ -40,7 +40,7 @@ namespace SlickQA.SlickSharp.ObjectReferences
 
 		public static implicit operator BuildReference(Build build)
 		{
-			return new BuildReference(build);
+			return build == null ? null : new BuildReference(build);
 		}
 	}
 }
