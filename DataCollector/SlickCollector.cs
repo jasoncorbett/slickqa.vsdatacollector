@@ -36,23 +36,18 @@ namespace SlickQA.DataCollector
 	[DataCollectorConfigurationEditor("configurationeditor://slickqa/SlickDataCollectorConfigurationEditor/0.0.1")]
 	public class SlickCollector : Microsoft.VisualStudio.TestTools.Execution.DataCollector
 	{
-		private DataCollectionEnvironmentContext _dataCollectionEnvironmentContext;
-
-		private DataCollectionEvents _dataEvents;
-
-		private DataCollectionLogger _dataLogger;
-
-		private Stack<Tuple<Result, Stopwatch>> _results;
-		private TestRun _slickRun;
-
 		private DataCollectionSink DataSink { get; set; }
-
 		private ProjectInfo ProjectInfo { get; set; }
 		private ReleaseInfo ReleaseInfo { get; set; }
 		private BuildProviderInfo BuildProvider { get; set; }
 		private ScreenshotInfo ScreenshotInfo { get; set; }
 		private TestPlanInfo TestPlanInfo { get; set; }
 		private UrlInfo UrlInfo { get; set; }
+		private TestRun SlickRun { get; set; }
+		private Stack<Tuple<Result, Stopwatch>> Results { get; set; }
+		private DataCollectionLogger DataLogger { get; set; }
+		private DataCollectionEvents DataEvents { get; set; }
+		private DataCollectionEnvironmentContext DataCollectionEnvironmentContext { get; set; }
 
 
 		public override void Initialize(XmlElement configurationElement, DataCollectionEvents events,
@@ -71,19 +66,21 @@ namespace SlickQA.DataCollector
 			ServerConfig.Port = UrlInfo.Port;
 			ServerConfig.SitePath = UrlInfo.SitePath;
 			
-			_dataEvents = events;
+			DataEvents = events;
 			DataSink = dataSink;
-			_dataLogger = logger;
-			_dataCollectionEnvironmentContext = environmentContext;
+			DataLogger = logger;
+			DataCollectionEnvironmentContext = environmentContext;
 
-			_results = new Stack<Tuple<Result, Stopwatch>>();
+			Results = new Stack<Tuple<Result, Stopwatch>>();
 
-			_dataEvents.TestCaseStart += OnTestCaseStart;
-			_dataEvents.TestCaseEnd += OnTestCaseEnd;
-			_dataEvents.TestCaseFailed += OnTestCaseFailed;
+			DataEvents.TestCaseStart += OnTestCaseStart;
+			DataEvents.TestCaseEnd += OnTestCaseEnd;
+			DataEvents.TestCaseFailed += OnTestCaseFailed;
 
-			_dataEvents.SessionStart += OnSessionStart;
-			_dataEvents.SessionEnd += OnSessionEnd;
+			DataEvents.SessionStart += OnSessionStart;
+			DataEvents.SessionEnd += OnSessionEnd;
+
+
 
 			//_dataEvents.CustomNotification += OnCustomNotification;
 			//_dataEvents.DataRequest += OnDataRequest;
@@ -98,19 +95,19 @@ namespace SlickQA.DataCollector
 
 		protected override void Dispose(bool disposing)
 		{
-			_dataLogger.LogWarning(_dataCollectionEnvironmentContext.SessionDataCollectionContext, "Slick Data Collector: Dispose");
+			DataLogger.LogWarning(DataCollectionEnvironmentContext.SessionDataCollectionContext, "Slick Data Collector: Dispose");
 			if (!disposing)
 			{
 				return;
 			}
-			_dataEvents.TestCaseStart -= OnTestCaseStart;
-			_dataEvents.TestCaseEnd -= OnTestCaseEnd;
-			_dataEvents.TestCaseFailed -= OnTestCaseFailed;
+			DataEvents.TestCaseStart -= OnTestCaseStart;
+			DataEvents.TestCaseEnd -= OnTestCaseEnd;
+			DataEvents.TestCaseFailed -= OnTestCaseFailed;
 
 
-			_dataEvents.SessionStart -= OnSessionStart;
+			DataEvents.SessionStart -= OnSessionStart;
 
-			_dataEvents.SessionEnd -= OnSessionEnd;
+			DataEvents.SessionEnd -= OnSessionEnd;
 
 			//_dataEvents.TestCasePause -= OnTestCasePause;
 			//_dataEvents.CustomNotification -= OnCustomNotification;
@@ -162,7 +159,7 @@ namespace SlickQA.DataCollector
 				environmentConfiguration.Post();
 			}
 
-			_slickRun = new TestRun
+			SlickRun = new TestRun
 			            {
 			            	Name = TestPlanInfo.Name,
 			            	ProjectReference = project,
@@ -171,12 +168,12 @@ namespace SlickQA.DataCollector
 			            	BuildReference = build,
 							ConfigurationReference = environmentConfiguration,
 			            };
-			_slickRun.Post();
+			SlickRun.Post();
 		}
 
 		private void OnSessionEnd(object sender, SessionEndEventArgs sessionEndEventArgs)
 		{
-			_slickRun = null;
+			SlickRun = null;
 		}
 
 		private void OnTestCaseStart(object sender, TestCaseStartEventArgs eventArgs)
@@ -196,11 +193,11 @@ namespace SlickQA.DataCollector
 							   AutomationKey = testElement.HumanReadableId,
 							   IsAutomated = true,
 							   Name = name,
-							   ProjectReference = _slickRun.ProjectReference,
+							   ProjectReference = SlickRun.ProjectReference,
 						   };
 				testcase.Post();
 			}
-			testcase.ProjectReference = _slickRun.ProjectReference;
+			testcase.ProjectReference = SlickRun.ProjectReference;
 			testcase.ComponentReference = component;
 			testcase.Purpose = testElement.Description;
 
@@ -221,11 +218,11 @@ namespace SlickQA.DataCollector
 
 			var testResult = new Result
 								 {
-									 TestRunReference = _slickRun,
+									 TestRunReference = SlickRun,
 									 TestcaseReference = testcase,
-									 ProjectReference = _slickRun.ProjectReference,
-									 ReleaseReference = _slickRun.ReleaseReference,
-									 BuildReference = _slickRun.BuildReference,
+									 ProjectReference = SlickRun.ProjectReference,
+									 ReleaseReference = SlickRun.ReleaseReference,
+									 BuildReference = SlickRun.BuildReference,
 									 Hostname = Environment.MachineName,
 									 Status = ResultStatus.NO_RESULT.ToString(),
 									 ComponentReference = testcase.ComponentReference,
@@ -241,7 +238,7 @@ namespace SlickQA.DataCollector
 			var timer = new Stopwatch();
 			timer.Start();
 
-			_results.Push(new Tuple<Result, Stopwatch>(testResult, timer));
+			Results.Push(new Tuple<Result, Stopwatch>(testResult, timer));
 		}
 
 		private static string GetTestName(ITestElement testElement)
@@ -261,7 +258,7 @@ namespace SlickQA.DataCollector
 			Component component = null;
 			if (!string.IsNullOrWhiteSpace(testedFeature))
 			{
-				component = new Component {Name = testedFeature, ProjectId = _slickRun.ProjectReference.Id};
+				component = new Component {Name = testedFeature, ProjectId = SlickRun.ProjectReference.Id};
 				component.Get(true);
 			}
 			return component;
@@ -283,7 +280,7 @@ namespace SlickQA.DataCollector
 
 		private void OnTestCaseEnd(object sender, TestCaseEndEventArgs eventArgs)
 		{
-			Tuple<Result,Stopwatch> result = _results.Pop();
+			Tuple<Result,Stopwatch> result = Results.Pop();
 			Result testResult = result.Item1;
 			Stopwatch timer = result.Item2;
 			timer.Stop();
@@ -291,10 +288,10 @@ namespace SlickQA.DataCollector
 			if (ScreenshotInfo.PostTest)
 			{
 				StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Post Test {0}.png", eventArgs.TestElement.HumanReadableId));
-				if (testResult.Files == null)
-				{
-					testResult.Files = new List<StoredFile>();
-				}
+			if (testResult.Files == null)
+			{
+				testResult.Files = new List<StoredFile>();
+			}
 				testResult.Files.Add(file);
 			}
 
@@ -305,7 +302,7 @@ namespace SlickQA.DataCollector
 
 		private void OnTestCaseFailed(object sender, TestCaseFailedEventArgs eventArgs)
 		{
-			Tuple<Result,Stopwatch> result = _results.Peek();
+			Tuple<Result,Stopwatch> result = Results.Peek();
 			Result testResult = result.Item1;
 
 			if (!ScreenshotInfo.FailedTest)
