@@ -17,6 +17,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Xml;
 using Microsoft.VisualStudio.TestTools.Common;
@@ -285,19 +286,67 @@ namespace SlickQA.DataCollector
 			Stopwatch timer = result.Item2;
 			timer.Stop();
 
-			if (ScreenshotInfo.PostTest)
-			{
-				StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Post Test {0}.png", eventArgs.TestElement.HumanReadableId));
 			if (testResult.Files == null)
 			{
 				testResult.Files = new List<StoredFile>();
 			}
+
+			if (ScreenshotInfo.PostTest)
+			{
+				StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Post Test {0}.png", eventArgs.TestElement.HumanReadableId));
+
 				testResult.Files.Add(file);
 			}
+			SendFiles(Environment.CurrentDirectory, testResult.Files);
 
 			testResult.Status = OutcomeTranslator.Convert(eventArgs.TestOutcome).ToString();
 			testResult.RunLength = timer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture);
 			testResult.Put();
+		}
+
+		private void SendFiles(string currentDirectory, List<StoredFile> files)
+		{
+			var d = new DirectoryInfo(currentDirectory);
+			foreach (var file in d.EnumerateFiles())
+			{
+				SendFile(files, file);
+			}
+		}
+
+		private void SendFile(List<StoredFile> files, FileInfo file)
+		{
+			var sf = new StoredFile {FileName = file.Name, Mimetype = GetMimeType(file)};
+			byte[] screenBytes;
+			using (var s = file.OpenRead())
+			{
+				screenBytes = new byte[file.Length];
+				s.Read(screenBytes, 0, Convert.ToInt32(file.Length));
+			}
+			sf.Post();
+			sf.PostContent(screenBytes);
+			files.Add(sf);
+		}
+
+		private string GetMimeType(FileInfo file)
+		{
+			var retVal = "text/plain";
+			switch (file.Extension)
+			{
+				case "png":
+					retVal = "image/png";
+					break;
+				case "jpg":
+					retVal = "image/jpeg";
+					break;
+				case "gif":
+					retVal = "image/gif";
+					break;
+				case "trx":
+				case "xml":
+					retVal = "text/xml";
+					break;
+			}
+			return retVal;
 		}
 
 		private void OnTestCaseFailed(object sender, TestCaseFailedEventArgs eventArgs)
