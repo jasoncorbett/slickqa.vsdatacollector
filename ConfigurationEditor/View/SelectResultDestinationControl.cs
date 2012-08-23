@@ -49,9 +49,16 @@ namespace SlickQA.DataCollector.ConfigurationEditor.View
 			{
 				Projects.Add(project);
 			}
-			_project.Enabled = true;
-			_project.SelectedIndex = -1;
-			_project.SelectedIndex = 0;
+			if (Projects.Count != 0)
+			{
+				_project.Enabled = true;
+				_project.SelectedIndex = -1;
+				_project.SelectedIndex = 0;
+			}
+			else
+			{
+				_project.Enabled = false;
+			}
 		}
 
 		public void SelectProject(ProjectInfo project)
