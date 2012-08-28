@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using SlickQA.DataCollector.ConfigurationEditor.AppController;
 using SlickQA.DataCollector.ConfigurationEditor.Commands;
@@ -98,7 +99,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.Services
 			Type[] types;
 			try
 			{
-				Assembly assembly = Assembly.LoadFile(commandData.AssemblyPath);
+				Assembly assembly = Assembly.ReflectionOnlyLoad(File.ReadAllBytes(commandData.AssemblyPath));
 				types = assembly.GetTypes();
 			}
 			catch (ReflectionTypeLoadException e)

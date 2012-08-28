@@ -51,8 +51,6 @@ namespace SlickQA.DataCollector.Models
 					TypeName = temp.TypeName;
 					MethodName = temp.MethodName;
 
-
-					//TODO: Load from CWD
 					string assemblyFile = null;
 					string tempPath = Path.Combine(Environment.CurrentDirectory, AssemblyName);
 					if (File.Exists(tempPath))
@@ -70,7 +68,7 @@ namespace SlickQA.DataCollector.Models
 
 					if (assemblyFile != null)
 					{
-						Assembly assembly = Assembly.LoadFrom(assemblyFile);
+						var assembly = Assembly.Load(File.ReadAllBytes(assemblyFile));
 						if (!string.IsNullOrWhiteSpace(TypeName))
 						{
 							Type type = assembly.GetType(TypeName);

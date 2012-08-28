@@ -307,7 +307,7 @@ namespace SlickQA.DataCollector
 		private void SendFiles(string currentDirectory, List<StoredFile> files)
 		{
 			var d = new DirectoryInfo(currentDirectory);
-			foreach (var file in d.EnumerateFiles())
+			foreach (var file in d.EnumerateFiles().Where(file => file.Extension != "dll"))
 			{
 				SendFile(files, file);
 			}
