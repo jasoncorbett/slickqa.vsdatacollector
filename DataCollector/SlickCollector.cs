@@ -37,6 +37,7 @@ namespace SlickQA.DataCollector
 	[DataCollectorConfigurationEditor("configurationeditor://slickqa/SlickDataCollectorConfigurationEditor/0.0.1")]
 	public class SlickCollector : Microsoft.VisualStudio.TestTools.Execution.DataCollector
 	{
+		public const string SLICK_FILE_STAGE = "slick";
 		private DataCollectionSink DataSink { get; set; }
 		private ProjectInfo ProjectInfo { get; set; }
 		private ReleaseInfo ReleaseInfo { get; set; }
@@ -297,7 +298,7 @@ namespace SlickQA.DataCollector
 
 				testResult.Files.Add(file);
 			}
-			SendFiles(Environment.CurrentDirectory, testResult.Files);
+			SendFiles(Path.Combine(Environment.CurrentDirectory, SLICK_FILE_STAGE), testResult.Files);
 
 			testResult.Status = OutcomeTranslator.Convert(eventArgs.TestOutcome).ToString();
 			testResult.RunLength = timer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture);
@@ -310,6 +311,7 @@ namespace SlickQA.DataCollector
 			foreach (var file in d.EnumerateFiles().Where(file => file.Extension != "dll"))
 			{
 				SendFile(files, file);
+				File.Delete(file.FullName);
 			}
 		}
 
