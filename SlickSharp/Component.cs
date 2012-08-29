@@ -21,6 +21,7 @@ namespace SlickQA.SlickSharp
 	[DataContract]
 	[CollectionApiPath("projects/{ProjectId}/components")]
 	[ItemApiPath("", "Id", 0)]
+	[ItemApiPath("byname", "Name", 1)]
 	public sealed class Component : JsonObject<Component>, IJsonObject
 	{
 		[DataMember(Name = "code")]
