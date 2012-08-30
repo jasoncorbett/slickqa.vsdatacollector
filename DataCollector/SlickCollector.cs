@@ -171,6 +171,8 @@ namespace SlickQA.DataCollector
 							ConfigurationReference = environmentConfiguration,
 			            };
 			SlickRun.Post();
+
+			Directory.CreateDirectory(Path.Combine(Environment.CurrentDirectory, SLICK_FILE_STAGE));
 		}
 
 		private void OnSessionEnd(object sender, SessionEndEventArgs sessionEndEventArgs)
