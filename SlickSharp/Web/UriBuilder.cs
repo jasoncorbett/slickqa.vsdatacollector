@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Web;
 using System.Text.RegularExpressions;
 using SlickQA.SlickSharp.Attributes;
 
@@ -80,11 +81,11 @@ namespace SlickQA.SlickSharp.Web
 				}
 				if (String.IsNullOrWhiteSpace(item.ApiPath))
 				{
-					getPath = value.ToString();
+					getPath = HttpUtility.UrlEncode(value.ToString());
 				}
 				else
 				{
-					getPath = item.ApiPath + "/" + value;
+					getPath = item.ApiPath + "/" + HttpUtility.UrlEncode(value.ToString());
 				}
 				break;
 			}
