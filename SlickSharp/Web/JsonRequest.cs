@@ -63,6 +63,10 @@ namespace SlickQA.SlickSharp.Web
 				{
 					throw new NotFoundException();
 				}
+				if (resp != null && resp.StatusCode == HttpStatusCode.BadRequest)
+				{
+					throw new Exception(resp.StatusDescription);
+				}
 				throw;
 			}
 		}
