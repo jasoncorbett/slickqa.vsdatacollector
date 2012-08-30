@@ -46,10 +46,11 @@ namespace SlickQA.DataCollector
 		private TestPlanInfo TestPlanInfo { get; set; }
 		private UrlInfo UrlInfo { get; set; }
 		private TestRun SlickRun { get; set; }
-		private Stack<Tuple<Result, Stopwatch>> Results { get; set; }
+		private Dictionary<Guid, Tuple<Result, Stopwatch>> Results { get; set; }
 		private DataCollectionLogger DataLogger { get; set; }
 		private DataCollectionEvents DataEvents { get; set; }
 		private DataCollectionEnvironmentContext DataCollectionEnvironmentContext { get; set; }
+		private bool SessionActive { get; set; }
 
 
 		public override void Initialize(XmlElement configurationElement, DataCollectionEvents events,
@@ -67,13 +68,14 @@ namespace SlickQA.DataCollector
 			ServerConfig.SlickHost = UrlInfo.HostName;
 			ServerConfig.Port = UrlInfo.Port;
 			ServerConfig.SitePath = UrlInfo.SitePath;
-			
+
 			DataEvents = events;
 			DataSink = dataSink;
 			DataLogger = logger;
 			DataCollectionEnvironmentContext = environmentContext;
 
-			Results = new Stack<Tuple<Result, Stopwatch>>();
+			Results = new Dictionary<Guid, Tuple<Result, Stopwatch>>();
+			SessionActive = false;
 
 			DataEvents.TestCaseStart += OnTestCaseStart;
 			DataEvents.TestCaseEnd += OnTestCaseEnd;
@@ -97,7 +99,11 @@ namespace SlickQA.DataCollector
 
 		protected override void Dispose(bool disposing)
 		{
-			DataLogger.LogWarning(DataCollectionEnvironmentContext.SessionDataCollectionContext, "Slick Data Collector: Dispose");
+			if (SessionActive)
+			{
+				DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, "Slick Data Collector disposed while there was still an active test session.");
+			}
+			
 			if (!disposing)
 			{
 				return;
@@ -124,28 +130,50 @@ namespace SlickQA.DataCollector
 
 		private void OnSessionStart(object sender, SessionStartEventArgs eventArgs)
 		{
-			var project = new Project {Id = ProjectInfo.Id};
-			project.Get();
+			SessionActive = true;
+
+			var project = new Project { Id = ProjectInfo.Id };
+			try
+			{
+				project.Get();
+			}
+			catch (Exception e)
+			{
+				DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
+			}
 
 			var release = new Release
-			              {
-			              	Id = ReleaseInfo.Id,
-							ProjectId = ReleaseInfo.ProjectId
-			              };
-			release.Get();
-
+						  {
+							  Id = ReleaseInfo.Id,
+							  ProjectId = ReleaseInfo.ProjectId
+						  };
+			try
+			{
+				release.Get();
+			}
+			catch (Exception e)
+			{
+				DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
+			}
 			Build build = null;
 			if (BuildProvider.Method != null)
 			{
 				var buildNumber = BuildProvider.Method.Invoke(null, null) as String;
 
 				build = new Build
-				        {
-				        	Name = buildNumber,
+						{
+							Name = buildNumber,
 							ProjectId = project.Id,
 							ReleaseId = release.Id
-				        };
-				build.Get(true);
+						};
+				try
+				{
+					build.Get(true);
+				}
+				catch (Exception e)
+				{
+					DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
+				}
 			}
 
 
@@ -158,25 +186,39 @@ namespace SlickQA.DataCollector
 					Name = hostname,
 					ConfigurationType = "ENVIRONMENT"
 				};
-				environmentConfiguration.Post();
+				try
+				{
+					environmentConfiguration.Post();
+				}
+				catch (Exception e)
+				{
+					DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
+				}
 			}
 
 			SlickRun = new TestRun
-			            {
-			            	Name = TestPlanInfo.Name,
-			            	ProjectReference = project,
-			            	ReleaseReference = release,
-			            	TestPlanId = TestPlanInfo.Id,
-			            	BuildReference = build,
+						{
+							Name = TestPlanInfo.Name,
+							ProjectReference = project,
+							ReleaseReference = release,
+							TestPlanId = TestPlanInfo.Id,
+							BuildReference = build,
 							ConfigurationReference = environmentConfiguration,
-			            };
-			SlickRun.Post();
-
+						};
+			try
+			{
+				SlickRun.Post();
+			}
+			catch (Exception e)
+			{
+				DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
+			}
 			Directory.CreateDirectory(Path.Combine(Environment.CurrentDirectory, SLICK_FILE_STAGE));
 		}
 
 		private void OnSessionEnd(object sender, SessionEndEventArgs sessionEndEventArgs)
 		{
+			SessionActive = false;
 			SlickRun = null;
 		}
 
@@ -187,19 +229,33 @@ namespace SlickQA.DataCollector
 
 			Component component = GetComponent(testElement);
 			string name = GetTestName(testElement);
-
-			Testcase testcase = Testcase.GetTestCaseByAutomationKey(testElement.HumanReadableId);
+			Testcase testcase = null;
+			try
+			{
+				testcase = Testcase.GetTestCaseByAutomationKey(testElement.HumanReadableId);
+			}
+			catch (Exception e)
+			{
+				DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
+			}
 			if (testcase == null)
 			{
 				testcase = new Testcase
-						   {
-							   AutomationId = testcaseId,
-							   AutomationKey = testElement.HumanReadableId,
-							   IsAutomated = true,
-							   Name = name,
-							   ProjectReference = SlickRun.ProjectReference,
-						   };
+				{
+					AutomationId = testcaseId,
+					AutomationKey = testElement.HumanReadableId,
+					IsAutomated = true,
+					Name = name,
+					ProjectReference = SlickRun.ProjectReference,
+				};
+			}
+			try
+			{
 				testcase.Post();
+			}
+			catch (Exception e)
+			{
+				DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
 			}
 			testcase.ProjectReference = SlickRun.ProjectReference;
 			testcase.ComponentReference = component;
@@ -217,9 +273,14 @@ namespace SlickQA.DataCollector
 			}
 
 			UpdateTags(testcase, testElement);
-
-			testcase.Put();
-
+			try
+			{
+				testcase.Put();
+			}
+			catch (Exception e)
+			{
+				DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
+			}
 			var testResult = new Result
 								 {
 									 TestRunReference = SlickRun,
@@ -235,14 +296,20 @@ namespace SlickQA.DataCollector
 			{
 				StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Pre Test {0}.png", testElement.HumanReadableId));
 
-				testResult.Files = new List<StoredFile> {file};
+				testResult.Files = new List<StoredFile> { file };
 			}
-
-			testResult.Post();
+			try
+			{
+				testResult.Post();
+			}
+			catch (Exception e)
+			{
+				DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
+			}
 			var timer = new Stopwatch();
 			timer.Start();
 
-			Results.Push(new Tuple<Result, Stopwatch>(testResult, timer));
+			Results.Add(eventArgs.TestCaseId, new Tuple<Result, Stopwatch>(testResult, timer));
 		}
 
 		private static string GetTestName(ITestElement testElement)
@@ -262,7 +329,7 @@ namespace SlickQA.DataCollector
 			Component component = null;
 			if (!string.IsNullOrWhiteSpace(testedFeature))
 			{
-				component = new Component {Name = testedFeature, ProjectId = SlickRun.ProjectReference.Id};
+				component = new Component { Name = testedFeature, ProjectId = SlickRun.ProjectReference.Id };
 				component.Get(true);
 			}
 			return component;
@@ -274,7 +341,7 @@ namespace SlickQA.DataCollector
 			if (testcase.Tags != null)
 			{
 				IEnumerable<string> allTags = testcase.Tags.Union(categories);
-				testcase.Tags = allTags.ToList();				
+				testcase.Tags = allTags.ToList();
 			}
 			else
 			{
@@ -284,7 +351,7 @@ namespace SlickQA.DataCollector
 
 		private void OnTestCaseEnd(object sender, TestCaseEndEventArgs eventArgs)
 		{
-			Tuple<Result,Stopwatch> result = Results.Pop();
+			Tuple<Result, Stopwatch> result = Results[eventArgs.TestCaseId];
 			Result testResult = result.Item1;
 			Stopwatch timer = result.Item2;
 			timer.Stop();
@@ -319,7 +386,7 @@ namespace SlickQA.DataCollector
 
 		private void SendFile(List<StoredFile> files, FileInfo file)
 		{
-			var sf = new StoredFile {FileName = file.Name, Mimetype = GetMimeType(file)};
+			var sf = new StoredFile { FileName = file.Name, Mimetype = GetMimeType(file) };
 			byte[] screenBytes;
 			using (var s = file.OpenRead())
 			{
@@ -355,7 +422,7 @@ namespace SlickQA.DataCollector
 
 		private void OnTestCaseFailed(object sender, TestCaseFailedEventArgs eventArgs)
 		{
-			Tuple<Result,Stopwatch> result = Results.Peek();
+			Tuple<Result, Stopwatch> result = Results[eventArgs.TestCaseId];
 			Result testResult = result.Item1;
 
 			if (!ScreenshotInfo.FailedTest)
