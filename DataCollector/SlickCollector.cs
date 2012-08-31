@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -52,22 +51,11 @@ namespace SlickQA.DataCollector
 		private DataCollectionEnvironmentContext DataCollectionEnvironmentContext { get; set; }
 		private bool SessionActive { get; set; }
 
-
-		public override void Initialize(XmlElement configurationElement, DataCollectionEvents events,
-										DataCollectionSink dataSink, DataCollectionLogger logger,
-										DataCollectionEnvironmentContext environmentContext)
+		public override void Initialize(XmlElement configurationElement, DataCollectionEvents events, DataCollectionSink dataSink,
+			DataCollectionLogger logger, DataCollectionEnvironmentContext environmentContext)
 		{
-			ProjectInfo = ProjectInfo.FromXml(configurationElement);
-			ReleaseInfo = ReleaseInfo.FromXml(configurationElement);
-			BuildProvider = BuildProviderInfo.FromXml(configurationElement);
-			ScreenshotInfo = ScreenshotInfo.FromXml(configurationElement);
-			TestPlanInfo = TestPlanInfo.FromXml(configurationElement);
-			UrlInfo = UrlInfo.FromXml(configurationElement);
-
-			ServerConfig.Scheme = UrlInfo.Scheme;
-			ServerConfig.SlickHost = UrlInfo.HostName;
-			ServerConfig.Port = UrlInfo.Port;
-			ServerConfig.SitePath = UrlInfo.SitePath;
+			LoadConfig(configurationElement);
+			SetupServerConfig();
 
 			DataEvents = events;
 			DataSink = dataSink;
@@ -83,49 +71,6 @@ namespace SlickQA.DataCollector
 
 			DataEvents.SessionStart += OnSessionStart;
 			DataEvents.SessionEnd += OnSessionEnd;
-
-
-
-			//_dataEvents.CustomNotification += OnCustomNotification;
-			//_dataEvents.DataRequest += OnDataRequest;
-			//_dataEvents.SessionPause += OnSessionPause;
-			//_dataEvents.SessionResume += OnSessionResume;
-			//_dataEvents.TestCasePause += OnTestCasePause;
-			//_dataEvents.TestCaseResume += OnTestCaseResume;
-			//_dataEvents.TestCaseReset += OnTestCaseReset;
-			//_dataEvents.TestStepStart += OnTestStepStart;
-			//_dataEvents.TestStepEnd += OnTestStepEnd;
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			if (SessionActive)
-			{
-				DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, "Slick Data Collector disposed while there was still an active test session.");
-			}
-			
-			if (!disposing)
-			{
-				return;
-			}
-			DataEvents.TestCaseStart -= OnTestCaseStart;
-			DataEvents.TestCaseEnd -= OnTestCaseEnd;
-			DataEvents.TestCaseFailed -= OnTestCaseFailed;
-
-
-			DataEvents.SessionStart -= OnSessionStart;
-
-			DataEvents.SessionEnd -= OnSessionEnd;
-
-			//_dataEvents.TestCasePause -= OnTestCasePause;
-			//_dataEvents.CustomNotification -= OnCustomNotification;
-			//_dataEvents.DataRequest -= OnDataRequest;
-			//_dataEvents.SessionPause -= OnSessionPause;
-			//_dataEvents.SessionResume -= OnSessionResume;
-			//_dataEvents.TestCaseResume -= OnTestCaseResume;
-			//_dataEvents.TestCaseReset -= OnTestCaseReset;
-			//_dataEvents.TestStepStart -= OnTestStepStart;
-			//_dataEvents.TestStepEnd -= OnTestStepEnd;
 		}
 
 		private void OnSessionStart(object sender, SessionStartEventArgs eventArgs)
@@ -155,6 +100,7 @@ namespace SlickQA.DataCollector
 			{
 				DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
 			}
+
 			Build build = null;
 			if (BuildProvider.Method != null)
 			{
@@ -175,7 +121,6 @@ namespace SlickQA.DataCollector
 					DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
 				}
 			}
-
 
 			string hostname = Environment.MachineName;
 			Configuration environmentConfiguration = Configuration.GetEnvironmentConfiguration(hostname);
@@ -225,11 +170,101 @@ namespace SlickQA.DataCollector
 		private void OnTestCaseStart(object sender, TestCaseStartEventArgs eventArgs)
 		{
 			ITestElement testElement = eventArgs.TestElement;
-			string testcaseId = testElement.GetAttributeValue<TestCaseIdAttribute>();
+			var storedFiles = new List<StoredFile> {};
 
-			Component component = GetComponent(testElement);
-			string name = GetTestName(testElement);
+			testElement.TakeScreenshot(ScreenshotInfo.PreTest, "Pre Test", storedFiles);
+			Result result = CreateTestResult(testElement, SlickRun, storedFiles);
+			Stopwatch timer = StartTimer();
+
+			Results.Add(eventArgs.TestCaseId, new Tuple<Result, Stopwatch>(result, timer));
+		}
+
+		private void OnTestCaseEnd(object sender, TestCaseEndEventArgs eventArgs)
+		{
+			ITestElement testElement = eventArgs.TestElement;
+
+			Tuple<Result, Stopwatch> result = Results[eventArgs.TestCaseId];
+			Result testResult = result.Item1;
+			Stopwatch timer = result.Item2;
+			timer.Stop();
+
+			testElement.TakeScreenshot(ScreenshotInfo.PostTest, "Post Test", testResult.Files);
+
+
+			SendFiles(Path.Combine(Environment.CurrentDirectory, SLICK_FILE_STAGE), testResult.Files);
+
+			testResult.Status = OutcomeTranslator.Convert(eventArgs.TestOutcome).ToString();
+			testResult.RunLength = timer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture);
+			testResult.Put();
+		}
+
+		private void OnTestCaseFailed(object sender, TestCaseFailedEventArgs eventArgs)
+		{
+			ITestElement testElement = eventArgs.TestElement;
+			Tuple<Result, Stopwatch> result = Results[eventArgs.TestCaseId];
+
+			testElement.TakeScreenshot(ScreenshotInfo.FailedTest, "Test Failure", result.Item1.Files);
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (SessionActive)
+			{
+				DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, "Slick Data Collector disposed while there was still an active test session.");
+			}
+
+			if (!disposing)
+			{
+				return;
+			}
+			DataEvents.SessionStart -= OnSessionStart;
+			DataEvents.SessionEnd -= OnSessionEnd;
+
+			DataEvents.TestCaseStart -= OnTestCaseStart;
+			DataEvents.TestCaseEnd -= OnTestCaseEnd;
+			DataEvents.TestCaseFailed -= OnTestCaseFailed;
+		}
+		
+		private void SetupServerConfig()
+		{
+			ServerConfig.Scheme = UrlInfo.Scheme;
+			ServerConfig.SlickHost = UrlInfo.HostName;
+			ServerConfig.Port = UrlInfo.Port;
+			ServerConfig.SitePath = UrlInfo.SitePath;
+		}
+
+		private void LoadConfig(XmlElement configurationElement)
+		{
+			ProjectInfo = ProjectInfo.FromXml(configurationElement);
+			ReleaseInfo = ReleaseInfo.FromXml(configurationElement);
+			BuildProvider = BuildProviderInfo.FromXml(configurationElement);
+			ScreenshotInfo = ScreenshotInfo.FromXml(configurationElement);
+			TestPlanInfo = TestPlanInfo.FromXml(configurationElement);
+			UrlInfo = UrlInfo.FromXml(configurationElement);
+		}
+
+		internal static readonly Guid OrderedTest = new Guid("{ec4800e8-40e5-4ab3-8510-b8bf29b1904d}");
+		private Result CreateTestResult(ITestElement testElement, TestRun testRun, List<StoredFile> storedFiles)
+		{
+			string testcaseId = null;
+			string name = null;
+			string description = null;
+
 			Testcase testcase = null;
+			Component component = null;
+			LinkedHashMap<string> attributes = null;
+			List<string> tags = null;
+
+			if (testElement.TestType.Id != OrderedTest)
+			{
+				description = testElement.Description;
+				testcaseId = testElement.GetAttributeValue<TestCaseIdAttribute>();
+				component = testElement.GetComponent(SlickRun.ProjectReference.Id);
+				attributes = testElement.GetAttributes();
+				name = testElement.GetTestName();
+				tags = testElement.GetTags();
+			}
+
 			try
 			{
 				testcase = Testcase.GetTestCaseByAutomationKey(testElement.HumanReadableId);
@@ -238,6 +273,7 @@ namespace SlickQA.DataCollector
 			{
 				DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
 			}
+
 			if (testcase == null)
 			{
 				testcase = new Testcase
@@ -246,58 +282,34 @@ namespace SlickQA.DataCollector
 					AutomationKey = testElement.HumanReadableId,
 					IsAutomated = true,
 					Name = name,
-					ProjectReference = SlickRun.ProjectReference,
+					ProjectReference = SlickRun.ProjectReference
 				};
-			}
-			try
-			{
-				testcase.Post();
-			}
-			catch (Exception e)
-			{
-				DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
-			}
-			testcase.ProjectReference = SlickRun.ProjectReference;
-			testcase.ComponentReference = component;
-			testcase.Purpose = testElement.Description;
-
-			if (testcase.Attributes == null)
-			{
-				testcase.Attributes = new LinkedHashMap<string>();
+				try
+				{
+					testcase.Post();
+				}
+				catch (Exception e)
+				{
+					DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
+				}
 			}
 
-			Hashtable props = testElement.Properties;
-			foreach (DictionaryEntry entry in props.Cast<DictionaryEntry>().Where(entry => !testcase.Attributes.ContainsKey(entry.Key.ToString())))
-			{
-				testcase.Attributes.Add(entry);
-			}
+			UpdateTestcase(testcase, component, attributes, description, tags);
 
-			UpdateTags(testcase, testElement);
-			try
-			{
-				testcase.Put();
-			}
-			catch (Exception e)
-			{
-				DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
-			}
 			var testResult = new Result
-								 {
-									 TestRunReference = SlickRun,
-									 TestcaseReference = testcase,
-									 ProjectReference = SlickRun.ProjectReference,
-									 ReleaseReference = SlickRun.ReleaseReference,
-									 BuildReference = SlickRun.BuildReference,
-									 Hostname = Environment.MachineName,
-									 Status = ResultStatus.NO_RESULT.ToString(),
-									 ComponentReference = testcase.ComponentReference,
-								 };
-			if (ScreenshotInfo.PreTest)
 			{
-				StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Pre Test {0}.png", testElement.HumanReadableId));
+				TestRunReference = testRun,
+				TestcaseReference = testcase,
+				ProjectReference = SlickRun.ProjectReference,
+				ReleaseReference = SlickRun.ReleaseReference,
+				BuildReference = SlickRun.BuildReference,
+				Hostname = Environment.MachineName,
+				Status = ResultStatus.NO_RESULT.ToString(),
+				ComponentReference = component,
+				Files = storedFiles,
+				//Recorded = ,
+			};
 
-				testResult.Files = new List<StoredFile> { file };
-			}
 			try
 			{
 				testResult.Post();
@@ -306,75 +318,36 @@ namespace SlickQA.DataCollector
 			{
 				DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
 			}
+
+			return testResult;
+		}
+
+		private void UpdateTestcase(Testcase testcase, Component component, LinkedHashMap<string> attributes, string description, List<string> tags)
+		{
+			testcase.ProjectReference = SlickRun.ProjectReference;
+			testcase.ComponentReference = component;
+			testcase.Attributes = attributes;
+			testcase.Purpose = description;
+			testcase.Tags = tags;
+
+			try
+			{
+				testcase.Put();
+			}
+			catch (Exception e)
+			{
+				DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
+			}
+		}
+
+		private static Stopwatch StartTimer()
+		{
 			var timer = new Stopwatch();
 			timer.Start();
-
-			Results.Add(eventArgs.TestCaseId, new Tuple<Result, Stopwatch>(testResult, timer));
+			return timer;
 		}
 
-		private static string GetTestName(ITestElement testElement)
-		{
-			string testName = testElement.GetAttributeValue<TestNameAttribute>();
-			string name = testElement.HumanReadableId;
-			if (!string.IsNullOrWhiteSpace(testName))
-			{
-				name = testName;
-			}
-			return name;
-		}
-
-		private Component GetComponent(ITestElement testElement)
-		{
-			string testedFeature = testElement.GetAttributeValue<TestedFeatureAttribute>();
-			Component component = null;
-			if (!string.IsNullOrWhiteSpace(testedFeature))
-			{
-				component = new Component { Name = testedFeature, ProjectId = SlickRun.ProjectReference.Id };
-				component.Get(true);
-			}
-			return component;
-		}
-
-		private static void UpdateTags(Testcase testcase, ITestElement testElement)
-		{
-			string[] categories = testElement.TestCategories.ToArray();
-			if (testcase.Tags != null)
-			{
-				IEnumerable<string> allTags = testcase.Tags.Union(categories);
-				testcase.Tags = allTags.ToList();
-			}
-			else
-			{
-				testcase.Tags = categories.ToList();
-			}
-		}
-
-		private void OnTestCaseEnd(object sender, TestCaseEndEventArgs eventArgs)
-		{
-			Tuple<Result, Stopwatch> result = Results[eventArgs.TestCaseId];
-			Result testResult = result.Item1;
-			Stopwatch timer = result.Item2;
-			timer.Stop();
-
-			if (testResult.Files == null)
-			{
-				testResult.Files = new List<StoredFile>();
-			}
-
-			if (ScreenshotInfo.PostTest)
-			{
-				StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Post Test {0}.png", eventArgs.TestElement.HumanReadableId));
-
-				testResult.Files.Add(file);
-			}
-			SendFiles(Path.Combine(Environment.CurrentDirectory, SLICK_FILE_STAGE), testResult.Files);
-
-			testResult.Status = OutcomeTranslator.Convert(eventArgs.TestOutcome).ToString();
-			testResult.RunLength = timer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture);
-			testResult.Put();
-		}
-
-		private void SendFiles(string currentDirectory, List<StoredFile> files)
+		private void SendFiles(string currentDirectory, ICollection<StoredFile> files)
 		{
 			var d = new DirectoryInfo(currentDirectory);
 			foreach (var file in d.EnumerateFiles().Where(file => file.Extension != "dll"))
@@ -384,7 +357,7 @@ namespace SlickQA.DataCollector
 			}
 		}
 
-		private void SendFile(List<StoredFile> files, FileInfo file)
+		private void SendFile(ICollection<StoredFile> files, FileInfo file)
 		{
 			var sf = new StoredFile { FileName = file.Name, Mimetype = GetMimeType(file) };
 			byte[] screenBytes;
@@ -398,7 +371,7 @@ namespace SlickQA.DataCollector
 			files.Add(sf);
 		}
 
-		private string GetMimeType(FileInfo file)
+		private static string GetMimeType(FileSystemInfo file)
 		{
 			var retVal = "text/plain";
 			switch (file.Extension)
@@ -419,45 +392,5 @@ namespace SlickQA.DataCollector
 			}
 			return retVal;
 		}
-
-		private void OnTestCaseFailed(object sender, TestCaseFailedEventArgs eventArgs)
-		{
-			Tuple<Result, Stopwatch> result = Results[eventArgs.TestCaseId];
-			Result testResult = result.Item1;
-
-			if (!ScreenshotInfo.FailedTest)
-			{
-				return;
-			}
-			StoredFile file = ScreenShot.CaptureScreenShot(String.Format("Test Failure {0}.png", eventArgs.TestElement.HumanReadableId));
-			if (testResult.Files == null)
-			{
-				testResult.Files = new List<StoredFile>();
-			}
-			testResult.Files.Add(file);
-		}
-
-		//private void OnTestCasePause(object sender, TestCasePauseEventArgs testCasePauseEventArgs)
-		//{
-		//}
-
-		//private void OnTestCaseResume(object sender, TestCaseResumeEventArgs testCaseResumeEventArgs)
-		//{
-		//}
-
-		//private void OnCustomNotification(object sender, CustomNotificationEventArgs customNotificationEventArgs)
-		//{
-		//}
-
-		//private void OnDataRequest(object sender, DataRequestEventArgs dataRequestEventArgs)
-		//{
-		//}
-		//private void OnSessionPause(object sender, SessionPauseEventArgs sessionPauseEventArgs)
-		//{
-		//}
-
-		//private void OnSessionResume(object sender, SessionResumeEventArgs sessionResumeEventArgs)
-		//{
-		//}
 	}
 }

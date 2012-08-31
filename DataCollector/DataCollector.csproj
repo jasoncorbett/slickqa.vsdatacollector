@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TestDetailExtensions.cs" />
     <Compile Include="OutcomeTranslator.cs" />
     <Compile Include="ScreenShot.cs" />
     <Compile Include="SlickCollector.cs" />

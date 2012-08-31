@@ -28,18 +28,15 @@ namespace SlickQA.DataCollector.Attributes
 			string typeName = element.HumanReadableId.Replace("." + element.Name, string.Empty);
 
 			string feature = string.Empty;
-			if (element.TestType.Id != _orderedTest)
-			{
-				Assembly assembly = Assembly.LoadFrom(storage);
-				Type type = assembly.GetType(typeName);
-				MethodInfo testMethod = type.GetMethod(element.Name);
+			Assembly assembly = Assembly.LoadFrom(storage);
+			Type type = assembly.GetType(typeName);
+			MethodInfo testMethod = type.GetMethod(element.Name);
 
-				feature = String.Empty;
-				object[] featureAttributes = testMethod.GetCustomAttributes(typeof(T), false);
-				if (featureAttributes.Length != 0)
-				{
-					feature = ((T)featureAttributes[0]).Value;
-				}
+			feature = String.Empty;
+			object[] featureAttributes = testMethod.GetCustomAttributes(typeof(T), false);
+			if (featureAttributes.Length != 0)
+			{
+				feature = ((T)featureAttributes[0]).Value;
 			}
 			return feature;
 		}
