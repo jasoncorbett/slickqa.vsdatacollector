@@ -65,7 +65,20 @@ namespace SlickQA.SlickSharp.Web
 				}
 				if (resp != null && resp.StatusCode == HttpStatusCode.BadRequest)
 				{
-					throw new Exception(resp.StatusDescription);
+					try
+					{
+						using (var stream = resp.GetResponseStream())
+						{
+							using (var reader = new StreamReader(stream))
+							{
+								throw new Exception(reader.ReadToEnd(), e);
+							}
+						}
+					}
+					catch (WebException)
+					{
+						// We tried, nothing to see here.
+					}
 				}
 				throw;
 			}

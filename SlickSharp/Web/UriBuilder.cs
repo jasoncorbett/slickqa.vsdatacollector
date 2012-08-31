@@ -81,11 +81,11 @@ namespace SlickQA.SlickSharp.Web
 				}
 				if (String.IsNullOrWhiteSpace(item.ApiPath))
 				{
-					getPath = HttpUtility.UrlEncode(value.ToString());
+					getPath = HttpUtility.UrlPathEncode(value.ToString());
 				}
 				else
 				{
-					getPath = item.ApiPath + "/" + HttpUtility.UrlEncode(value.ToString());
+					getPath = item.ApiPath + "/" + HttpUtility.UrlPathEncode(value.ToString());
 				}
 				break;
 			}
