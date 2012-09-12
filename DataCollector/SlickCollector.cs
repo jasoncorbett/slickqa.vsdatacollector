@@ -105,7 +105,7 @@ namespace SlickQA.DataCollector
 
 				//TODO: Pre-load all Not Run results for tests in an ordered test
 				// Read XML
-				string xml = null;
+				string xml;
 				using (var xmlFile = File.Open(orderedTestPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 				{
 					using (var reader = new StreamReader(xmlFile))
