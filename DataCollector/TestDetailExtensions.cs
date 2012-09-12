@@ -29,13 +29,13 @@ namespace SlickQA.DataCollector
 			return component;
 		}
 
-		public static void TakeScreenshot(this ITestElement testElement, bool shouldTakeScreenshot, string filePrefix, List<StoredFile> storedFiles)
+		public static void TakeScreenshot(bool shouldTakeScreenshot, string filePrefix, List<StoredFile> storedFiles, string automationKey)
 		{
-			if (testElement.TestType.Id == SlickCollector.OrderedTest || !shouldTakeScreenshot)
+			if (!shouldTakeScreenshot)
 			{
 				return;
 			}
-			StoredFile file = ScreenShot.CaptureScreenShot(String.Format("{0}_{1}.png",filePrefix, testElement.HumanReadableId));
+			StoredFile file = ScreenShot.CaptureScreenShot(String.Format("{0}_{1}.png",filePrefix, automationKey));
 			storedFiles.Add(file);
 		}
 

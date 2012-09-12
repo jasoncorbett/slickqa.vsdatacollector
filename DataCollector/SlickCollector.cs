@@ -18,9 +18,12 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Xml;
+using System.Xml.Linq;
 using Microsoft.VisualStudio.TestTools.Common;
 using Microsoft.VisualStudio.TestTools.Execution;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SlickQA.DataCollector.Attributes;
 using SlickQA.DataCollector.Models;
 using SlickQA.SlickSharp;
@@ -51,6 +54,10 @@ namespace SlickQA.DataCollector
 		private DataCollectionEnvironmentContext DataCollectionEnvironmentContext { get; set; }
 		private bool SessionActive { get; set; }
 
+
+		internal static readonly Guid OrderedTest = new Guid("{ec4800e8-40e5-4ab3-8510-b8bf29b1904d}");
+
+
 		public override void Initialize(XmlElement configurationElement, DataCollectionEvents events, DataCollectionSink dataSink,
 			DataCollectionLogger logger, DataCollectionEnvironmentContext environmentContext)
 		{
@@ -77,87 +84,7 @@ namespace SlickQA.DataCollector
 		{
 			SessionActive = true;
 
-			var project = new Project { Id = ProjectInfo.Id };
-			try
-			{
-				project.Get();
-			}
-			catch (Exception e)
-			{
-				DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
-			}
-
-			var release = new Release
-						  {
-							  Id = ReleaseInfo.Id,
-							  ProjectId = ReleaseInfo.ProjectId
-						  };
-			try
-			{
-				release.Get();
-			}
-			catch (Exception e)
-			{
-				DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
-			}
-
-			Build build = null;
-			if (BuildProvider.Method != null)
-			{
-				var buildNumber = BuildProvider.Method.Invoke(null, null) as String;
-
-				build = new Build
-						{
-							Name = buildNumber,
-							ProjectId = project.Id,
-							ReleaseId = release.Id
-						};
-				try
-				{
-					build.Get(true);
-				}
-				catch (Exception e)
-				{
-					DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
-				}
-			}
-
-			string hostname = Environment.MachineName;
-			Configuration environmentConfiguration = Configuration.GetEnvironmentConfiguration(hostname);
-			if (environmentConfiguration == null)
-			{
-				environmentConfiguration = new Configuration
-				{
-					Name = hostname,
-					ConfigurationType = "ENVIRONMENT"
-				};
-				try
-				{
-					environmentConfiguration.Post();
-				}
-				catch (Exception e)
-				{
-					DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
-				}
-			}
-
-			SlickRun = new TestRun
-						{
-							Name = TestPlanInfo.Name,
-							ProjectReference = project,
-							ReleaseReference = release,
-							TestPlanId = TestPlanInfo.Id,
-							BuildReference = build,
-							ConfigurationReference = environmentConfiguration,
-						};
-			try
-			{
-				SlickRun.Post();
-			}
-			catch (Exception e)
-			{
-				DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
-			}
+			CreateTestRun();
 			Directory.CreateDirectory(Path.Combine(Environment.CurrentDirectory, SLICK_FILE_STAGE));
 		}
 
@@ -170,13 +97,166 @@ namespace SlickQA.DataCollector
 		private void OnTestCaseStart(object sender, TestCaseStartEventArgs eventArgs)
 		{
 			ITestElement testElement = eventArgs.TestElement;
-			var storedFiles = new List<StoredFile> {};
 
-			testElement.TakeScreenshot(ScreenshotInfo.PreTest, "Pre Test", storedFiles);
-			Result result = CreateTestResult(testElement, SlickRun, storedFiles);
-			Stopwatch timer = StartTimer();
+			if (testElement.TestType.Id == OrderedTest)
+			{
+				var orderedTestPath = testElement.Storage;
+				var orderedTestDir = Path.GetDirectoryName(orderedTestPath);
 
-			Results.Add(eventArgs.TestCaseId, new Tuple<Result, Stopwatch>(result, timer));
+				//TODO: Pre-load all Not Run results for tests in an ordered test
+				// Read XML
+				string xml = null;
+				using (var xmlFile = File.Open(orderedTestPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+				{
+					using (var reader = new StreamReader(xmlFile))
+					{
+						xml = reader.ReadToEnd();
+					}
+				}
+
+				XNamespace vs = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010";
+				XDocument doc = XDocument.Parse(xml);
+
+				var assemblies = doc.Descendants(vs + "TestLink").Select(x => x.Attribute("storage").Value).Distinct().ToList();
+
+				var methodLookupTable = new Dictionary<Guid, SlickInfo>();
+				foreach (var path in assemblies)
+				{
+					// Load dlls referenced in ordered test
+					Debug.Assert(orderedTestDir != null, "orderedTestDir != null");
+					var dll = Assembly.Load(File.ReadAllBytes(Path.Combine(orderedTestDir, path)));
+
+					// Find all classes that are test classes
+					foreach (var type in dll.GetTypes())
+					{
+						var extensionAttrs = type.GetCustomAttributes(typeof(TestClassExtensionAttribute), true);
+						var testclassAttrs = type.GetCustomAttributes(typeof(TestClassAttribute), true);
+
+						if (extensionAttrs.Length != 0 || testclassAttrs.Length != 0)
+						{
+							// Find all methods with TestMethod attribute
+							var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);
+							foreach (var method in methods)
+							{
+								if (method.GetCustomAttributes(typeof(TestMethodAttribute), true).Length != 0)
+								{
+									//Read Slick Attributes for each method
+									methodLookupTable.Add(method.GetHash(),
+									                      new SlickInfo
+									                      {
+										                      Id = method.GetTestCaseId(),
+										                      AutomationKey = method.GetAutomationKey(),
+										                      Name = method.GetTestName(),
+										                      Description = method.GetDescription(),
+										                      Component = method.GetComponent(SlickRun.ProjectReference.Id),
+										                      Tags = method.GetTags(),
+										                      Attributes = method.GetAttributes(),
+									                      });
+								}
+							}
+						}
+					}
+				}
+				// Lookup test guids in the lookup table
+				var guids = doc.Descendants(vs + "TestLink").Select(t => new Guid(t.Attribute("id").Value));
+
+				foreach (var guid in guids)
+				{
+					// Create test result for each matching method
+					var info = methodLookupTable[guid];
+
+					var testcase = GetTestCase(testElement, info);
+
+					UpdateTestcase(testcase, info.Component, info.Attributes, info.Description, info.Tags);
+
+					var testResult = CreateResult(testcase, info);
+					Results.Add(guid, new Tuple<Result, Stopwatch>(testResult, new Stopwatch()));
+				}
+			}
+			else
+			{
+				var status = Results[testElement.Id.Id];
+				var result = status.Item1;
+				var stopwatch = status.Item2;
+
+
+				result.RunStatus = RunStatus.RUNNING.ToString();
+				result.Recorded = DateTime.Now.ToUniversalTime().Ticks;
+
+				stopwatch.Start();
+
+				TestDetailExtensions.TakeScreenshot(ScreenshotInfo.PreTest, "Pre Test", result.Files, testElement.HumanReadableId);
+				try
+				{
+					result.Post();
+				}
+				catch (Exception e)
+				{
+					DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
+				}
+			}
+		}
+
+		private Result CreateResult(Testcase testcase, SlickInfo info)
+		{
+			var testResult = new Result
+			{
+				TestRunReference = SlickRun,
+				TestcaseReference = testcase,
+				ProjectReference = SlickRun.ProjectReference,
+				ReleaseReference = SlickRun.ReleaseReference,
+				BuildReference = SlickRun.BuildReference,
+				Hostname = Environment.MachineName,
+				Status = ResultStatus.NO_RESULT.ToString(),
+				RunStatus = RunStatus.TO_BE_RUN.ToString(),
+				ComponentReference = info.Component,
+				Files = new List<StoredFile>(),
+				Recorded = DateTime.Now.ToUniversalTime().Ticks,
+			};
+
+			try
+			{
+				testResult.Post();
+			}
+			catch (Exception e)
+			{
+				DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
+			}
+			return testResult;
+		}
+
+		private Testcase GetTestCase(ITestElement testElement, SlickInfo info)
+		{
+			Testcase testcase = null;
+			try
+			{
+				testcase = Testcase.GetTestCaseByAutomationKey(testElement.HumanReadableId);
+			}
+			catch (Exception e)
+			{
+				DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
+			}
+
+			if (testcase == null)
+			{
+				testcase = new Testcase
+				{
+					AutomationId = info.Id,
+					AutomationKey = info.AutomationKey,
+					IsAutomated = true,
+					Name = info.Name,
+					ProjectReference = SlickRun.ProjectReference
+				};
+				try
+				{
+					testcase.Post();
+				}
+				catch (Exception e)
+				{
+					DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
+				}
+			}
+			return testcase;
 		}
 
 		private void OnTestCaseEnd(object sender, TestCaseEndEventArgs eventArgs)
@@ -188,13 +268,14 @@ namespace SlickQA.DataCollector
 			Stopwatch timer = result.Item2;
 			timer.Stop();
 
-			testElement.TakeScreenshot(ScreenshotInfo.PostTest, "Post Test", testResult.Files);
-
+			TestDetailExtensions.TakeScreenshot(ScreenshotInfo.PostTest, "Post Test", testResult.Files, testElement.HumanReadableId);
 
 			SendFiles(Path.Combine(Environment.CurrentDirectory, SLICK_FILE_STAGE), testResult.Files);
 
 			testResult.Status = OutcomeTranslator.Convert(eventArgs.TestOutcome).ToString();
 			testResult.RunLength = timer.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture);
+			testResult.Recorded = DateTime.Now.ToUniversalTime().Ticks;
+			testResult.RunStatus = RunStatus.FINISHED.ToString();
 			testResult.Put();
 		}
 
@@ -203,7 +284,7 @@ namespace SlickQA.DataCollector
 			ITestElement testElement = eventArgs.TestElement;
 			Tuple<Result, Stopwatch> result = Results[eventArgs.TestCaseId];
 
-			testElement.TakeScreenshot(ScreenshotInfo.FailedTest, "Test Failure", result.Item1.Files);
+			TestDetailExtensions.TakeScreenshot(ScreenshotInfo.FailedTest, "Test Failure", result.Item1.Files, testElement.HumanReadableId);
 		}
 
 		protected override void Dispose(bool disposing)
@@ -224,7 +305,79 @@ namespace SlickQA.DataCollector
 			DataEvents.TestCaseEnd -= OnTestCaseEnd;
 			DataEvents.TestCaseFailed -= OnTestCaseFailed;
 		}
-		
+
+		private void CreateTestRun()
+		{
+			var project = new Project { Id = ProjectInfo.Id };
+			try
+			{
+				project.Get();
+			}
+			catch (Exception e)
+			{
+				DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
+			}
+
+			var release = new Release { Id = ReleaseInfo.Id, ProjectId = ReleaseInfo.ProjectId };
+			try
+			{
+				release.Get();
+			}
+			catch (Exception e)
+			{
+				DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
+			}
+
+			Build build = null;
+			if (BuildProvider.Method != null)
+			{
+				var buildNumber = BuildProvider.Method.Invoke(null, null) as String;
+
+				build = new Build { Name = buildNumber, ProjectId = project.Id, ReleaseId = release.Id };
+				try
+				{
+					build.Get(true);
+				}
+				catch (Exception e)
+				{
+					DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
+				}
+			}
+
+			string hostname = Environment.MachineName;
+			Configuration environmentConfiguration = Configuration.GetEnvironmentConfiguration(hostname);
+			if (environmentConfiguration == null)
+			{
+				environmentConfiguration = new Configuration { Name = hostname, ConfigurationType = "ENVIRONMENT" };
+				try
+				{
+					environmentConfiguration.Post();
+				}
+				catch (Exception e)
+				{
+					DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
+				}
+			}
+
+			SlickRun = new TestRun
+			{
+				Name = TestPlanInfo.Name,
+				ProjectReference = project,
+				ReleaseReference = release,
+				TestPlanId = TestPlanInfo.Id,
+				BuildReference = build,
+				ConfigurationReference = environmentConfiguration,
+			};
+			try
+			{
+				SlickRun.Post();
+			}
+			catch (Exception e)
+			{
+				DataLogger.LogError(DataCollectionEnvironmentContext.SessionDataCollectionContext, e);
+			}
+		}
+
 		private void SetupServerConfig()
 		{
 			ServerConfig.Scheme = UrlInfo.Scheme;
@@ -243,7 +396,6 @@ namespace SlickQA.DataCollector
 			UrlInfo = UrlInfo.FromXml(configurationElement);
 		}
 
-		internal static readonly Guid OrderedTest = new Guid("{ec4800e8-40e5-4ab3-8510-b8bf29b1904d}");
 		private Result CreateTestResult(ITestElement testElement, TestRun testRun, List<StoredFile> storedFiles)
 		{
 			string testcaseId = null;
