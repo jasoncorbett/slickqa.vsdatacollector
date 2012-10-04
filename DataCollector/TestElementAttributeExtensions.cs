@@ -29,8 +29,6 @@ namespace SlickQA.DataCollector
 {
 	public static class TestElementAttributeExtensions
 	{
-		private static readonly Guid _orderedTest = new Guid("{ec4800e8-40e5-4ab3-8510-b8bf29b1904d}");
-
 		public static string GetAttributeValue<T>(this ITestElement element) where T : IStringValueAttribute
 		{
 			string storage = element.Storage;
@@ -96,16 +94,9 @@ namespace SlickQA.DataCollector
 			return description;
 		}
 
-		public static Component GetComponent(this MethodInfo method, string projectId)
+		public static string GetComponent(this MethodInfo method)
 		{
-			string testedFeature = method.GetAttributeValue<TestedFeatureAttribute>();
-			Component component = null;
-			if (!String.IsNullOrWhiteSpace(testedFeature))
-			{
-				component = new Component { Name = testedFeature, ProjectId = projectId };
-				component.Get(true);
-			}
-			return component;
+			return method.GetAttributeValue<TestedFeatureAttribute>();
 		}
 
 		public static List<string> GetTags(this MethodInfo method)
