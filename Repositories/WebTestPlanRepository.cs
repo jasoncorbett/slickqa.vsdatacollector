@@ -55,7 +55,7 @@ namespace SlickQA.DataCollector.Repositories
 			return testPlan.Id;
 		}
 
-		IEnumerable<TestPlanInfo> ITestPlanRepository.GetPlans(string projectId)
+		public IEnumerable<TestPlanInfo> GetPlans(string projectId)
 		{
 			if (RefreshTestPlans[projectId])
 			{

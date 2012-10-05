@@ -1,3 +1,5 @@
+using System;
+
 namespace SlickEventListeners
 {
 	public enum FileChangedReason
@@ -7,7 +9,7 @@ namespace SlickEventListeners
 		Removed
 	}
 
-	public class FileChangedEventArgs
+	public class FileChangedEventArgs : EventArgs
 	{
 		public FileChangedReason Changed { get; private set; }
 		public string FullPath { get; private set; }
