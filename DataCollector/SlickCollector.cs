@@ -76,7 +76,7 @@ namespace SlickQA.DataCollector
 
 				var assemblies = doc.Descendants(vs + "TestLink").Select(x => x.Attribute("storage").Value).Distinct().ToList();
 
-				var methodLookupTable = new Dictionary<Guid, SlickInfo>();
+				var methodLookupList = new List<SlickInfo>();
 				foreach (var path in assemblies)
 				{
 					// Load dlls referenced in ordered test
@@ -98,8 +98,7 @@ namespace SlickQA.DataCollector
 								if (method.GetCustomAttributes(typeof(TestMethodAttribute), true).Length != 0)
 								{
 									//Read Slick Attributes for each method
-									methodLookupTable.Add(method.GetHash(),
-									                      new SlickInfo
+									methodLookupList.Add(new SlickInfo
 									                      {
 										                      Id = method.GetTestCaseId(),
 										                      AutomationKey = method.GetAutomationKey(),
@@ -121,9 +120,8 @@ namespace SlickQA.DataCollector
 				{
 					using (var writer = XmlWriter.Create(stream, new XmlWriterSettings {Indent = true, Encoding = Encoding.UTF8}))
 					{
-						foreach (var kvp in methodLookupTable)
+						foreach (var info in methodLookupList)
 						{
-							var info = kvp.Value;
 							serializer.Serialize(writer, info);
 						}
 					}
