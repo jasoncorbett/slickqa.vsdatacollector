@@ -39,6 +39,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repositories", "Repositorie
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Attributes", "Attributes\Attributes.csproj", "{DD7D0C38-C232-4664-A9B0-9EBC291EE3E4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlickEventListeners", "SlickEventListeners\SlickEventListeners.csproj", "{4A927FEA-160F-4740-88F8-EEE0679993FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlickTestAdapter", "SlickTestAdapter\SlickTestAdapter.csproj", "{EDF0BB1F-37A1-4426-8218-A4208F5C3EBC}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Configuration.vsmdi
@@ -172,6 +176,26 @@ Global
 		{DD7D0C38-C232-4664-A9B0-9EBC291EE3E4}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{DD7D0C38-C232-4664-A9B0-9EBC291EE3E4}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{DD7D0C38-C232-4664-A9B0-9EBC291EE3E4}.Release|x86.ActiveCfg = Release|Any CPU
+		{4A927FEA-160F-4740-88F8-EEE0679993FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A927FEA-160F-4740-88F8-EEE0679993FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A927FEA-160F-4740-88F8-EEE0679993FC}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{4A927FEA-160F-4740-88F8-EEE0679993FC}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{4A927FEA-160F-4740-88F8-EEE0679993FC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4A927FEA-160F-4740-88F8-EEE0679993FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A927FEA-160F-4740-88F8-EEE0679993FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A927FEA-160F-4740-88F8-EEE0679993FC}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{4A927FEA-160F-4740-88F8-EEE0679993FC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{4A927FEA-160F-4740-88F8-EEE0679993FC}.Release|x86.ActiveCfg = Release|Any CPU
+		{EDF0BB1F-37A1-4426-8218-A4208F5C3EBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDF0BB1F-37A1-4426-8218-A4208F5C3EBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDF0BB1F-37A1-4426-8218-A4208F5C3EBC}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{EDF0BB1F-37A1-4426-8218-A4208F5C3EBC}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{EDF0BB1F-37A1-4426-8218-A4208F5C3EBC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EDF0BB1F-37A1-4426-8218-A4208F5C3EBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDF0BB1F-37A1-4426-8218-A4208F5C3EBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDF0BB1F-37A1-4426-8218-A4208F5C3EBC}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{EDF0BB1F-37A1-4426-8218-A4208F5C3EBC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{EDF0BB1F-37A1-4426-8218-A4208F5C3EBC}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
