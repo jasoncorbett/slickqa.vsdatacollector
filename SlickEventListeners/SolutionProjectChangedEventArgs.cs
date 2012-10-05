@@ -1,8 +1,9 @@
+using System;
 using Microsoft.VisualStudio.Shell.Interop;
 
 namespace SlickEventListeners
 {
-	public class SolutionProjectChangedEventArgs
+	public class SolutionProjectChangedEventArgs : EventArgs
 	{
 		public SolutionProjectChangedEventArgs(IVsProject project, SolutionChangeReason changedReason)
 		{

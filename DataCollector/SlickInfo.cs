@@ -4,7 +4,7 @@ using SlickQA.SlickSharp.Utility;
 
 namespace SlickQA.DataCollector
 {
-	internal sealed class SlickInfo
+	public sealed class SlickInfo
 	{
 		public string Id { get; set; }
 		public string Name { get; set; }

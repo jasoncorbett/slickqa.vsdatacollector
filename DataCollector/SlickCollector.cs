@@ -16,7 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Xml;
@@ -30,58 +29,65 @@ namespace SlickQA.DataCollector
 {
 	[DataCollectorTypeUri("datacollector://slickqa/SlickDataCollector/0.0.1")]
 	[DataCollectorFriendlyName("Slick", false)]
-	[DataCollectorConfigurationEditor("configurationeditor://slickqa/SlickDataCollectorConfigurationEditor/0.0.1")]
 	public class SlickCollector : Microsoft.VisualStudio.TestTools.Execution.DataCollector
 	{
 		private DataCollectionSink DataSink { get; set; }
 		private DataCollectionEvents DataEvents { get; set; }
-		private DataCollectionEnvironmentContext DataCollectionEnvironmentContext { get; set; }
-
+		private DataCollectionEnvironmentContext EnvironmentContext { get; set; }
 
 		internal static readonly Guid OrderedTest = new Guid("{ec4800e8-40e5-4ab3-8510-b8bf29b1904d}");
 
 
-		public override void Initialize(XmlElement configurationElement, DataCollectionEvents events, DataCollectionSink dataSink,
-			DataCollectionLogger logger, DataCollectionEnvironmentContext environmentContext)
+		private List<SlickInfo> _methodLookupList;
+		private bool _firstTest = true;
+
+
+		public override void Initialize(XmlElement configurationElement, DataCollectionEvents events,
+										DataCollectionSink dataSink, DataCollectionLogger logger,
+										DataCollectionEnvironmentContext environmentContext)
 		{
 			DataEvents = events;
 			DataSink = dataSink;
-			DataCollectionEnvironmentContext = environmentContext;
+			EnvironmentContext = environmentContext;
+			_methodLookupList = new List<SlickInfo>();
+
 
 			DataEvents.TestCaseStart += OnTestCaseStart;
 		}
 
-		private void OnTestCaseStart(object sender, TestCaseStartEventArgs eventArgs)
+		private void ParseOrderedTestXmlToSlickInfoList(string orderedTestPath)
 		{
-			ITestElement testElement = eventArgs.TestElement;
+			var orderedTestDir = Path.GetDirectoryName(orderedTestPath);
 
-			if (testElement.TestType.Id == OrderedTest)
+			// Read XML
+			string xml;
+
+			using (var reader = new StreamReader(File.Open(orderedTestPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
 			{
-				var orderedTestPath = testElement.Storage;
-				var orderedTestDir = Path.GetDirectoryName(orderedTestPath);
+				xml = reader.ReadToEnd();
+			}
 
-				//TODO: Pre-load all Not Run results for tests in an ordered test
-				// Read XML
-				string xml;
-				using (var xmlFile = File.Open(orderedTestPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+
+			XNamespace vs = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010";
+			XDocument doc = XDocument.Parse(xml);
+
+			var testlinks = doc.Descendants(vs + "TestLink");
+			foreach (var testlink in testlinks)
+			{
+				var id = Guid.Parse(testlink.Attribute("id").Value);
+				var storagePath = testlink.Attribute("storage").Value;
+
+				Debug.Assert(orderedTestDir != null, "orderedTestDir != null");
+				var fullPath = Path.Combine(orderedTestDir, storagePath);
+
+				if (storagePath.Contains(".orderedtest"))
 				{
-					using (var reader = new StreamReader(xmlFile))
-					{
-						xml = reader.ReadToEnd();
-					}
+					ParseOrderedTestXmlToSlickInfoList(fullPath);
 				}
-
-				XNamespace vs = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010";
-				XDocument doc = XDocument.Parse(xml);
-
-				var assemblies = doc.Descendants(vs + "TestLink").Select(x => x.Attribute("storage").Value).Distinct().ToList();
-
-				var methodLookupList = new List<SlickInfo>();
-				foreach (var path in assemblies)
+				else
 				{
 					// Load dlls referenced in ordered test
-					Debug.Assert(orderedTestDir != null, "orderedTestDir != null");
-					var dll = Assembly.Load(File.ReadAllBytes(Path.Combine(orderedTestDir, path)));
+					var dll = Assembly.Load(File.ReadAllBytes(fullPath));
 
 					// Find all classes that are test classes
 					foreach (var type in dll.GetTypes())
@@ -89,6 +95,7 @@ namespace SlickQA.DataCollector
 						var extensionAttrs = type.GetCustomAttributes(typeof(TestClassExtensionAttribute), true);
 						var testclassAttrs = type.GetCustomAttributes(typeof(TestClassAttribute), true);
 
+						bool found = false;
 						if (extensionAttrs.Length != 0 || testclassAttrs.Length != 0)
 						{
 							// Find all methods with TestMethod attribute
@@ -97,36 +104,64 @@ namespace SlickQA.DataCollector
 							{
 								if (method.GetCustomAttributes(typeof(TestMethodAttribute), true).Length != 0)
 								{
-									//Read Slick Attributes for each method
-									methodLookupList.Add(new SlickInfo
-									                      {
-										                      Id = method.GetTestCaseId(),
-										                      AutomationKey = method.GetAutomationKey(),
-										                      Name = method.GetTestName(),
-										                      Description = method.GetDescription(),
-										                      Component = method.GetComponent(),
-										                      Tags = method.GetTags(),
-										                      Attributes = method.GetAttributes(),
-									                      });
+									if (method.GetHash() == id)
+									{
+										_methodLookupList.Add(new SlickInfo
+										{
+											Id = method.GetTestCaseId(),
+											AutomationKey = method.GetAutomationKey(),
+											Name = method.GetTestName(),
+											Description = method.GetDescription(),
+											Component = method.GetComponent(),
+											Tags = method.GetTags(),
+											Attributes = method.GetAttributes(),
+										});
+										found = true;
+										break;
+									}
 								}
 							}
 						}
-					}
-				}
-
-
-				XmlSerializer serializer = new XmlSerializer(typeof(SlickInfo));
-				using (var stream = new MemoryStream())
-				{
-					using (var writer = XmlWriter.Create(stream, new XmlWriterSettings {Indent = true, Encoding = Encoding.UTF8}))
-					{
-						foreach (var info in methodLookupList)
+						if (found)
 						{
-							serializer.Serialize(writer, info);
+							break;
 						}
 					}
-					DataSink.SendStreamAsync(DataCollectionEnvironmentContext.SessionDataCollectionContext, stream, "TestInfo.xml",
-					                         false);
+				}
+			}
+		}
+
+		private void OnTestCaseStart(object sender, TestCaseStartEventArgs eventArgs)
+		{
+			ITestElement testElement = eventArgs.TestElement;
+
+			if (_firstTest && testElement.TestType.Id == OrderedTest)
+			{
+				_firstTest = false;
+				var orderedTestPath = testElement.Storage;
+				ParseOrderedTestXmlToSlickInfoList(orderedTestPath);
+
+				var serializer = new XmlSerializer(typeof(List<SlickInfo>));
+				MemoryStream stream = null;
+				try
+				{
+					stream = new MemoryStream();
+
+					using (var writer = XmlWriter.Create(stream, new XmlWriterSettings { Indent = true, Encoding = Encoding.UTF8 }))
+					{
+							serializer.Serialize(writer, _methodLookupList);
+
+					}
+
+					stream.Position = 0;
+					DataSink.SendStreamAsync(EnvironmentContext.SessionDataCollectionContext, stream, "TestInfo.xml", false);
+				}
+				finally
+				{
+					if (stream != null)
+					{
+						stream.Dispose();
+					}
 				}
 			}
 		}
