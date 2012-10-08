@@ -1,44 +1,44 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Xml.Serialization;
 using Microsoft.VisualStudio.TestPlatform.Extensions.OrderedTestAdapter;
 using Microsoft.VisualStudio.TestPlatform.Extensions.TmiHelper;
 using Microsoft.VisualStudio.TestPlatform.Extensions.VSTestIntegration;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
+using SlickQA.DataCollector.Models;
 
 namespace SlickQA.TestAdapter
 {
 	[ExtensionUri(Constants.EXECUTOR_URI_STRING)]
 	public class SlickTestExecutor : ITestExecutor
 	{
+	    private IFrameworkHandle _frameworkHandle;
+
 		public void RunTests(IEnumerable<TestCase> tests, IRunContext runContext, IFrameworkHandle frameworkHandle)
 		{
-			var testCases = tests as List<TestCase> ?? tests.ToList();
-
 			ValidateArg.NotNull(frameworkHandle, "frameworkHandle");
-			ValidateArg.NotNullOrEmpty(testCases, "tests");
+			ValidateArg.NotNullOrEmpty(tests, "tests");
+		    _frameworkHandle = frameworkHandle;
 
-			_cancellationToken = new TestRunCancellationToken();
 
-		    var sources = new List<string>();
-		    foreach (var testCase in testCases)
-		    {
-                frameworkHandle.SendMessage(TestMessageLevel.Informational, String.Format("In RunTests({0})", testCase.Source));
-		        sources.Add(testCase.Source.Replace(".slicktest", ".orderedtest"));
-		    }
-
-			var slickExecutionRecorder = new SlickExecutionRecorder(frameworkHandle);
 			using (var bridge = new TmiBridge())
 			{
-			    bridge.RunAllTests(sources, runContext, slickExecutionRecorder, new Uri(OrderedTestExecutor.ExecutorUriString), _cancellationToken );
+			    foreach (var test in tests)
+			    {
+                    log("Running '{0}'", test.Source);
+			        var slickExecutionRecorder = new SlickExecutionRecorder(frameworkHandle, LoadSlickTest(test.Source));
+			        _cancellationToken = new TestRunCancellationToken();
+			        bridge.RunAllTests(new string[] {slickExecutionRecorder.SlickInfo.OrderedTest}, runContext, slickExecutionRecorder, new Uri(OrderedTestExecutor.ExecutorUriString), _cancellationToken );
+			        _cancellationToken = null;
+			    }
 			}
-		    frameworkHandle.SendMessage(TestMessageLevel.Informational,
-		                                String.Format("We have {0} results", slickExecutionRecorder.results.Count));
-		    _iFrameworkHandle = frameworkHandle;
-            
-            foreach (var result in slickExecutionRecorder.results)
+
+            /*
+            foreach (var result in slickExecutionRecorder.Results)
             {
                 log("Result for test {0}: {1}", result.DisplayName, result.Outcome);
 
@@ -63,37 +63,56 @@ namespace SlickQA.TestAdapter
                         log("  {0}: {1}", property.Label, result.TestCase.GetPropertyValue(property));
                 }
             }
-			_cancellationToken = null;
+             */
 		}
 
         public void log(string format, params object[] items)
         {
-            _iFrameworkHandle.SendMessage(TestMessageLevel.Informational, String.Format(format, items));
+            _frameworkHandle.SendMessage(TestMessageLevel.Informational, String.Format(format, items));
         }
 
 		public void RunTests(IEnumerable<string> sources, IRunContext runContext, IFrameworkHandle frameworkHandle)
 		{
-		    var testSources = new List<string>();
-		    foreach (var source in sources)
-		    {
-                frameworkHandle.SendMessage(TestMessageLevel.Informational, String.Format("In RunTestsSources({0})", source));
-		        testSources.Add(source.Replace(".slicktest", ".orderedtest"));
-		    }
-
 			ValidateArg.NotNull(frameworkHandle, "frameworkHandle");
-			ValidateArg.NotNullOrEmpty(testSources, "sources");
+			ValidateArg.NotNullOrEmpty(sources, "sources");
+		    _frameworkHandle = frameworkHandle;
 
-			_cancellationToken = new TestRunCancellationToken();
-	
-			var slickExecutionRecorder = new SlickExecutionRecorder(frameworkHandle);
 			using (var bridge = new TmiBridge())
 			{
-			    bridge.RunAllTests(testSources, runContext, slickExecutionRecorder, new Uri(OrderedTestExecutor.ExecutorUriString), _cancellationToken);
+			    foreach (var testSource in sources)
+			    {
+                    log("Running '{0}'", testSource);
+			        var slickExecutionRecorder = new SlickExecutionRecorder(frameworkHandle, LoadSlickTest(testSource));
+			        _cancellationToken = new TestRunCancellationToken();
+			        bridge.RunAllTests(new string[] {slickExecutionRecorder.SlickInfo.OrderedTest}, runContext, slickExecutionRecorder, new Uri(OrderedTestExecutor.ExecutorUriString), _cancellationToken);
+		            _cancellationToken = null;
+			    }
 			}
-		    frameworkHandle.SendMessage(TestMessageLevel.Informational,
-		                                String.Format("We have {0} results", slickExecutionRecorder.results.Count));
-		    _cancellationToken = null;
 		}
+
+        public SlickTest LoadSlickTest(string source)
+        {
+            SlickTest retval = null;
+
+            try
+            {
+                var serializer = new XmlSerializer(typeof (SlickTest));
+                using (var filestream = new FileStream(source, FileMode.Open))
+                {
+                    retval = (SlickTest) serializer.Deserialize(filestream);
+                }
+                log("Loaded slicktest file '{0}'", source);
+                retval.OrderedTest = Path.Combine(Path.GetDirectoryName(source), retval.OrderedTest);
+            }
+            catch (Exception e)
+            {
+                log("Unable to load slicktest '{0}': {1}", source, e.Message);
+                log(e.StackTrace);
+                throw;
+            }
+
+            return retval;
+        }
 
 		public void Cancel()
 		{
@@ -105,6 +124,5 @@ namespace SlickQA.TestAdapter
 		}
 
 		private TestRunCancellationToken _cancellationToken;
-	    private IFrameworkHandle _iFrameworkHandle;
 	}
 }

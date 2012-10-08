@@ -19,7 +19,5 @@
     <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="SlickTestAdapter" Path="|SlickTestAdapter|" />
     <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="SlickEventListeners" Path="|SlickEventListeners|" />
     <Asset Type="UnitTestExtension" d:Source="Project" d:ProjectName="SlickTestAdapter" Path="|SlickTestAdapter|" />
-    <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="DataCollector" Path="|DataCollector|" />
-    <Asset Type="UnitTestExtension" d:Source="Project" d:ProjectName="DataCollector" Path="|DataCollector|" />
   </Assets>
 </PackageManifest>

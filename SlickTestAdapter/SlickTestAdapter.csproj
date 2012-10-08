@@ -55,20 +55,26 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Serialization" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="SlickTestContainer.cs" />
+    <Compile Include="SlickTestContainerDiscoverer.cs" />
     <Compile Include="VsSolutionHelper.cs" />
     <Compile Include="SlickExecutionRecorder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SlickTestContainer.cs" />
-    <Compile Include="SlickTestContainerDiscoverer.cs" />
     <Compile Include="SlickTestDiscoverer.cs" />
     <Compile Include="SlickTestExecutor.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Models\Models.csproj">
+      <Project>{16665302-f509-4a5e-a234-746f78082365}</Project>
+      <Name>Models</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SlickEventListeners\SlickEventListeners.csproj">
       <Project>{4A927FEA-160F-4740-88F8-EEE0679993FC}</Project>
       <Name>SlickEventListeners</Name>
