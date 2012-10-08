@@ -32,14 +32,6 @@
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLFOLDER</RefTargetDir>
     </ProjectReference>
-    <ProjectReference Include="..\DataCollector\DataCollector.csproj">
-      <Name>DataCollector</Name>
-      <Project>{02f32db5-01f2-446a-a84e-fe862137e5f6}</Project>
-      <Private>True</Private>
-      <DoNotHarvest>True</DoNotHarvest>
-      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
-      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
-    </ProjectReference>
     <ProjectReference Include="..\Models\Models.csproj">
       <Name>Models</Name>
       <Project>{16665302-f509-4a5e-a234-746f78082365}</Project>

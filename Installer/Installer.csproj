@@ -62,12 +62,6 @@
       <Project>{954CC12A-6B97-4602-BC95-6BD5A57487C9}</Project>
       <Name>ConfigurationEditor</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DataCollector\DataCollector.csproj">
-      <Project>{02F32DB5-01F2-446A-A84E-FE862137E5F6}</Project>
-      <Name>DataCollector</Name>
-      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
-    </ProjectReference>
     <ProjectReference Include="..\SlickEventListeners\SlickEventListeners.csproj">
       <Project>{4a927fea-160f-4740-88f8-eee0679993fc}</Project>
       <Name>SlickEventListeners</Name>

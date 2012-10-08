@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 using Microsoft.VisualStudio.TestPlatform.Extensions.OrderedTestAdapter;
 using Microsoft.VisualStudio.TestPlatform.Extensions.TmiHelper;
@@ -9,6 +12,7 @@ using Microsoft.VisualStudio.TestPlatform.Extensions.VSTestIntegration;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SlickQA.DataCollector.Models;
 
 namespace SlickQA.TestAdapter
@@ -103,6 +107,7 @@ namespace SlickQA.TestAdapter
                 }
                 log("Loaded slicktest file '{0}'", source);
                 retval.OrderedTest = Path.Combine(Path.GetDirectoryName(source), retval.OrderedTest);
+                retval.Tests = ParseOrderedTestXmlToSlickInfoList(retval.OrderedTest);
             }
             catch (Exception e)
             {
@@ -113,6 +118,85 @@ namespace SlickQA.TestAdapter
 
             return retval;
         }
+
+        private List<SlickInfo> ParseOrderedTestXmlToSlickInfoList(string orderedTestPath)
+        {
+            var retval = new List<SlickInfo>();
+            var orderedTestDir = Path.GetDirectoryName(orderedTestPath);
+
+            // Read XML
+            string xml;
+
+            using (var reader = new StreamReader(File.Open(orderedTestPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+            {
+                xml = reader.ReadToEnd();
+            }
+
+
+            XNamespace vs = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010";
+            XDocument doc = XDocument.Parse(xml);
+
+            var testlinks = doc.Descendants(vs + "TestLink");
+            foreach (var testlink in testlinks)
+            {
+                var id = Guid.Parse(testlink.Attribute("id").Value);
+                var storagePath = testlink.Attribute("storage").Value;
+
+                Debug.Assert(orderedTestDir != null, "orderedTestDir != null");
+                var fullPath = Path.Combine(orderedTestDir, storagePath);
+
+                if (storagePath.Contains(".orderedtest"))
+                {
+                    retval.AddRange(ParseOrderedTestXmlToSlickInfoList(fullPath));
+                }
+                else
+                {
+                    // Load dlls referenced in ordered test
+                    var dll = Assembly.Load(File.ReadAllBytes(fullPath));
+
+                    // Find all classes that are test classes
+                    foreach (var type in dll.GetTypes())
+                    {
+                        var extensionAttrs = type.GetCustomAttributes(typeof(TestClassExtensionAttribute), true);
+                        var testclassAttrs = type.GetCustomAttributes(typeof(TestClassAttribute), true);
+
+                        bool found = false;
+                        if (extensionAttrs.Length != 0 || testclassAttrs.Length != 0)
+                        {
+                            // Find all methods with TestMethod attribute
+                            var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);
+                            foreach (var method in methods)
+                            {
+                                if (method.GetCustomAttributes(typeof(TestMethodAttribute), true).Length != 0)
+                                {
+                                    if (method.GetHash() == id)
+                                    {
+                                        retval.Add(new SlickInfo
+                                        {
+                                            Id = method.GetTestCaseId(),
+                                            AutomationKey = method.GetAutomationKey(),
+                                            Name = method.GetTestName(),
+                                            Description = method.GetDescription(),
+                                            Component = method.GetComponent(),
+                                            Tags = method.GetTags(),
+                                            Attributes = method.GetAttributes(),
+                                        });
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        if (found)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+            return retval;
+        }
+
 
 		public void Cancel()
 		{

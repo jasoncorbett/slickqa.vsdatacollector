@@ -10,13 +10,14 @@ namespace SlickQA.TestAdapter
 	public class SlickExecutionRecorder : IFrameworkHandle
 	{
 		private readonly IFrameworkHandle _handle;
-        public List<TestResult> Results = new List<TestResult>();
         public SlickTest SlickInfo { get; set; }
+        private int testcount { get; set; }
 
 		public SlickExecutionRecorder(IFrameworkHandle handle, SlickTest slickTest)
 		{
 			_handle = handle;
 		    SlickInfo = slickTest;
+		    testcount = 0;
 		}
 
         public void log(string format, params object[] items)
@@ -32,8 +33,12 @@ namespace SlickQA.TestAdapter
 		public void RecordResult(TestResult testResult)
 		{
 			log("RecordResult: Test Case Id: {0} Test Case Display Name: {1}", testResult.TestCase.Id, testResult.DisplayName);
-            Results.Add(testResult);
-			_handle.RecordResult(testResult);
+            if (!String.IsNullOrWhiteSpace(testResult.DisplayName))
+            {
+                var tcinfo = SlickInfo.Tests[testcount++];
+                log("Test Info: Id: {0}, Name: {1}, Description: {2}", tcinfo.Id, tcinfo.Name, tcinfo.Description);
+            }
+		    _handle.RecordResult(testResult);
 		}
 
 		public void RecordStart(TestCase testCase)

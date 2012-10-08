@@ -30,6 +30,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.Shell.11.0, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.Shell.Immutable.10.0, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.Shell.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
@@ -56,6 +57,7 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml.Serialization" />
   </ItemGroup>
   <ItemGroup>
@@ -64,6 +66,7 @@
     <Compile Include="Logger.cs" />
     <Compile Include="SlickTestContainer.cs" />
     <Compile Include="SlickTestContainerDiscoverer.cs" />
+    <Compile Include="TestElementAttributeExtensions.cs" />
     <Compile Include="VsSolutionHelper.cs" />
     <Compile Include="SlickExecutionRecorder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -71,6 +74,10 @@
     <Compile Include="SlickTestExecutor.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Attributes\Attributes.csproj">
+      <Project>{DD7D0C38-C232-4664-A9B0-9EBC291EE3E4}</Project>
+      <Name>Attributes</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Models\Models.csproj">
       <Project>{16665302-f509-4a5e-a234-746f78082365}</Project>
       <Name>Models</Name>
