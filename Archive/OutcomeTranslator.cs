@@ -15,7 +15,7 @@
 using Microsoft.VisualStudio.TestTools.Common;
 using SlickQA.SlickSharp;
 
-namespace SlickQA.DataCollector
+namespace Archive
 {
 	public static class OutcomeTranslator
 	{

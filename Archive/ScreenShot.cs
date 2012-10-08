@@ -1,4 +1,4 @@
-﻿// Copyright 2012 AccessData Group, LLC.
+// Copyright 2012 AccessData Group, LLC.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ using System.Linq;
 using System.Windows.Forms;
 using SlickQA.SlickSharp.Logging;
 
-namespace SlickQA.DataCollector
+namespace Archive
 {
 	internal static class ScreenShot
 	{

@@ -50,16 +50,10 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SlickInfo.cs" />
-    <Compile Include="TestDetailExtensions.cs" />
-    <Compile Include="OutcomeTranslator.cs" />
-    <Compile Include="ScreenShot.cs" />
     <Compile Include="SlickCollector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestElementAttributeExtensions.cs" />
@@ -68,13 +62,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\slickqa.slicksharp\SlickSharp\SlickSharp.csproj">
-      <Project>{4DB0F133-F095-4C10-BF62-0939195F26FB}</Project>
-      <Name>SlickSharp</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Attributes\Attributes.csproj">
       <Project>{DD7D0C38-C232-4664-A9B0-9EBC291EE3E4}</Project>
       <Name>Attributes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Models\Models.csproj">
+      <Project>{16665302-f509-4a5e-a234-746f78082365}</Project>
+      <Name>Models</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

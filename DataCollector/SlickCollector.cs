@@ -24,6 +24,7 @@ using System.Xml.Serialization;
 using Microsoft.VisualStudio.TestTools.Common;
 using Microsoft.VisualStudio.TestTools.Execution;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SlickQA.DataCollector.Models;
 
 namespace SlickQA.DataCollector
 {

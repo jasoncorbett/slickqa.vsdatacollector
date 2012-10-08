@@ -13,40 +13,19 @@
 // limitations under the License.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SlickQA.DataCollector.Attributes;
-using SlickQA.SlickSharp;
-using SlickQA.SlickSharp.Utility;
 
 namespace SlickQA.DataCollector
 {
 	public static class TestElementAttributeExtensions
 	{
-		public static string GetAttributeValue<T>(this ITestElement element) where T : IStringValueAttribute
-		{
-			string storage = element.Storage;
-			string typeName = element.HumanReadableId.Replace("." + element.Name, string.Empty);
-
-			Assembly assembly = Assembly.LoadFrom(storage);
-			Type type = assembly.GetType(typeName);
-			MethodInfo testMethod = type.GetMethod(element.Name);
-
-			string feature = String.Empty;
-			object[] featureAttributes = testMethod.GetCustomAttributes(typeof(T), false);
-			if (featureAttributes.Length != 0)
-			{
-				feature = ((T)featureAttributes[0]).Value;
-			}
-			return feature;
-		}
-
 		private static string GetAttributeValue<T>(this MethodInfo method) where T : IStringValueAttribute
 		{
 			var feature = String.Empty;
@@ -60,8 +39,7 @@ namespace SlickQA.DataCollector
 
 		public static string GetTestCaseId(this MethodInfo method)
 		{
-			var id = method.GetAttributeValue<TestCaseIdAttribute>();
-			return id;
+			return method.GetAttributeValue<TestCaseIdAttribute>();
 		}
 
 		public static string GetTestName(this MethodInfo method)
@@ -79,8 +57,7 @@ namespace SlickQA.DataCollector
 		public static string GetAutomationKey(this MethodInfo method)
 		{
 			Debug.Assert(method.DeclaringType != null, "method.DeclaringType != null");
-			string name = string.Format("{0}.{1}", method.DeclaringType.Name, method.Name);
-			return name;
+			return string.Format("{0}.{1}", method.DeclaringType.Name, method.Name);
 		}
 
 		public static string GetDescription(this MethodInfo method)
@@ -103,23 +80,17 @@ namespace SlickQA.DataCollector
 		{
 			var tags = new List<string>();
 			var properties = method.GetCustomAttributes(typeof(TestCategoryAttribute), true);
-			foreach (TestCategoryAttribute property in properties)
+			foreach (var categories in properties.Cast<TestCategoryAttribute>().Select(property => property.TestCategories))
 			{
-				var cat = property.TestCategories;
-				tags.AddRange(cat);
+				tags.AddRange(categories);
 			}
 			return tags;
 		}
 
-		public static LinkedHashMap<string> GetAttributes(this MethodInfo method)
+		public static Dictionary<string, string> GetAttributes(this MethodInfo method)
 		{
-			var attributes = new LinkedHashMap<string>();
 			var properties = method.GetCustomAttributes(typeof(TestPropertyAttribute), true);
-			foreach (TestPropertyAttribute property in properties)
-			{
-				attributes.Add(new KeyValuePair<string, string>(property.Name, property.Value));
-			}
-			return attributes;
+			return properties.Cast<TestPropertyAttribute>().ToDictionary(property => property.Name, property => property.Value);
 		}
 
 		// This matches the hash used to calculate the guid for use as an id in MS testing tools

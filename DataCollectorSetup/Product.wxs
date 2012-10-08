@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="*" Name="Slick Data Collector" Language="1033" Version="1.0.0.0" Manufacturer="SlickQA" UpgradeCode="41184d66-e9a8-4858-86c5-d54778b2aaab">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate />
+
+		<Feature Id="ProductFeature" Title="DataCollectorSetup" Level="1">
+			<ComponentGroupRef Id="DataCollectorComponents" />
+		</Feature>
+	</Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder" />
+		</Directory>
+	</Fragment>
+
+	<Fragment>
+		<PropertyRef Id="VS2012_ROOT_FOLDER" />
+
+		<DirectoryRef Id="ProgramFilesFolder">
+			<Directory Id="VS2012_ROOT_FOLDER">
+				<Directory Id="Common7" Name="Common7">
+					<Directory Id="Ide" Name="IDE">
+						<Directory Id="PrivateAssemblies" Name="PrivateAssemblies">
+							<Directory Id="VS2012DataCollectors" Name="DataCollectors" />
+						</Directory>
+					</Directory>
+				</Directory>
+			</Directory>
+		</DirectoryRef>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="DataCollectorComponents" Directory="VS2012DataCollectors">
+			<Component Id="DataCollector" Guid="{CB7EBDBC-2CD8-414F-A339-3B7189E51550}">
+				<File Source="$(var.DataCollector.TargetPath)" />
+				<File Source="$(var.Attributes.TargetPath)" />
+				<File Source="$(var.Models.TargetPath)" />
+			</Component>
+		</ComponentGroup>
+	</Fragment>
+</Wix>

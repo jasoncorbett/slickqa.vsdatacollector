@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using SlickQA.SlickSharp;
-using SlickQA.SlickSharp.Utility;
 
-namespace SlickQA.DataCollector
+namespace SlickQA.DataCollector.Models
 {
 	public sealed class SlickInfo
 	{
@@ -11,7 +9,7 @@ namespace SlickQA.DataCollector
 		public string Description { get; set; }
 		public string Component { get; set; }
 		public List<string> Tags { get; set; }
-		public LinkedHashMap<string> Attributes { get; set; }
+		public Dictionary<string, string> Attributes { get; set; }
 		public string AutomationKey { get; set; }
 	}
 }

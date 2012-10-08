@@ -69,9 +69,9 @@
       <Project>{4DB0F133-F095-4C10-BF62-0939195F26FB}</Project>
       <Name>SlickSharp</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DataCollector\DataCollector.csproj">
-      <Project>{02F32DB5-01F2-446A-A84E-FE862137E5F6}</Project>
-      <Name>DataCollector</Name>
+    <ProjectReference Include="..\Archive\Archive.csproj">
+      <Project>{de712dea-77a9-48bf-a186-451fc0a60323}</Project>
+      <Name>Archive</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>
