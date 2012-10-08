@@ -30,7 +30,7 @@ namespace SlickQA.SlickSharp.Web
 
 		#region IHttpWebResponse Members
 
-		public void Dispose()
+		public new void Dispose()
 		{
 			_response.Close();
 		}

@@ -16,6 +16,7 @@ using System;
 
 namespace SlickQA.SlickSharp.Web
 {
+	[Serializable]
 	public sealed class RetryException : Exception
 	{
 	}

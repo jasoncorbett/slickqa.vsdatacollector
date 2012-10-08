@@ -14,8 +14,8 @@
 
 using System;
 using System.Runtime.Serialization;
+using LinkedHashMap;
 using SlickQA.SlickSharp.Attributes;
-using SlickQA.SlickSharp.Utility;
 
 namespace SlickQA.SlickSharp
 {
