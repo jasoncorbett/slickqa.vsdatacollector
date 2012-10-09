@@ -11,13 +11,26 @@ namespace SlickQA.TestAdapter
 	{
 		private readonly IFrameworkHandle _handle;
         public SlickTest SlickInfo { get; set; }
-        private int testcount { get; set; }
+        public SlickReporter Reporter { get; set; }
+        public bool ReportToSlick { get; set; }
 
 		public SlickExecutionRecorder(IFrameworkHandle handle, SlickTest slickTest)
 		{
 			_handle = handle;
 		    SlickInfo = slickTest;
-		    testcount = 0;
+            Reporter = new SlickReporter(slickTest);
+		    ReportToSlick = true;
+		    try
+		    {
+                Reporter.Initialize();
+                Reporter.RecordEmptyResults();
+		    }
+		    catch (Exception e)
+		    {
+                log("Unable to report to slick: {0}", e.Message);
+                log(e.StackTrace);
+		        ReportToSlick = false;
+		    }
 		}
 
         public void log(string format, params object[] items)
@@ -32,39 +45,39 @@ namespace SlickQA.TestAdapter
 
 		public void RecordResult(TestResult testResult)
 		{
-			log("RecordResult: Test Case Id: {0} Test Case Display Name: {1}", testResult.TestCase.Id, testResult.DisplayName);
-            if (!String.IsNullOrWhiteSpace(testResult.DisplayName))
+            if (!String.IsNullOrWhiteSpace(testResult.DisplayName) && ReportToSlick)
             {
-                var tcinfo = SlickInfo.Tests[testcount++];
-                log("Test Info: Id: {0}, Name: {1}, Description: {2}", tcinfo.Id, tcinfo.Name, tcinfo.Description);
+                Reporter.UpdateResult(testResult);
             }
 		    _handle.RecordResult(testResult);
 		}
 
 		public void RecordStart(TestCase testCase)
 		{
-			log("RecordStart: Test Case Id: {0} Test Case Display Name: {1}", testCase.Id, testCase.DisplayName);
 			_handle.RecordStart(testCase);
 		}
 
 		public void RecordEnd(TestCase testCase, TestOutcome outcome)
 		{
-			log("RecordEnd: Test Case Id: {0} Test Case Display Name: {1} OutCome: {2}", testCase.Id, testCase.DisplayName, outcome);
 			_handle.RecordEnd(testCase, outcome);
 		}
 
 		public void RecordAttachments(IList<AttachmentSet> attachmentSets)
 		{
-			log("RecordAttachements: {0}", attachmentSets);
 			_handle.RecordAttachments(attachmentSets);
 		}
 
 		public int LaunchProcessWithDebuggerAttached(string filePath, string workingDirectory, string arguments, IDictionary<string, string> environmentVariables)
 		{
-			log("LaunchProcessWithDebuggerAttached: File Path: {0} Working Directory: {1} Arguments: {2} EnvironmentVariables: {3}", filePath, workingDirectory, arguments, environmentVariables);
 			return _handle.LaunchProcessWithDebuggerAttached(filePath, workingDirectory, arguments, environmentVariables);
 		}
 
 		public bool EnableShutdownAfterTestRun { get; set; }
+
+        public void AllDone()
+        {
+            if (ReportToSlick)
+                Reporter.AllDone();
+        }
 	}
 }

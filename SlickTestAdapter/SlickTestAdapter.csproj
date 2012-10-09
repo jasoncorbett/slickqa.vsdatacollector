@@ -64,6 +64,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="SlickReporter.cs" />
     <Compile Include="SlickTestContainer.cs" />
     <Compile Include="SlickTestContainerDiscoverer.cs" />
     <Compile Include="TestElementAttributeExtensions.cs" />
@@ -74,6 +75,10 @@
     <Compile Include="SlickTestExecutor.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\slickqa.slicksharp\SlickSharp\SlickSharp.csproj">
+      <Project>{4db0f133-f095-4c10-bf62-0939195f26fb}</Project>
+      <Name>SlickSharp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Attributes\Attributes.csproj">
       <Project>{DD7D0C38-C232-4664-A9B0-9EBC291EE3E4}</Project>
       <Name>Attributes</Name>

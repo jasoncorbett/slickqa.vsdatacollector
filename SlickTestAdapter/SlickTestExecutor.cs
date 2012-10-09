@@ -37,6 +37,7 @@ namespace SlickQA.TestAdapter
 			        var slickExecutionRecorder = new SlickExecutionRecorder(frameworkHandle, LoadSlickTest(test.Source));
 			        _cancellationToken = new TestRunCancellationToken();
 			        bridge.RunAllTests(new string[] {slickExecutionRecorder.SlickInfo.OrderedTest}, runContext, slickExecutionRecorder, new Uri(OrderedTestExecutor.ExecutorUriString), _cancellationToken );
+                    slickExecutionRecorder.AllDone();
 			        _cancellationToken = null;
 			    }
 			}
@@ -89,6 +90,7 @@ namespace SlickQA.TestAdapter
 			        var slickExecutionRecorder = new SlickExecutionRecorder(frameworkHandle, LoadSlickTest(testSource));
 			        _cancellationToken = new TestRunCancellationToken();
 			        bridge.RunAllTests(new string[] {slickExecutionRecorder.SlickInfo.OrderedTest}, runContext, slickExecutionRecorder, new Uri(OrderedTestExecutor.ExecutorUriString), _cancellationToken);
+                    slickExecutionRecorder.AllDone();
 		            _cancellationToken = null;
 			    }
 			}
