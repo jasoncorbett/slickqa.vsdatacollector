@@ -28,7 +28,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("Copyright © AccessData Group, LLC 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: InternalsVisibleTo("SlickQA.DataCollector.Configuration.Test")]
+[assembly: InternalsVisibleTo("SlickQA.SlickSharp.Test")]
 
 
 // Setting ComVisible to false makes the types in this assembly not visible 
@@ -54,4 +54,3 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
-[assembly: InternalsVisibleTo("SlickQA.SlickSharp.Test")]
