@@ -54,6 +54,7 @@ namespace SlickQA.TestAdapter
 
 		public void RecordStart(TestCase testCase)
 		{
+            log("Testcase starting: {0}", testCase.DisplayName);
 			_handle.RecordStart(testCase);
 		}
 

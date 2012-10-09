@@ -86,7 +86,6 @@ namespace SlickQA.TestAdapter
 			{
 			    foreach (var testSource in sources)
 			    {
-                    log("Running '{0}'", testSource);
 			        var slickExecutionRecorder = new SlickExecutionRecorder(frameworkHandle, LoadSlickTest(testSource));
 			        _cancellationToken = new TestRunCancellationToken();
 			        bridge.RunAllTests(new string[] {slickExecutionRecorder.SlickInfo.OrderedTest}, runContext, slickExecutionRecorder, new Uri(OrderedTestExecutor.ExecutorUriString), _cancellationToken);
@@ -107,7 +106,6 @@ namespace SlickQA.TestAdapter
                 {
                     retval = (SlickTest) serializer.Deserialize(filestream);
                 }
-                log("Loaded slicktest file '{0}'", source);
                 retval.OrderedTest = Path.Combine(Path.GetDirectoryName(source), retval.OrderedTest);
                 retval.Tests = ParseOrderedTestXmlToSlickInfoList(retval.OrderedTest);
             }
