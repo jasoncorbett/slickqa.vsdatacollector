@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<SlickTest>
+  <Url>
+    <Scheme>http</Scheme>
+    <HostName>10.2.2.101</HostName>
+    <Port>9999</Port>
+    <SitePath></SitePath>
+  </Url>
+  <Project>
+    <Id>50452a7cda0685ba6a265acd</Id>
+    <Name>Another Project</Name>
+  </Project>
+  <Release>
+    <Id>504641e98de2b7518231b1b6</Id>
+    <Name>1</Name>
+    <ProjectId>50452a7cda0685ba6a265acd</ProjectId>
+  </Release>
+  <TestPlan>
+    <Id>507307ebcbced438bbf2a5bd</Id>
+    <Name>OrderedTest1</Name>
+    <ProjectId>50452a7cda0685ba6a265acd</ProjectId>
+  </TestPlan>
+  <OrderedTest>orderedtest1.orderedtest</OrderedTest>
+</SlickTest>
