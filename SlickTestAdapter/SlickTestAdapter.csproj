@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="ILogger.cs" />
+    <Compile Include="LocalLogEntry.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="SlickReporter.cs" />
     <Compile Include="SlickTestContainer.cs" />

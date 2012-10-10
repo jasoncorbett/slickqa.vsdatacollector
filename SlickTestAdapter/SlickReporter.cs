@@ -130,6 +130,7 @@ namespace SlickQA.TestAdapter
             // TODO: Detect and handle out of range results
             var slickResult = Results[TestCount++];
             // TODO: Check DisplayName to make sure it matches the test name
+            slickResult.Recorded = DateTime.Now.ToUnixTime();
             slickResult.RunStatus = "FINISHED";
             slickResult.Status = result.Outcome.ConvertToSlickResultStatus();
             if(!String.IsNullOrWhiteSpace(result.ErrorMessage))
@@ -157,6 +158,12 @@ namespace SlickQA.TestAdapter
                         slickFile.Post();
                         slickFile.PostContent(filebytes);
                         slickResult.Files.Add(slickFile);
+                        if(Path.GetFileName(filepath).Equals("testlog.xml", StringComparison.OrdinalIgnoreCase))
+                        {
+                            if(slickResult.Log == null)
+                                slickResult.Log = new List<LogEntry>();
+                            slickResult.Log.AddRange(LocalLogEntry.ReadFromFile(filepath));
+                        }
                     }
                 }
             }
@@ -242,7 +249,7 @@ namespace SlickQA.TestAdapter
     {
         public static string ConvertToSlickResultStatus(this TestOutcome outcome)
         {
-            switch(outcome)
+            switch (outcome)
             {
                 case TestOutcome.Passed:
                     return "PASS";
@@ -255,6 +262,15 @@ namespace SlickQA.TestAdapter
                 default:
                     return "NOT_TESTED";
             }
+        }
+    }
+
+    public static class UnixDateConverter
+    {
+        public static long ToUnixTime(this DateTime time)
+        {
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            return Convert.ToInt64((time.ToUniversalTime() - epoch).TotalMilliseconds);
         }
     }
 
