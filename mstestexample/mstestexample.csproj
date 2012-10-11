@@ -65,6 +65,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="default.ini">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="OrderedTest1.orderedtest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -75,9 +78,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Attributes\Attributes.csproj">
-      <Project>{dd7d0c38-c232-4664-a9b0-9ebc291ee3e4}</Project>
-      <Name>Attributes</Name>
+    <ProjectReference Include="..\SlickTL\SlickTL.csproj">
+      <Project>{58c26953-1b7e-48e2-b563-c82feae9d569}</Project>
+      <Name>SlickTL</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

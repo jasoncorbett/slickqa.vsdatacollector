@@ -58,6 +58,12 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Attributes\Attributes.csproj">
+      <Project>{DD7D0C38-C232-4664-A9B0-9EBC291EE3E4}</Project>
+      <Name>Attributes</Name>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
+    </ProjectReference>
     <ProjectReference Include="..\ConfigurationEditor\ConfigurationEditor.csproj">
       <Project>{954CC12A-6B97-4602-BC95-6BD5A57487C9}</Project>
       <Name>ConfigurationEditor</Name>

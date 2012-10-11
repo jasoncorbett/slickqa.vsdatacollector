@@ -80,10 +80,6 @@
       <Project>{4db0f133-f095-4c10-bf62-0939195f26fb}</Project>
       <Name>SlickSharp</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Attributes\Attributes.csproj">
-      <Project>{DD7D0C38-C232-4664-A9B0-9EBC291EE3E4}</Project>
-      <Name>Attributes</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Models\Models.csproj">
       <Project>{16665302-f509-4a5e-a234-746f78082365}</Project>
       <Name>Models</Name>
@@ -91,6 +87,10 @@
     <ProjectReference Include="..\SlickEventListeners\SlickEventListeners.csproj">
       <Project>{4A927FEA-160F-4740-88F8-EEE0679993FC}</Project>
       <Name>SlickEventListeners</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SlickTL\SlickTL.csproj">
+      <Project>{58c26953-1b7e-48e2-b563-c82feae9d569}</Project>
+      <Name>SlickTL</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

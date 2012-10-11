@@ -20,7 +20,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SlickQA.DataCollector.Attributes;
+using SlickQA.SlickTL;
 
 namespace SlickQA.TestAdapter
 {

@@ -3,7 +3,7 @@
   <Url>
     <Scheme>http</Scheme>
     <HostName>10.2.2.101</HostName>
-    <Port>9999</Port>
+    <Port>8080</Port>
     <SitePath></SitePath>
   </Url>
   <Project>
