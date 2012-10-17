@@ -62,6 +62,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming
 
 		public void Handle(SaveDataEvent eventData)
 		{
+			eventData.TestInfo.TestPlan = CurrentTestPlan;
 		}
 
 		#endregion

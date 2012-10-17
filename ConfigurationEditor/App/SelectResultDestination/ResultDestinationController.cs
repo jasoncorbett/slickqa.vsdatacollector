@@ -101,6 +101,8 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SelectResultDestination
 
 		public void Handle(SaveDataEvent eventData)
 		{
+			eventData.TestInfo.Project = CurrentProject;
+			eventData.TestInfo.Release = CurrentRelease;
 		}
 
 		#endregion

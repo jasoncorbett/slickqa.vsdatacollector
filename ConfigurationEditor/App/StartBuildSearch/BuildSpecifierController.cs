@@ -54,6 +54,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.StartBuildSearch
 
 		public void Handle(SaveDataEvent eventData)
 		{
+			eventData.TestInfo.BuildProvider = CurrentProvider;
 		}
 
 		#endregion

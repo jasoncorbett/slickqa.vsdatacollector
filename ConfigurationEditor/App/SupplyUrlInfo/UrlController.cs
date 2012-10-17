@@ -50,6 +50,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 
 		public void Handle(SaveDataEvent eventData)
 		{
+			eventData.TestInfo.Url = CurrentUrl;
 		}
 
 		#endregion
