@@ -16,7 +16,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace LinkedHashMap
+namespace SlickQA
 {
 	[DataContract]
 	public sealed class LinkedHashMap<T> : IDictionary<string, T> where T : class
