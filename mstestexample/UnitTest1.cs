@@ -16,6 +16,7 @@ namespace mstestexample
         public string ExampleConfig { get; set; }
 
         [TestMethod]
+        [TestAuthor("Jason Corbett")]
         [TestedFeature(Feature)]
         [TestName("Example Config Test")]
         [TestCategory("config")]
@@ -27,6 +28,7 @@ namespace mstestexample
         }
 
         [TestMethod]
+        [TestAuthor("Jason Corbett")]
         [TestedFeature(Feature)]
         [TestName("Default Pass Test")]
         [TestCategory("shouldpass")]
@@ -39,6 +41,7 @@ namespace mstestexample
         }
 
         [TestMethod]
+        [TestAuthor("Jason Corbett")]
         [TestedFeature(Feature)]
         [TestName("Default Fail Test")]
         [TestCategory("shouldfail")]
@@ -50,6 +53,7 @@ namespace mstestexample
         }
 
         [TestMethod]
+        [TestAuthor("Jason Corbett")]
         [TestName("Default Unexpected Exception Test")]
         [TestCategory("shouldfail")]
         [TestCategory("reporter")]
@@ -60,6 +64,7 @@ namespace mstestexample
         }
 
         [TestMethod]
+        [TestAuthor("Jason Corbett")]
         [TestedFeature(Feature)]
         [TestName("Add a text file to result")]
         [TestCategory("shouldpass")]
@@ -78,6 +83,7 @@ namespace mstestexample
         }
 
         [TestMethod]
+        [TestAuthor("Jason Corbett")]
         [TestedFeature(Feature)]
         [TestCategory("shouldfail")]
         [TestCategory("reporter")]

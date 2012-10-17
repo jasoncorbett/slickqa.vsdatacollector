@@ -109,10 +109,20 @@ namespace SlickQA.TestAdapter
                 retval.OrderedTest = Path.Combine(Path.GetDirectoryName(source), retval.OrderedTest);
                 retval.Tests = ParseOrderedTestXmlToSlickInfoList(retval.OrderedTest);
             }
+                catch(ReflectionTypeLoadException e)
+                {
+                    foreach(var ex in e.LoaderExceptions)
+                    {
+                        log("Loader Exception: {0}", ex.GetType().FullName);
+                        log("Loader Exception Message: {0}", ex.Message);
+                        log(ex.StackTrace);
+                    }
+                }
             catch (Exception e)
             {
                 log("Unable to load slicktest '{0}': {1}", source, e.Message);
                 log(e.StackTrace);
+                log("Exception Class Name: {0}", e.GetType().FullName);
                 throw;
             }
 
@@ -151,14 +161,12 @@ namespace SlickQA.TestAdapter
                 }
                 else
                 {
-                    // Load dlls referenced in ordered test
                     var dll = Assembly.Load(File.ReadAllBytes(fullPath));
-
                     // Find all classes that are test classes
                     foreach (var type in dll.GetTypes())
                     {
-                        var extensionAttrs = type.GetCustomAttributes(typeof(TestClassExtensionAttribute), true);
-                        var testclassAttrs = type.GetCustomAttributes(typeof(TestClassAttribute), true);
+                        var extensionAttrs = type.GetCustomAttributes(typeof (TestClassExtensionAttribute), true);
+                        var testclassAttrs = type.GetCustomAttributes(typeof (TestClassAttribute), true);
 
                         bool found = false;
                         if (extensionAttrs.Length != 0 || testclassAttrs.Length != 0)
@@ -167,20 +175,21 @@ namespace SlickQA.TestAdapter
                             var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);
                             foreach (var method in methods)
                             {
-                                if (method.GetCustomAttributes(typeof(TestMethodAttribute), true).Length != 0)
+                                if (method.GetCustomAttributes(typeof (TestMethodAttribute), true).Length != 0)
                                 {
                                     if (method.GetHash() == id)
                                     {
                                         retval.Add(new SlickInfo
-                                        {
-                                            Id = method.GetTestCaseId(),
-                                            AutomationKey = method.GetAutomationKey(),
-                                            Name = method.GetTestName(),
-                                            Description = method.GetDescription(),
-                                            Component = method.GetComponent(),
-                                            Tags = method.GetTags(),
-                                            Attributes = method.GetAttributes(),
-                                        });
+                                                       {
+                                                           Id = method.GetTestCaseId(),
+                                                           AutomationKey = method.GetAutomationKey(),
+                                                           Name = method.GetTestName(),
+                                                           Description = method.GetDescription(),
+                                                           Component = method.GetComponent(),
+                                                           Tags = method.GetTags(),
+                                                           Attributes = method.GetAttributes(),
+                                                           Author = method.GetAuthor(),
+                                                       });
                                         found = true;
                                         break;
                                     }
@@ -193,6 +202,8 @@ namespace SlickQA.TestAdapter
                         }
                     }
                 }
+
+
             }
             return retval;
         }

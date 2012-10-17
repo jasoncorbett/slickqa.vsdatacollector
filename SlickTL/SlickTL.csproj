@@ -90,7 +90,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="NuGetPkg\SlickTL.nuspec" />
+    <None Include="NuGetPkg\SlickTL.nuspec">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -98,7 +100,7 @@
   <PropertyGroup>
     <PostBuildEvent>mkdir $(ProjectDir)NuGetPkg\lib\net45
 copy $(TargetPath) $(ProjectDir)NuGetPkg\lib\net45\
-Nuget pack $(ProjectDir)\SlickTL.nuspec</PostBuildEvent>
+Nuget pack $(ProjectDir)\NuGetPkg\SlickTL.nuspec</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

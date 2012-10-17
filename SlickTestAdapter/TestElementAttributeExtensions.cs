@@ -37,6 +37,11 @@ namespace SlickQA.TestAdapter
 			return feature;
 		}
 
+        public static string GetAuthor(this MethodInfo method)
+        {
+            return method.GetAttributeValue<TestAuthorAttribute>();
+        }
+
 		public static string GetTestCaseId(this MethodInfo method)
 		{
 			return method.GetAttributeValue<TestCaseIdAttribute>();

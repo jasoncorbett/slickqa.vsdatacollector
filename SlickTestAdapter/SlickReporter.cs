@@ -90,6 +90,7 @@ namespace SlickQA.TestAdapter
                             Purpose = testinfo.Description,
                             Tags = testinfo.Tags,
                             Name = testinfo.Name,
+                            Author = testinfo.Author,
                             IsAutomated = true
                         };
                     test.Post();
@@ -105,6 +106,7 @@ namespace SlickQA.TestAdapter
                     test.IsDeleted = false;
                     test.AutomationTool = "mstest";
                     test.Attributes = new LinkedHashMap<string>(testinfo.Attributes);
+                    test.Author = testinfo.Author;
                     test.Put();
                 }
                 Result result = new Result()
@@ -117,7 +119,7 @@ namespace SlickQA.TestAdapter
                                         BuildReference = Build,
                                         Status = "NO_RESULT",
                                         Hostname = Environment.MachineName,
-                                        RunStatus = "TO_BE_RUN"
+                                        RunStatus = "TO_BE_RUN",
                                     };
                 result.Post();
                 Results.Add(result);

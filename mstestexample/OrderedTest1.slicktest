@@ -2,7 +2,7 @@
 <SlickTest>
   <Url>
     <Scheme>http</Scheme>
-    <HostName>10.2.2.101</HostName>
+    <HostName>10.2.2.100</HostName>
     <Port>8080</Port>
     <SitePath></SitePath>
   </Url>

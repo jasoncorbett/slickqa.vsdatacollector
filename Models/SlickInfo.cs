@@ -11,5 +11,6 @@ namespace SlickQA.DataCollector.Models
 		public List<string> Tags { get; set; }
 		public Dictionary<string, string> Attributes { get; set; }
 		public string AutomationKey { get; set; }
+        public string Author { get; set; }
 	}
 }
