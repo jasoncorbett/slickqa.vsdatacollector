@@ -13,7 +13,7 @@
 // limitations under the License.
 namespace SlickQA.DataCollector.ConfigurationEditor.Commands
 {
-	internal sealed class RetrieveTestPlansData
+	public sealed class RetrieveTestPlansData
 	{
 		public RetrieveTestPlansData(string projectId)
 		{

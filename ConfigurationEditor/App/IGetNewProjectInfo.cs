@@ -16,7 +16,7 @@ using SlickQA.DataCollector.Models;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.App
 {
-	internal interface IGetNewProjectInfo
+	public interface IGetNewProjectInfo
 	{
 		Result<ProjectInfo> Get();
 	}

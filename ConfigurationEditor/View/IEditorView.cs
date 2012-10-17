@@ -1,4 +1,4 @@
-// Copyright 2012 AccessData Group, LLC.
+﻿// Copyright 2012 AccessData Group, LLC.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,12 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using SlickQA.DataCollector.Models;
+using System.Windows.Forms;
 
-namespace SlickQA.DataCollector.ConfigurationEditor.App
+namespace SlickQA.DataCollector.ConfigurationEditor.View
 {
-	public interface IGetNewTestPlanInfo
+	public interface IEditorView
 	{
-		Result<TestPlanInfo> Get();
+		void ClearUrlError();
+		void SetUrlError();
+		void ClearTestPlanError();
+		void SetTestPlanError();
+		IWin32Window Window { get; }
 	}
 }

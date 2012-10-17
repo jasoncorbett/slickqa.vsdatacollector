@@ -62,12 +62,15 @@
     <Compile Include="Commands\AddNewTestPlanData.cs" />
     <Compile Include="Commands\RetrieveReleasesData.cs" />
     <Compile Include="Commands\RetrieveTestPlansData.cs" />
+    <Compile Include="Events\OrderedTestSelectedEvent.cs" />
+    <Compile Include="Events\ReleaseSelectedEvent.cs" />
     <Compile Include="Events\ReleasesLoadedEvent.cs" />
     <Compile Include="Events\SaveDataEvent.cs" />
     <Compile Include="Events\ServiceProviderLoadedEvent.cs" />
     <Compile Include="Events\FileLoadedEvent.cs" />
     <Compile Include="Events\TestPlanAddedEvent.cs" />
     <Compile Include="Events\TestPlanInvalidatedEvent.cs" />
+    <Compile Include="Events\TestPlanSelectedEvent.cs" />
     <Compile Include="Events\TestPlansLoadedEvent.cs" />
     <Compile Include="Events\TestPlanValidatedEvent.cs" />
     <Compile Include="Events\UrlInvalidatedEvent.cs" />
@@ -122,6 +125,7 @@
     <Compile Include="View\BuildSpecifierControl.designer.cs">
       <DependentUpon>BuildSpecifierControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\IEditorView.cs" />
     <Compile Include="View\NewProjectForm.cs">
       <SubType>Form</SubType>
     </Compile>

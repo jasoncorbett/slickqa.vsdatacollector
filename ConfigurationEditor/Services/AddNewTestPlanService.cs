@@ -21,7 +21,7 @@ using SlickQA.DataCollector.Repositories;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.Services
 {
-	class AddNewTestPlanService : ICommand<AddNewTestPlanData>
+	public class AddNewTestPlanService : ICommand<AddNewTestPlanData>
 	{
 		public AddNewTestPlanService(IApplicationController appController, IGetNewTestPlanInfo getNewTestPlanInfo, ITestPlanRepository repository)
 		{

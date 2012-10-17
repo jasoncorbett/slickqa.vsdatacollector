@@ -44,6 +44,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlickTL", "SlickTL\SlickTL.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlickTestTemplate", "SlickTestTemplate\SlickTestTemplate.csproj", "{893B77E7-60EE-4925-9E56-33319AD56FDF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestFileEditor", "TestFileEditor\TestFileEditor.csproj", "{E8EB323D-C3E0-4467-871D-11187B50D842}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Configuration.vsmdi
@@ -197,6 +199,16 @@ Global
 		{893B77E7-60EE-4925-9E56-33319AD56FDF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{893B77E7-60EE-4925-9E56-33319AD56FDF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{893B77E7-60EE-4925-9E56-33319AD56FDF}.Release|x86.ActiveCfg = Release|Any CPU
+		{E8EB323D-C3E0-4467-871D-11187B50D842}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8EB323D-C3E0-4467-871D-11187B50D842}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8EB323D-C3E0-4467-871D-11187B50D842}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E8EB323D-C3E0-4467-871D-11187B50D842}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E8EB323D-C3E0-4467-871D-11187B50D842}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E8EB323D-C3E0-4467-871D-11187B50D842}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8EB323D-C3E0-4467-871D-11187B50D842}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8EB323D-C3E0-4467-871D-11187B50D842}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{E8EB323D-C3E0-4467-871D-11187B50D842}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{E8EB323D-C3E0-4467-871D-11187B50D842}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -19,7 +19,7 @@ using SlickQA.DataCollector.Repositories;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.Services
 {
-	class RetrieveTestPlansService : ICommand<RetrieveTestPlansData>
+	public class RetrieveTestPlansService : ICommand<RetrieveTestPlansData>
 	{
 		public RetrieveTestPlansService(IApplicationController appController, ITestPlanRepository repository)
 		{

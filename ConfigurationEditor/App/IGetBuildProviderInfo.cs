@@ -16,7 +16,7 @@ using SlickQA.DataCollector.Models;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.App
 {
-	internal interface IGetBuildProviderInfo
+	public interface IGetBuildProviderInfo
 	{
 		Result<BuildProviderInfo> Get(BuildProviderInfo provider);
 	}

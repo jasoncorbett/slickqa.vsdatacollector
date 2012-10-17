@@ -1,4 +1,4 @@
-// Copyright 2012 AccessData Group, LLC.
+﻿// Copyright 2012 AccessData Group, LLC.
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,10 +14,15 @@
 
 using SlickQA.DataCollector.Models;
 
-namespace SlickQA.DataCollector.ConfigurationEditor.App
+namespace SlickQA.DataCollector.ConfigurationEditor.Events
 {
-	public interface IGetNewTestPlanInfo
+	public sealed class ReleaseSelectedEvent
 	{
-		Result<TestPlanInfo> Get();
+		public ReleaseInfo ReleaseInfo { get; set; }
+
+		public ReleaseSelectedEvent(ReleaseInfo releaseInfo)
+		{
+			ReleaseInfo = releaseInfo;
+		}
 	}
 }

@@ -13,7 +13,7 @@
 // limitations under the License.
 namespace SlickQA.DataCollector.ConfigurationEditor.App
 {
-	internal interface IGetUrlInfo
+	public interface IGetUrlInfo
 	{
 	}
 }

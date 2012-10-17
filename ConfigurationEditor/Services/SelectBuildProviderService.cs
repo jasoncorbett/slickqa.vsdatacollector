@@ -20,7 +20,7 @@ using SlickQA.DataCollector.Models;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.Services
 {
-	class SelectBuildProviderService : ICommand<SelectBuildProviderData>
+	public class SelectBuildProviderService : ICommand<SelectBuildProviderData>
 	{
 		public SelectBuildProviderService(IGetBuildProviderInfo getBuildProviderInfo, IApplicationController appController)
 		{
