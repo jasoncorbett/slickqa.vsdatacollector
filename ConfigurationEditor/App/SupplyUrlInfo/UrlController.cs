@@ -50,9 +50,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 
 		public void Handle(SaveDataEvent eventData)
 		{
-			XmlElement config = eventData.Settings.Configuration;
-
-			config.UpdateTagWithNewValue(UrlInfo.TAG_NAME, CurrentUrl.ToXmlNode());
 		}
 
 		#endregion

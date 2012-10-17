@@ -101,10 +101,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SelectResultDestination
 
 		public void Handle(SaveDataEvent eventData)
 		{
-			XmlElement config = eventData.Settings.Configuration;
-
-			config.UpdateTagWithNewValue(ProjectInfo.TAG_NAME, CurrentProject.ToXmlNode());
-			config.UpdateTagWithNewValue(ReleaseInfo.TAG_NAME, CurrentRelease.ToXmlNode());
 		}
 
 		#endregion

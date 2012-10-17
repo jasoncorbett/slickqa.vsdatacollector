@@ -62,9 +62,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming
 
 		public void Handle(SaveDataEvent eventData)
 		{
-			XmlElement config = eventData.Settings.Configuration;
-
-			config.UpdateTagWithNewValue(TestPlanInfo.TAG_NAME, CurrentTestPlan.ToXmlNode());
 		}
 
 		#endregion

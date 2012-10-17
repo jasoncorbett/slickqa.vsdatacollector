@@ -54,9 +54,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.StartBuildSearch
 
 		public void Handle(SaveDataEvent eventData)
 		{
-			XmlElement config = eventData.Settings.Configuration;
-
-			config.UpdateTagWithNewValue(BuildProviderInfo.TAG_NAME, CurrentProvider.ToXmlNode());
 		}
 
 		#endregion
