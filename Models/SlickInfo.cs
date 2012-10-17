@@ -9,7 +9,7 @@ namespace SlickQA.DataCollector.Models
 		public string Description { get; set; }
 		public string Component { get; set; }
 		public List<string> Tags { get; set; }
-		public Dictionary<string, string> Attributes { get; set; }
+		public LinkedHashMap<string> Attributes { get; set; }
 		public string AutomationKey { get; set; }
         public string Author { get; set; }
 	}

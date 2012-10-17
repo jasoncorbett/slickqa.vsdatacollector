@@ -19,7 +19,7 @@ using SlickQA.DataCollector.Repositories;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.Services
 {
-	internal class RetrieveReleasesService : ICommand<RetrieveReleasesData>
+	public class RetrieveReleasesService : ICommand<RetrieveReleasesData>
 	{
 		public RetrieveReleasesService(IApplicationController appController, IReleaseRepository releaseRepository)
 		{

@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VSTemplate Version="3.0.0" Type="Item" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010">
+	<TemplateData>
+		<Name Package="{03784121-cc93-4f52-8c79-ed979e1afdc6}" ID="200" />
+		<Description Package="{03784121-cc93-4f52-8c79-ed979e1afdc6}" ID="201" />
+		<Icon Package="{03784121-cc93-4f52-8c79-ed979e1afdc6}" ID="401" />
+		<ProjectType>CSharp</ProjectType>
+		<SortOrder>80</SortOrder>
+		<DefaultName>SlickTest.slicktest</DefaultName>
+		<TemplateGroupID>TestProject-V1</TemplateGroupID>
+		<TemplateID>00aca9f3-1f05-4ea9-998c-a79454585050</TemplateID>
+		<CustomDataSignature>TestProject-V1</CustomDataSignature>
+	</TemplateData>
+	<TemplateContent>
+		<ProjectItem ReplaceParameters="true">SlickTest.slicktest</ProjectItem>
+	</TemplateContent>
+	<TestProjectData>
+		<LongDescription Package="{03784121-cc93-4f52-8c79-ed979e1afdc6}" ID="202" />
+		<HelpKeyword Package="{03784121-cc93-4f52-8c79-ed979e1afdc6}" ID="203" />
+	</TestProjectData>
+</VSTemplate>

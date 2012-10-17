@@ -43,11 +43,16 @@
     <Compile Include="ProjectInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReleaseInfo.cs" />
-    <Compile Include="ScreenshotInfo.cs" />
     <Compile Include="SlickTest.cs" />
     <Compile Include="SlickInfo.cs" />
     <Compile Include="TestPlanInfo.cs" />
     <Compile Include="UrlInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LinkedHashMap\LinkedHashMap.csproj">
+      <Project>{79621f2d-2d07-4f1f-b154-4731ebb03df3}</Project>
+      <Name>LinkedHashMap</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

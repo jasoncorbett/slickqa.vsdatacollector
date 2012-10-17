@@ -19,7 +19,7 @@ using SlickQA.DataCollector.Repositories;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.Services
 {
-	class RetrieveProjectsService : ICommand<RetrieveProjectsData>
+	public class RetrieveProjectsService : ICommand<RetrieveProjectsData>
 	{
 		public RetrieveProjectsService(IApplicationController appController, IProjectRepository projectRepository)
 		{

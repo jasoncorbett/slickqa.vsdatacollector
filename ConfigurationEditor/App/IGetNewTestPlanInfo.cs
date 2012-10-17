@@ -16,7 +16,7 @@ using SlickQA.DataCollector.Models;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.App
 {
-	internal interface IGetNewTestPlanInfo
+	public interface IGetNewTestPlanInfo
 	{
 		Result<TestPlanInfo> Get();
 	}

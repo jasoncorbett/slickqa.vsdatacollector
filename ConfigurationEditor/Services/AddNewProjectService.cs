@@ -21,7 +21,7 @@ using SlickQA.DataCollector.Repositories;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.Services
 {
-	internal class AddNewProjectService : ICommand<AddNewProjectData>
+	public class AddNewProjectService : ICommand<AddNewProjectData>
 	{
 		public AddNewProjectService(IGetNewProjectInfo getNewProjectInfo, IProjectRepository projectRepository, IReleaseRepository releaseRepository, IApplicationController appController)
 		{

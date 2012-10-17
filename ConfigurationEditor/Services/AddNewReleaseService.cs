@@ -21,7 +21,7 @@ using SlickQA.DataCollector.Repositories;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.Services
 {
-	class AddNewReleaseService : ICommand<AddNewReleaseData>
+	public class AddNewReleaseService : ICommand<AddNewReleaseData>
 	{
 		public AddNewReleaseService(IGetNewReleaseInfo getNewReleaseInfo, IApplicationController appController, IReleaseRepository releaseRepository)
 		{

@@ -22,7 +22,7 @@ using SlickQA.DataCollector.ConfigurationEditor.Events;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.Services
 {
-	internal class GetAssemblyInfoService : ICommand<GetAssemblyInfoData>
+	public class GetAssemblyInfoService : ICommand<GetAssemblyInfoData>
 	{
 		public GetAssemblyInfoService(IApplicationController appController)
 		{

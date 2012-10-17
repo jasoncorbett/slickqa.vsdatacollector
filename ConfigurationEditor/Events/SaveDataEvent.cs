@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Microsoft.VisualStudio.TestTools.Execution;
+using SlickQA.DataCollector.Models;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.Events
 {
 	public sealed class SaveDataEvent
 	{
-		public SaveDataEvent(DataCollectorSettings settings)
+		public SaveDataEvent(SlickTest testInfo)
 		{
-			Settings = settings;
+			TestInfo = testInfo;
 		}
 
-		public DataCollectorSettings Settings { get; private set; }
+		public SlickTest TestInfo { get; private set; }
 	}
 }

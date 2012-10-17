@@ -62,14 +62,15 @@
     <Compile Include="Commands\AddNewTestPlanData.cs" />
     <Compile Include="Commands\RetrieveReleasesData.cs" />
     <Compile Include="Commands\RetrieveTestPlansData.cs" />
-    <Compile Include="ConfigExtensions.cs" />
+    <Compile Include="Events\OrderedTestSelectedEvent.cs" />
+    <Compile Include="Events\ReleaseSelectedEvent.cs" />
     <Compile Include="Events\ReleasesLoadedEvent.cs" />
-    <Compile Include="Events\ResetEvent.cs" />
     <Compile Include="Events\SaveDataEvent.cs" />
     <Compile Include="Events\ServiceProviderLoadedEvent.cs" />
-    <Compile Include="Events\SettingsLoadedEvent.cs" />
+    <Compile Include="Events\FileLoadedEvent.cs" />
     <Compile Include="Events\TestPlanAddedEvent.cs" />
     <Compile Include="Events\TestPlanInvalidatedEvent.cs" />
+    <Compile Include="Events\TestPlanSelectedEvent.cs" />
     <Compile Include="Events\TestPlansLoadedEvent.cs" />
     <Compile Include="Events\TestPlanValidatedEvent.cs" />
     <Compile Include="Events\UrlInvalidatedEvent.cs" />
@@ -80,11 +81,9 @@
     <Compile Include="Events\BuildProviderSelectedEvent.cs" />
     <Compile Include="Commands\GetAssemblyInfoData.cs" />
     <Compile Include="Services\GetAssemblyInfoService.cs" />
-    <Compile Include="App\IEditorView.cs" />
     <Compile Include="App\IGetBuildProviderInfo.cs" />
     <Compile Include="App\IGetNewProjectInfo.cs" />
     <Compile Include="App\IGetNewReleaseInfo.cs" />
-    <Compile Include="App\MainEditorController.cs" />
     <Compile Include="Events\ProjectAddedEvent.cs" />
     <Compile Include="Events\ProjectSelectedEvent.cs" />
     <Compile Include="Events\ProjectsLoadedEvent.cs" />
@@ -107,12 +106,9 @@
     <Compile Include="App\SupplyProjectInfo\NewProjectController.cs" />
     <Compile Include="App\SupplyReleaseInfo\INewReleaseView.cs" />
     <Compile Include="App\SupplyReleaseInfo\NewReleaseController.cs" />
-    <Compile Include="App\SupplyScreenshotInfo\IScreenshotView.cs" />
-    <Compile Include="App\SupplyScreenshotInfo\ScreenshotController.cs" />
     <Compile Include="App\SupplyUrlInfo\ISetUrlView.cs" />
     <Compile Include="App\SupplyUrlInfo\UrlController.cs" />
     <Compile Include="Events\UrlValidatedEvent.cs" />
-    <Compile Include="IoC Setup\BootStrapper.cs" />
     <Compile Include="IoC Setup\DefaultRegistry.cs" />
     <Compile Include="IoC Setup\EventInterceptor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -129,12 +125,7 @@
     <Compile Include="View\BuildSpecifierControl.designer.cs">
       <DependentUpon>BuildSpecifierControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\MainEditorControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="View\MainEditorControl.Designer.cs">
-      <DependentUpon>MainEditorControl.cs</DependentUpon>
-    </Compile>
+    <Compile Include="View\IEditorView.cs" />
     <Compile Include="View\NewProjectForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -158,12 +149,6 @@
     </Compile>
     <Compile Include="View\SelectResultDestinationControl.designer.cs">
       <DependentUpon>SelectResultDestinationControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="View\ScreenshotSetter.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="View\ScreenshotSetter.designer.cs">
-      <DependentUpon>ScreenshotSetter.cs</DependentUpon>
     </Compile>
     <Compile Include="View\ExecutionNaming.cs">
       <SubType>UserControl</SubType>
@@ -209,9 +194,6 @@
       <DependentUpon>BuildSpecifierControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\MainEditorControl.resx">
-      <DependentUpon>MainEditorControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="View\NewProjectForm.es.resx">
       <DependentUpon>NewProjectForm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -255,15 +237,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="View\SelectResultDestinationControl.resx">
       <DependentUpon>SelectResultDestinationControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="View\ScreenshotSetter.es.resx">
-      <DependentUpon>ScreenshotSetter.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="View\ScreenshotSetter.fr.resx">
-      <DependentUpon>ScreenshotSetter.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="View\ScreenshotSetter.resx">
-      <DependentUpon>ScreenshotSetter.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\ExecutionNaming.resx">
       <DependentUpon>ExecutionNaming.cs</DependentUpon>

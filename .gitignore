@@ -4,3 +4,5 @@ obj
 _ReSharper.*
 *.user
 TestResults
+/packages
+/SlickTL/NuGetPkg/lib

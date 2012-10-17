@@ -20,7 +20,7 @@ using StructureMap.TypeRules;
 
 namespace SlickQA.DataCollector.ConfigurationEditor.IoC_Setup
 {
-	sealed class EventInterceptor : TypeInterceptor
+	public sealed class EventInterceptor : TypeInterceptor
 	{
 		#region TypeInterceptor Members
 

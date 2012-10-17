@@ -76,6 +76,13 @@
       <Project>{edf0bb1f-37a1-4426-8218-a4208f5c3ebc}</Project>
       <Name>SlickTestAdapter</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SlickTestTemplate\SlickTestTemplate.csproj">
+      <Project>{893B77E7-60EE-4925-9E56-33319AD56FDF}</Project>
+      <Name>SlickTestTemplate</Name>
+      <VSIXSubPath>ItemTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
