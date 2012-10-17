@@ -14,7 +14,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
 using SlickQA.DataCollector.ConfigurationEditor.AppController;
 using SlickQA.DataCollector.ConfigurationEditor.Commands;
 using SlickQA.DataCollector.ConfigurationEditor.Events;
@@ -28,7 +27,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming
 		IEventHandler<ProjectSelectedEvent>,
 		IEventHandler<TestPlansLoadedEvent>,
 		IEventHandler<TestPlanAddedEvent>,
-		IEventHandler<SettingsLoadedEvent>,
+		IEventHandler<FileLoadedEvent>,
 		IEventHandler<SaveDataEvent>
 	{
 		public ExecutionNamingController(IExecutionNamingView view, IApplicationController appController, ITestPlanRepository repository)
@@ -38,7 +37,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming
 			AppController = appController;
 			Repository = repository;
 			CurrentTestPlan = new TestPlanInfo();
-			DefaultTestPlan = new TestPlanInfo();
 		}
 
 		private IApplicationController AppController { get; set; }
@@ -46,7 +44,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming
 		private ProjectInfo Project { get; set; }
 		private IExecutionNamingView View { get; set; }
 		private TestPlanInfo CurrentTestPlan { get; set; }
-		private TestPlanInfo DefaultTestPlan { get; set; }
 
 		#region IEventHandler<ProjectSelectedEvent> Members
 
@@ -67,12 +64,11 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming
 
 		#endregion
 
-		#region IEventHandler<SettingsLoadedEvent> Members
+		#region IEventHandler<FileLoadedEvent> Members
 
-		public void Handle(SettingsLoadedEvent eventData)
+		public void Handle(FileLoadedEvent eventData)
 		{
-			TestPlanInfo testPlan = TestPlanInfo.FromXml(eventData.Settings.Configuration);
-			DefaultTestPlan = TestPlanInfo.FromXml(eventData.Settings.DefaultConfiguration);
+			TestPlanInfo testPlan = eventData.TestInfo.TestPlan;
 
 			View.SelectPlan(testPlan);
 		}

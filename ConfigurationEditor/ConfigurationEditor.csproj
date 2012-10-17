@@ -65,7 +65,7 @@
     <Compile Include="Events\ReleasesLoadedEvent.cs" />
     <Compile Include="Events\SaveDataEvent.cs" />
     <Compile Include="Events\ServiceProviderLoadedEvent.cs" />
-    <Compile Include="Events\SettingsLoadedEvent.cs" />
+    <Compile Include="Events\FileLoadedEvent.cs" />
     <Compile Include="Events\TestPlanAddedEvent.cs" />
     <Compile Include="Events\TestPlanInvalidatedEvent.cs" />
     <Compile Include="Events\TestPlansLoadedEvent.cs" />

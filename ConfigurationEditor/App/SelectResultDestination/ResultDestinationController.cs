@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System.Collections.Generic;
-using System.Xml;
 using SlickQA.DataCollector.ConfigurationEditor.AppController;
 using SlickQA.DataCollector.ConfigurationEditor.Commands;
 using SlickQA.DataCollector.ConfigurationEditor.Events;
@@ -28,7 +27,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SelectResultDestination
 		IEventHandler<ProjectAddedEvent>,
 		IEventHandler<ProjectSelectedEvent>, 
 		IEventHandler<ReleaseAddedEvent>,
-		IEventHandler<SettingsLoadedEvent>,
+		IEventHandler<FileLoadedEvent>,
 		IEventHandler<SaveDataEvent>
 	{
 		public ResultDestinationController(IResultDestinationView view, IApplicationController appController, IProjectRepository projectRepository, IReleaseRepository releaseRepository)
@@ -46,9 +45,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SelectResultDestination
 		private IApplicationController AppController { get; set; }
 		private IProjectRepository ProjectRepository { get; set; }
 		private IReleaseRepository ReleaseRepository { get; set; }
-		private ProjectInfo DefaultProject { get; set; }
 		private ProjectInfo CurrentProject { get; set; }
-		private ReleaseInfo DefaultRelease { get; set; }
 		private ReleaseInfo CurrentRelease { get; set; }
 
 		#region IEventHandler<ProjectAddedEvent> Members
@@ -107,15 +104,13 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SelectResultDestination
 
 		#endregion
 
-		#region IEventHandler<SettingsLoadedEvent> Members
+		#region IEventHandler<FileLoadedEvent> Members
 
-		public void Handle(SettingsLoadedEvent eventData)
+		public void Handle(FileLoadedEvent eventData)
 		{
-			CurrentProject = ProjectInfo.FromXml(eventData.Settings.Configuration);
-			DefaultProject = ProjectInfo.FromXml(eventData.Settings.DefaultConfiguration);
+			CurrentProject = eventData.TestInfo.Project;
 
-			ReleaseInfo release = ReleaseInfo.FromXml(eventData.Settings.Configuration);
-			DefaultRelease = ReleaseInfo.FromXml(eventData.Settings.DefaultConfiguration);
+			ReleaseInfo release = eventData.TestInfo.Release;
 
 			View.SelectProject(CurrentProject);
 			View.SelectRelease(release);

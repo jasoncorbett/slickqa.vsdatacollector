@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Xml;
 using SlickQA.DataCollector.ConfigurationEditor.AppController;
 using SlickQA.DataCollector.ConfigurationEditor.Commands;
 using SlickQA.DataCollector.ConfigurationEditor.Events;
@@ -23,7 +22,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.StartBuildSearch
 {
 	public class BuildSpecifierController :
 		IEventHandler<BuildProviderSelectedEvent>,
-		IEventHandler<SettingsLoadedEvent>,
+		IEventHandler<FileLoadedEvent>,
 		IEventHandler<SaveDataEvent>
 	{
 		public BuildSpecifierController(IBuildSpecifierView view, IApplicationController appController)
@@ -32,10 +31,8 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.StartBuildSearch
 			View = view;
 			View.Controller = this;
 			CurrentProvider = new BuildProviderInfo();
-			DefaultProvider = new BuildProviderInfo();
 		}
 
-		private BuildProviderInfo DefaultProvider { get; set; }
 		private BuildProviderInfo CurrentProvider { get; set; }
 		private IApplicationController AppController { get; set; }
 		private IBuildSpecifierView View { get; set; }
@@ -59,12 +56,11 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.StartBuildSearch
 
 		#endregion
 
-		#region IEventHandler<SettingsLoadedEvent> Members
+		#region IEventHandler<FileLoadedEvent> Members
 
-		public void Handle(SettingsLoadedEvent eventData)
+		public void Handle(FileLoadedEvent eventData)
 		{
-			CurrentProvider = BuildProviderInfo.FromXml(eventData.Settings.Configuration);
-			DefaultProvider = BuildProviderInfo.FromXml(eventData.Settings.DefaultConfiguration);
+			CurrentProvider = eventData.TestInfo.BuildProvider;
 
 			View.SetProviderText(CurrentProvider.ToString());
 		}

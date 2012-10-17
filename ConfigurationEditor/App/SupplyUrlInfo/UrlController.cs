@@ -15,7 +15,6 @@
 using System;
 using System.Diagnostics;
 using System.Net;
-using System.Xml;
 using SlickQA.DataCollector.ConfigurationEditor.AppController;
 using SlickQA.DataCollector.ConfigurationEditor.Commands;
 using SlickQA.DataCollector.ConfigurationEditor.Events;
@@ -27,7 +26,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 {
 	public class UrlController : IGetUrlInfo,
 		IEventHandler<UrlValidatedEvent>,
-		IEventHandler<SettingsLoadedEvent>,
+		IEventHandler<FileLoadedEvent>,
 		IEventHandler<SaveDataEvent>
 	{
 		public UrlController(ISetUrlView view, IApplicationController appController, IUrlRepository repository)
@@ -37,13 +36,11 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 			AppController = appController;
 			UrlRepository = repository;
 			CurrentUrl = new UrlInfo();
-			DefaultUrl = new UrlInfo();
 		}
 
 		private IApplicationController AppController { get; set; }
 		private ISetUrlView View { get; set; }
 		private IUrlRepository UrlRepository { get; set; }
-		private UrlInfo DefaultUrl { get; set; }
 		private UrlInfo CurrentUrl { get; set; }
 
 		#region IEventHandler<SaveDataEvent> Members
@@ -55,12 +52,11 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 
 		#endregion
 
-		#region IEventHandler<SettingsLoadedEvent> Members
+		#region IEventHandler<FileLoadedEvent> Members
 
-		public void Handle(SettingsLoadedEvent eventData)
+		public void Handle(FileLoadedEvent eventData)
 		{
-			CurrentUrl = UrlInfo.FromXml(eventData.Settings.Configuration);
-			DefaultUrl = UrlInfo.FromXml(eventData.Settings.DefaultConfiguration);
+			CurrentUrl = eventData.TestInfo.Url;
 
 			if (ValidateUrl())
 			{
