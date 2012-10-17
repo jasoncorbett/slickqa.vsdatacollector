@@ -28,7 +28,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 	public class UrlController : IGetUrlInfo,
 		IEventHandler<UrlValidatedEvent>,
 		IEventHandler<SettingsLoadedEvent>,
-		IEventHandler<ResetEvent>,
 		IEventHandler<SaveDataEvent>
 	{
 		public UrlController(ISetUrlView view, IApplicationController appController, IUrlRepository repository)
@@ -46,17 +45,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo
 		private IUrlRepository UrlRepository { get; set; }
 		private UrlInfo DefaultUrl { get; set; }
 		private UrlInfo CurrentUrl { get; set; }
-
-		#region IEventHandler<ResetEvent> Members
-
-		public void Handle(ResetEvent eventData)
-		{
-			CurrentUrl = new UrlInfo(DefaultUrl);
-
-			View.Update(CurrentUrl);
-		}
-
-		#endregion
 
 		#region IEventHandler<SaveDataEvent> Members
 

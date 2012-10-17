@@ -29,7 +29,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming
 		IEventHandler<TestPlansLoadedEvent>,
 		IEventHandler<TestPlanAddedEvent>,
 		IEventHandler<SettingsLoadedEvent>,
-		IEventHandler<ResetEvent>,
 		IEventHandler<SaveDataEvent>
 	{
 		public ExecutionNamingController(IExecutionNamingView view, IApplicationController appController, ITestPlanRepository repository)
@@ -55,17 +54,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming
 		{
 			Project = eventData.Project;
 			AppController.Execute(new RetrieveTestPlansData(Project.Id));
-		}
-
-		#endregion
-
-		#region IEventHandler<ResetEvent> Members
-
-		public void Handle(ResetEvent eventData)
-		{
-			CurrentTestPlan = new TestPlanInfo(DefaultTestPlan);
-
-			View.SelectPlan(CurrentTestPlan);
 		}
 
 		#endregion

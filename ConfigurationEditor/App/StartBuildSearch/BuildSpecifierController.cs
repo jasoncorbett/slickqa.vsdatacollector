@@ -24,7 +24,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.StartBuildSearch
 	public class BuildSpecifierController :
 		IEventHandler<BuildProviderSelectedEvent>,
 		IEventHandler<SettingsLoadedEvent>,
-		IEventHandler<ResetEvent>,
 		IEventHandler<SaveDataEvent>
 	{
 		public BuildSpecifierController(IBuildSpecifierView view, IApplicationController appController)
@@ -46,17 +45,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.StartBuildSearch
 		public void Handle(BuildProviderSelectedEvent eventData)
 		{
 			CurrentProvider = eventData.ProviderInfo;
-			View.SetProviderText(CurrentProvider.ToString());
-		}
-
-		#endregion
-
-		#region IEventHandler<ResetEvent> Members
-
-		public void Handle(ResetEvent eventData)
-		{
-			CurrentProvider = new BuildProviderInfo(DefaultProvider);
-
 			View.SetProviderText(CurrentProvider.ToString());
 		}
 

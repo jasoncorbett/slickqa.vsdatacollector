@@ -29,7 +29,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SelectResultDestination
 		IEventHandler<ProjectSelectedEvent>, 
 		IEventHandler<ReleaseAddedEvent>,
 		IEventHandler<SettingsLoadedEvent>,
-		IEventHandler<ResetEvent>,
 		IEventHandler<SaveDataEvent>
 	{
 		public ResultDestinationController(IResultDestinationView view, IApplicationController appController, IProjectRepository projectRepository, IReleaseRepository releaseRepository)
@@ -94,19 +93,6 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SelectResultDestination
 			View.LoadReleaseList(ReleaseRepository.GetReleases(CurrentProject.Id));
 
 			View.SelectRelease(eventData.Release);
-		}
-
-		#endregion
-
-		#region IEventHandler<ResetEvent> Members
-
-		public void Handle(ResetEvent eventData)
-		{
-			CurrentProject = new ProjectInfo(DefaultProject);
-			View.SelectProject(CurrentProject);
-
-			CurrentRelease = new ReleaseInfo(DefaultRelease);
-			View.SelectRelease(CurrentRelease);
 		}
 
 		#endregion
