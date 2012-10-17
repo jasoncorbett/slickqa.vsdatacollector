@@ -87,10 +87,17 @@ namespace SlickQA.TestAdapter
 			return tags;
 		}
 
-		public static Dictionary<string, string> GetAttributes(this MethodInfo method)
+		public static LinkedHashMap<string> GetAttributes(this MethodInfo method)
 		{
+			var retMap = new LinkedHashMap<string>();
+
 			var properties = method.GetCustomAttributes(typeof(TestPropertyAttribute), true);
-			return properties.Cast<TestPropertyAttribute>().ToDictionary(property => property.Name, property => property.Value);
+			var testPropertyAttributes = properties.Cast<TestPropertyAttribute>();
+			foreach (var attribute in testPropertyAttributes)
+			{
+				retMap.Add(attribute.Name, attribute.Value);
+			}
+			return retMap;
 		}
 
 		// This matches the hash used to calculate the guid for use as an id in MS testing tools

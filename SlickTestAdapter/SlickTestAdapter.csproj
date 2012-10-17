@@ -80,6 +80,10 @@
       <Project>{4db0f133-f095-4c10-bf62-0939195f26fb}</Project>
       <Name>SlickSharp</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LinkedHashMap\LinkedHashMap.csproj">
+      <Project>{79621F2D-2D07-4F1F-B154-4731EBB03DF3}</Project>
+      <Name>LinkedHashMap</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Models\Models.csproj">
       <Project>{16665302-f509-4a5e-a234-746f78082365}</Project>
       <Name>Models</Name>

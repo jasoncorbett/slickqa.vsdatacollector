@@ -82,7 +82,7 @@ namespace SlickQA.TestAdapter
                     test = new Testcase()
                         {
                             AutomationKey = testinfo.AutomationKey,
-                            Attributes = new LinkedHashMap<string>(testinfo.Attributes),
+                            Attributes = testinfo.Attributes,
                             AutomationTool = "mstest",
                             AutomationId = testinfo.Id,
                             ProjectReference = Project,
@@ -104,7 +104,7 @@ namespace SlickQA.TestAdapter
                     test.IsAutomated = true;
                     test.IsDeleted = false;
                     test.AutomationTool = "mstest";
-                    test.Attributes = new LinkedHashMap<string>(testinfo.Attributes);
+                    test.Attributes = testinfo.Attributes;
                     test.Put();
                 }
                 Result result = new Result()
