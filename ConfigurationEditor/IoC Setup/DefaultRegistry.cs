@@ -20,7 +20,6 @@ using SlickQA.DataCollector.ConfigurationEditor.App.SupplyBuildProvider;
 using SlickQA.DataCollector.ConfigurationEditor.App.SupplyExecutionNaming;
 using SlickQA.DataCollector.ConfigurationEditor.App.SupplyProjectInfo;
 using SlickQA.DataCollector.ConfigurationEditor.App.SupplyReleaseInfo;
-using SlickQA.DataCollector.ConfigurationEditor.App.SupplyScreenshotInfo;
 using SlickQA.DataCollector.ConfigurationEditor.App.SupplyTestPlanInfo;
 using SlickQA.DataCollector.ConfigurationEditor.App.SupplyUrlInfo;
 using SlickQA.DataCollector.ConfigurationEditor.AppController;
@@ -43,11 +42,9 @@ namespace SlickQA.DataCollector.ConfigurationEditor.IoC_Setup
 			For<IChooseBuildProviderView>().Use<ChooseBuildProviderForm>();
 			For<INewProjectView>().Use<NewProjectForm>();
 			For<INewReleaseView>().Use<NewReleaseForm>();
-			For<IScreenshotView>().Use<ScreenshotSetter>();
 			For<ISetUrlView>().Use<UrlSelector>();
 			For<IExecutionNamingView>().Use<ExecutionNaming>();
 			For<INewTestPlanView>().Use<NewTestPlanForm>();
-			For<IWin32Window>().Use<MainEditorControl>();
 
 			//Controllers
 			For<IGetBuildProviderInfo>().Use<ChooseBuildProviderController>();
