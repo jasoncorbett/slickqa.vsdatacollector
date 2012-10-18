@@ -83,6 +83,12 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
+    <ProjectReference Include="..\SlickTL\SlickTL.csproj">
+      <Project>{58C26953-1B7E-48E2-B563-C82FEAE9D569}</Project>
+      <Name>SlickTL</Name>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
+    </ProjectReference>
     <ProjectReference Include="..\TestFileEditor\TestFileEditor.csproj">
       <Project>{E8EB323D-C3E0-4467-871D-11187B50D842}</Project>
       <Name>TestFileEditor</Name>

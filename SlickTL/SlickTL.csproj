@@ -42,6 +42,8 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -71,6 +73,7 @@
     <Compile Include="Nini\OrderedList.cs" />
     <Compile Include="Nini\OrderedListEnumerator.cs" />
     <Compile Include="Nini\RegistryConfigSource.cs" />
+    <Compile Include="SlickScreenshotEnabledBaseTest.cs" />
     <Compile Include="SlickBaseTest.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="DirectoryManager.cs" />

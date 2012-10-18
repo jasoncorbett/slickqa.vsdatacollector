@@ -18,6 +18,7 @@ namespace SlickQA.TestAdapter
     public class SlickReporter
     {
         public SlickTest SlickRunInfo { get; set; }
+        public Configuration Environment { get; set; }
         public Project Project { get; set; }
         public Release Release { get; set; }
         public Build Build { get; set; }
@@ -48,6 +49,7 @@ namespace SlickQA.TestAdapter
             ServerConfig.SitePath = SlickRunInfo.Url.SitePath;
 
             InitializeProject();
+            InitializeEnvironment();
             InitializeRelease();
             InitializeBuild();
             InitializeTestplan();
@@ -118,8 +120,9 @@ namespace SlickQA.TestAdapter
                                         ReleaseReference = Release,
                                         BuildReference = Build,
                                         Status = "NO_RESULT",
-                                        Hostname = Environment.MachineName,
+                                        Hostname = System.Environment.MachineName,
                                         RunStatus = "TO_BE_RUN",
+                                        ConfigurationReference = Environment,
                                     };
                 result.Post();
                 Results.Add(result);
@@ -132,7 +135,7 @@ namespace SlickQA.TestAdapter
             // TODO: Detect and handle out of range results
             var slickResult = Results[TestCount++];
             // TODO: Check DisplayName to make sure it matches the test name
-            slickResult.Recorded = DateTime.Now.ToUnixTime();
+            slickResult.Recorded = result.EndTime.UtcDateTime.ToUnixTime();
             slickResult.RunStatus = "FINISHED";
             slickResult.Status = result.Outcome.ConvertToSlickResultStatus();
             if(!String.IsNullOrWhiteSpace(result.ErrorMessage))
@@ -199,7 +202,8 @@ namespace SlickQA.TestAdapter
                               ReleaseReference = Release,
                               BuildReference = Build,
                               TestPlanId = Testplan.Id,
-                              Name = Testplan.Name
+                              Name = Testplan.Name,
+                              ConfigurationReference = Environment,
                           };
             Testrun.Post();
         }
@@ -227,9 +231,23 @@ namespace SlickQA.TestAdapter
                           {
                               ProjectId = SlickRunInfo.Release.ProjectId,
                               Id = SlickRunInfo.Release.Id,
-                              Name = SlickRunInfo.Release.Name
+                              Name = SlickRunInfo.Release.Name,
                           };
             Release.Get(CreateIfNecessaryMode, 3);
+        }
+
+        private void InitializeEnvironment()
+        {
+            Environment = Configuration.GetEnvironmentConfiguration(SlickRunInfo.Environment);
+            if(Environment == null)
+            {
+                Environment = new Configuration()
+                                  {
+                                      Name = SlickRunInfo.Environment,
+                                      ConfigurationType = "ENVIRONMENT",
+                                  };
+                Environment.Post();
+            }
         }
 
         private void InitializeProject()

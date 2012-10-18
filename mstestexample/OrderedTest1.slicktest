@@ -21,4 +21,5 @@
     <ProjectId>50452a7cda0685ba6a265acd</ProjectId>
   </TestPlan>
   <OrderedTest>orderedtest1.orderedtest</OrderedTest>
+  <Environment>Windows VM</Environment>
 </SlickTest>

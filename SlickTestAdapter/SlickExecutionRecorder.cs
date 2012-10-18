@@ -45,11 +45,11 @@ namespace SlickQA.TestAdapter
 
 		public void RecordResult(TestResult testResult)
 		{
+		    _handle.RecordResult(testResult);
             if (!String.IsNullOrWhiteSpace(testResult.DisplayName) && ReportToSlick)
             {
                 Reporter.UpdateResult(testResult);
             }
-		    _handle.RecordResult(testResult);
 		}
 
 		public void RecordStart(TestCase testCase)
@@ -60,6 +60,7 @@ namespace SlickQA.TestAdapter
 
 		public void RecordEnd(TestCase testCase, TestOutcome outcome)
 		{
+            log("Test Ended with outcome: {0}", outcome);
 			_handle.RecordEnd(testCase, outcome);
 		}
 
