@@ -39,5 +39,20 @@ namespace mstestexample
             AlwaysTakeScreenshot = false;
             "This".Should().Be("That");
         }
+
+        [TestMethod]
+        [TestName("Test Steps Included")]
+        [TestAuthor("Jason Corbett")]
+        [TestedFeature("SlickTL")]
+        [TestCategory("slicktl")]
+        [Description("This test will include steps and they should get uploaded by the TestAdapter.")]
+        public void TestWithSteps()
+        {
+            Step("Check that ok==ok", "String 'ok' is equal to 'ok'");
+            "ok".Should().Be("ok");
+            Step("Check that foo!=bar", "String 'foo' is not equal to string 'bar'");
+            "foo".Should().NotBe("bar");
+            Step("All Done.");
+        }
     }
 }

@@ -86,6 +86,7 @@
     <Compile Include="TestCaseIdAttribute.cs" />
     <Compile Include="TestedFeatureAttribute.cs" />
     <Compile Include="TestNameAttribute.cs" />
+    <Compile Include="TestStepUtility.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Nini\Nini-LICENSE.txt" />

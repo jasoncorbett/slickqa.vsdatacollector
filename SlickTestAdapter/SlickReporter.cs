@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using SlickQA.DataCollector.Models;
 using SlickQA.SlickSharp;
@@ -169,6 +170,29 @@ namespace SlickQA.TestAdapter
                                 slickResult.Log = new List<LogEntry>();
                             slickResult.Log.AddRange(LocalLogEntry.ReadFromFile(filepath));
                         }
+                        else if(Path.GetFileName(filepath).Equals("steps.xml", StringComparison.OrdinalIgnoreCase))
+                        {
+                            Testcase test = slickResult.TestcaseReference;
+                            test.Get();
+                            if(test.Steps == null)
+                                test.Steps = new List<TestStep>();
+                            var serializer = new XmlSerializer(typeof (List<SlickQA.SlickTL.TestStep>), new XmlRootAttribute("Steps"));
+                            using (var stepFileStream = new FileStream(filepath, FileMode.Open))
+                            {
+                                try
+                                {
+                                    var steps = (List<SlickQA.SlickTL.TestStep>) serializer.Deserialize(stepFileStream);
+                                    foreach(var step in steps)
+                                    {
+                                        test.Steps.Add(new TestStep() {Name = step.StepName, ExpectedResult = step.ExpectedResult});
+                                    }
+                                    test.Put();
+                                }
+                                catch (Exception)
+                                {
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -221,8 +245,24 @@ namespace SlickQA.TestAdapter
 
         private void InitializeBuild()
         {
-            // TODO: Get build info from static method
-            Build = new Build() {ProjectId = Project.Id, Id = Release.DefaultBuildId};
+            try
+            {
+                var buildNumber = SlickRunInfo.BuildProvider.Method.Invoke(null, null) as String;
+
+                var build = new Build
+                            {
+                                Name = buildNumber,
+                                ProjectId = Project.Id,
+                                ReleaseId = Release.Id
+                            };
+                build.Get(CreateIfNecessaryMode, 3);
+                Build = build;
+            }
+            catch (Exception)
+            {
+                Build = new Build() { ProjectId = Project.Id, ReleaseId = Release.Id, Id = Release.DefaultBuildId };
+                Build.Get(CreateIfNecessaryMode, 3);
+            }
         }
 
         private void InitializeRelease()

@@ -2,7 +2,7 @@
 <SlickTest>
   <Url>
     <Scheme>http</Scheme>
-    <HostName>10.2.2.100</HostName>
+    <HostName>10.2.2.85</HostName>
     <Port>8080</Port>
     <SitePath></SitePath>
   </Url>
@@ -22,4 +22,12 @@
   </TestPlan>
   <OrderedTest>orderedtest1.orderedtest</OrderedTest>
   <Environment>Windows VM</Environment>
+  <!--
+  <BuildProvider>
+    <AssemblyName>mstestexample.dll</AssemblyName>
+    <Directory>C:\Development\slickqa.vsdatacollector\mstestexample\Bin\Debug</Directory>
+    <TypeName>mstestexample.BuildProvider</TypeName>
+    <MethodName>BuildInfo</MethodName>
+  </BuildProvider>
+  -->
 </SlickTest>
