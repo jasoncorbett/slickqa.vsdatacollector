@@ -94,7 +94,7 @@
     <Compile Include="Web\UriBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\slickqa.vsdatacollector\LinkedHashMap\LinkedHashMap.csproj">
+    <ProjectReference Include="..\..\slickqa.testadapter\LinkedHashMap\LinkedHashMap.csproj">
       <Project>{79621f2d-2d07-4f1f-b154-4731ebb03df3}</Project>
       <Name>LinkedHashMap</Name>
     </ProjectReference>

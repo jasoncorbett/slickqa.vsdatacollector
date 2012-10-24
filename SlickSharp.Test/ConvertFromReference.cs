@@ -131,7 +131,7 @@ namespace SlickQA.SlickSharp.Test
 			         {
 			         	Id = "0123456789abcdef",
 						DateRecorded = 123456789,
-						ResultStatus = ResultStatus.CANCELLED.ToString()
+						ResultStatus = ResultStatus.CANCELLED
 			         };
 
 			var expected = new Result
@@ -139,7 +139,7 @@ namespace SlickQA.SlickSharp.Test
 			               	Id = "0123456789abcdef",
 			               	Hostname = "blah.example.com",
 			               	Recorded = 123456789,
-			               	Status = ResultStatus.CANCELLED.ToString(),
+			               	Status = ResultStatus.CANCELLED,
 			               	Reason = "Unit Test"
 			               };
 

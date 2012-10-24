@@ -33,8 +33,18 @@ namespace SlickQA.SlickSharp.Logging
 		[DataMember(Name = "exceptionStackTrace")]
 		public List<String> ExceptionStackTrace;
 
+		public LogLevel Level { get; set; }
+
 		[DataMember(Name = "level")]
-		public String Level;
+		public String LevelString
+		{
+			get { return Level.ToString(); }
+			set
+			{
+				LogLevel l;
+				Level = Enum.TryParse(value, true, out l) ? l : LogLevel.INFO;
+			}
+		}
 
 		[DataMember(Name = "loggerName")]
 		public String LoggerName;

@@ -77,11 +77,31 @@ namespace SlickQA.SlickSharp
 		[DataMember(Name = "runlength")]
 		public String RunLength;
 
+		public RunStatus RunStatus { get; set; }
+
 		[DataMember(Name = "runstatus")]
-		public String RunStatus;
+		public String RunStatusString
+		{
+			get { return RunStatus.ToString(); }
+			set
+			{
+				RunStatus s;
+				RunStatus = Enum.TryParse(value, true, out s) ? s : RunStatus.TO_BE_RUN;
+			}
+		}
+
+		public ResultStatus Status { get; set; }
 
 		[DataMember(Name = "status")]
-		public String Status;
+		public String StatusString
+		{
+			get { return Status.ToString(); }
+			set
+			{
+				ResultStatus s;
+				Status = Enum.TryParse(value, true, out s) ? s : ResultStatus.NO_RESULT;
+			}
+		}
 
 		[DataMember(Name = "testrun")]
 		public TestRunReference TestRunReference;

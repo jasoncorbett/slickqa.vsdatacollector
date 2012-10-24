@@ -29,8 +29,18 @@ namespace SlickQA.SlickSharp.ObjectReferences
 		[DataMember(Name = "resultId")]
 		public String Id;
 
+		public ResultStatus ResultStatus { get; set; }
+
 		[DataMember(Name = "status")]
-		public String ResultStatus;
+		public String ResultStatusString
+		{
+			get { return ResultStatus.ToString(); }
+			set
+			{
+				ResultStatus s;
+				ResultStatus = Enum.TryParse(value, true, out s) ? s : ResultStatus.NO_RESULT;
+			}
+		}
 
 		public ResultReference()
 		{

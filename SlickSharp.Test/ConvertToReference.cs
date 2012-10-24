@@ -96,7 +96,7 @@ namespace SlickQA.SlickSharp.Test
 			        	Id = "0123456789abcdefABCDEF",
 			        	BuildReference = new BuildReference(),
 			        	Recorded = 123456,
-			        	Status = "NOT_RUN",
+			        	Status = ResultStatus.CANCELLED,
 			        };
 			ResultReference rr = r;
 

@@ -81,7 +81,7 @@ namespace SlickQA.SlickSharp.Utility.Json
 			}
 		}
 
-		private static byte[] ConvertToByteBuffer(JsonObject<T> jsonObject)
+		internal static byte[] ConvertToByteBuffer(JsonObject<T> jsonObject)
 		{
 			using (var tempStream = new MemoryStream())
 			{
