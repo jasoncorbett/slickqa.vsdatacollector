@@ -1,26 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
-	<Metadata>
-		<Identity Id="SlickTestAdapter.SlickQA.9c62bd8f-f1c4-4571-9f0f-6b1116cba355" Version="1.1" Language="en-US" Publisher="SlickQA" />
-		<DisplayName>Slick Visual Studio Extensions</DisplayName>
-		<Description xml:space="preserve">A test adapter that reports to the Slick results database.A</Description>
-		<MoreInfo>http://code.google.com/p/slickqa/</MoreInfo>
-		<License>License.rtf</License>
-	</Metadata>
-	<Installation>
-		<InstallationTarget Version="[11.0,12.0)" Id="Microsoft.VisualStudio.Pro" />
-		<InstallationTarget Version="[11.0,12.0)" Id="Microsoft.VisualStudio.Premium" />
-		<InstallationTarget Version="[11.0,12.0)" Id="Microsoft.VisualStudio.Ultimate" />
-	</Installation>
-	<Dependencies>
-		<Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="4.5" />
-	</Dependencies>
-	<Assets>
-		<Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="SlickTestAdapter" Path="|SlickTestAdapter|" />
-		<Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="SlickEventListeners" Path="|SlickEventListeners|" />
-		<Asset Type="UnitTestExtension" d:Source="Project" d:ProjectName="SlickTestAdapter" Path="|SlickTestAdapter|" />
-		<Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="Attributes" Path="|Attributes|" AssemblyName="|Attributes;AssemblyName|" />
-		<Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="Project" d:ProjectName="SlickTestTemplate" d:TargetPath="|SlickTestTemplate;TemplateProjectOutputGroup|" Path="ItemTemplates" d:VsixSubPath="ItemTemplates" />
-		<Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="TestFileEditor" Path="|TestFileEditor;PkgdefProjectOutputGroup|" />
-	</Assets>
+  <Metadata>
+    <Identity Id="SlickTestAdapter.SlickQA.9c62bd8f-f1c4-4571-9f0f-6b1116cba355" Version="1.1" Language="en-US" Publisher="SlickQA" />
+    <DisplayName>Slick Visual Studio Extensions</DisplayName>
+    <Description xml:space="preserve">A test adapter that reports to the Slick results database.A</Description>
+    <MoreInfo>http://code.google.com/p/slickqa/</MoreInfo>
+    <License>License.rtf</License>
+    <ReleaseNotes>ReleaseNotes.rtf</ReleaseNotes>
+    <Icon>vs-slick.png</Icon>
+  </Metadata>
+  <Installation>
+    <InstallationTarget Version="[11.0,12.0)" Id="Microsoft.VisualStudio.Pro" />
+    <InstallationTarget Version="[11.0,12.0)" Id="Microsoft.VisualStudio.Premium" />
+    <InstallationTarget Version="[11.0,12.0)" Id="Microsoft.VisualStudio.Ultimate" />
+  </Installation>
+  <Dependencies>
+    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="4.5" />
+  </Dependencies>
+  <Assets>
+    <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="SlickTestAdapter" Path="|SlickTestAdapter|" />
+    <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="SlickEventListeners" Path="|SlickEventListeners|" />
+    <Asset Type="UnitTestExtension" d:Source="Project" d:ProjectName="SlickTestAdapter" Path="|SlickTestAdapter|" />
+    <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="SlickTL" Path="|SlickTL|" AssemblyName="|SlickTL;AssemblyName|" />
+    <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="Project" d:ProjectName="SlickTestTemplate" d:TargetPath="|SlickTestTemplate;TemplateProjectOutputGroup|" Path="ItemTemplates" d:VsixSubPath="ItemTemplates" />
+    <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="TestFileEditor" Path="|TestFileEditor;PkgdefProjectOutputGroup|" />
+  </Assets>
 </PackageManifest>

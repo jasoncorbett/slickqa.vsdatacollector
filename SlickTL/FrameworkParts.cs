@@ -9,11 +9,11 @@ namespace SlickQA.SlickTL
 
     public interface IFrameworkInitializePart : INamablePart
     {
-        void initialize(object instance, TestContext context);
+        void initialize(object instance);
     }
 
     public interface IFrameworkCleanupPart : INamablePart
     {
-        void cleanup(object instance, TestContext context);
+        void cleanup(object instance);
     }
 }

@@ -16,6 +16,8 @@ namespace SlickQA.SlickTL
         public static CompositionContainer Container { get; set; }
         public static DirectoryManager Directories { get; set; }
         public static LoggingManager LoggingManager { get; set; }
+        public static ITestingContext TestingContext { get; set; }
+        public static TestFinishedSignaler TestFinishedSignaler { get; set; }
         public static IEnumerable<IFrameworkInitializePart> FrameworkInitializerParts { get; set; }
         public static IEnumerable<IFrameworkCleanupPart> CleanupParts { get; set; }
 
@@ -24,26 +26,30 @@ namespace SlickQA.SlickTL
             if (Container == null)
             {
                 Container = new CompositionContainer(new ApplicationCatalog());
+                TestingContext = Container.GetExportedValue<ITestingContext>();
+                TestFinishedSignaler = Container.GetExportedValue<TestFinishedSignaler>();
                 Directories = Container.GetExportedValue<DirectoryManager>();
                 LoggingManager = Container.GetExportedValue<LoggingManager>();
                 FrameworkInitializerParts = Container.GetExportedValues<IFrameworkInitializePart>();
                 CleanupParts = Container.GetExportedValues<IFrameworkCleanupPart>();
             }
-            // these 2 have to be handled individually first so that everything else can log
+            // these 3 have to be handled individually first so that everything else can log
+            TestingContext.Initialize(testInstance, context);
             Directories.initialize(testInstance, context);
-            LoggingManager.initialize(testInstance, context);
+            LoggingManager.initialize(testInstance);
 
             foreach (var initializer in FrameworkInitializerParts)
             {
                 Log.Debug("Initializing Framework Part '{0}'.", initializer.Name);
                 try
                 {
-                    initializer.initialize(testInstance, context);
+                    initializer.initialize(testInstance);
                 }
                 catch (Exception e)
                 {
                     Log.Warn("Error occurred while trying to initialize framework part '{0}': {1}", initializer.Name, e.Message);
                     Log.WarnException("Error from initialize.", e);
+                    throw;
                 }
             }
 
@@ -60,7 +66,7 @@ namespace SlickQA.SlickTL
                 Log.Debug("Calling cleanup on framework part '{0}'.", cleanupPart.Name);
                 try
                 {
-                    cleanupPart.cleanup(testInstance, context);
+                    cleanupPart.cleanup(testInstance);
                 }
                 catch (Exception e)
                 {
@@ -70,6 +76,7 @@ namespace SlickQA.SlickTL
             }
             Log.Debug("Framework Cleanup Complete.");
             LoggingManager.cleanup();
+            TestFinishedSignaler.FrameworkCleanupFinished(testInstance);
         }
 
 

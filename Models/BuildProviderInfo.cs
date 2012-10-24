@@ -105,8 +105,38 @@ namespace SlickQA.DataCollector.Models
 		[XmlIgnore]
 		public MethodInfo Method
 		{
-			get { return _method; }
-			set
+            get
+            {
+                if(_method == null)
+                {
+                    string assemblyFile = null;
+                    string tempPath = Path.Combine(Environment.CurrentDirectory, AssemblyName);
+                    if (File.Exists(tempPath))
+                    {
+                        assemblyFile = tempPath;
+                    }
+                    else
+                    {
+                        string path = Path.Combine(Directory, AssemblyName);
+                        if (File.Exists(path))
+                        {
+                            assemblyFile = path;
+                        }
+                    }
+
+                    if (assemblyFile != null)
+                    {
+                        var assembly = Assembly.Load(File.ReadAllBytes(assemblyFile));
+                        if (!string.IsNullOrWhiteSpace(TypeName))
+                        {
+                            Type type = assembly.GetType(TypeName);
+                            _method = type.GetMethod(MethodName);
+                        }
+                    }
+                }
+                return _method;
+            }
+		    set
 			{
 				_method = value;
 				UpdateFromMethod(_method);

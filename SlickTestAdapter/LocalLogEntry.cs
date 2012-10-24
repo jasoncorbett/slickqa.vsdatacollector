@@ -23,7 +23,8 @@ namespace SlickQA.TestAdapter
         {
             var retval = new LogEntry();
             retval.EntryTime = EntryTime;
-            retval.Level = Level.ToUpper();
+	        LogLevel l;
+            retval.Level = Enum.TryParse(Level.ToUpper(), true, out l) ? l : LogLevel.INFO;
             retval.LoggerName = LoggerName;
             retval.Message = Message;
             retval.ExceptionClassName = ExceptionClassName;
