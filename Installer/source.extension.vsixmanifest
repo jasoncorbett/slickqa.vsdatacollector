@@ -6,6 +6,8 @@
     <Description xml:space="preserve">A test adapter that reports to the Slick results database.A</Description>
     <MoreInfo>http://code.google.com/p/slickqa/</MoreInfo>
     <License>License.rtf</License>
+    <ReleaseNotes>ReleaseNotes.rtf</ReleaseNotes>
+    <Icon>vs-slick.png</Icon>
   </Metadata>
   <Installation>
     <InstallationTarget Version="[11.0,12.0)" Id="Microsoft.VisualStudio.Pro" />

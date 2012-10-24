@@ -7,9 +7,14 @@ using SlickQA.DataCollector.Models;
 
 namespace SlickQA.TestAdapter
 {
-	public class SlickExecutionRecorder : IFrameworkHandle
+    public interface ISimpleLogger
+    {
+        void Log(string message, params object[] items);
+    }
+
+	public class SlickExecutionRecorder : IFrameworkHandle, ISimpleLogger
 	{
-		private readonly IFrameworkHandle _handle;
+	    private readonly IFrameworkHandle _handle;
         public SlickTest SlickInfo { get; set; }
         public SlickReporter Reporter { get; set; }
         public bool ReportToSlick { get; set; }
@@ -18,7 +23,7 @@ namespace SlickQA.TestAdapter
 		{
 			_handle = handle;
 		    SlickInfo = slickTest;
-            Reporter = new SlickReporter(slickTest);
+            Reporter = new SlickReporter(this, slickTest);
 		    ReportToSlick = true;
 		    try
 		    {
@@ -27,13 +32,13 @@ namespace SlickQA.TestAdapter
 		    }
 		    catch (Exception e)
 		    {
-                log("Unable to report to slick: {0}", e.Message);
-                log(e.StackTrace);
+                Log("Unable to report to slick: {0}", e.Message);
+                Log(e.StackTrace);
 		        ReportToSlick = false;
 		    }
 		}
 
-        public void log(string format, params object[] items)
+        public void Log(string format, params object[] items)
         {
             _handle.SendMessage(TestMessageLevel.Informational, String.Format(format, items));
         }
@@ -54,13 +59,13 @@ namespace SlickQA.TestAdapter
 
 		public void RecordStart(TestCase testCase)
 		{
-            log("Testcase starting: {0}", testCase.DisplayName);
+            Log("Testcase starting: {0}", testCase.DisplayName);
 			_handle.RecordStart(testCase);
 		}
 
 		public void RecordEnd(TestCase testCase, TestOutcome outcome)
 		{
-            log("Test Ended with outcome: {0}", outcome);
+            Log("Test Ended with outcome: {0}", outcome);
 			_handle.RecordEnd(testCase, outcome);
 		}
 

@@ -19,6 +19,9 @@ namespace SlickQA.SlickTL
         [Import]
         public DirectoryManager TestDirectories { get; set; }
 
+        [Import]
+        public ITestingContext Context { get; set; }
+
         [TestInitialize]
         public void InitializeTakeScreenshot()
         {
@@ -68,7 +71,7 @@ namespace SlickQA.SlickTL
                 try
                 {
                     bmp.Save(filename, format);
-                    TestContext.AddResultFile(filename);
+                    Context.AddResultFile(filename);
                 }
                 catch (Exception e)
                 {
@@ -81,7 +84,7 @@ namespace SlickQA.SlickTL
         [TestCleanup]
         public void TakeResultScreenshot()
         {
-            if(TestContext.CurrentTestOutcome != UnitTestOutcome.Passed || AlwaysTakeScreenshot)
+            if(Context.CurrentTestOutcome != UnitTestOutcome.Passed || AlwaysTakeScreenshot)
             {
                 AttachScreenshotToResult("EndResult");
             }

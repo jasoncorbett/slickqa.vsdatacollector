@@ -74,7 +74,7 @@ namespace SlickQA.SlickTL
             LastTestType = null;
         }
 
-        public void initialize(object instance, TestContext context)
+        public void initialize(object instance)
         {
             // Only load all the configuration if we have a different test type from the last
             // test run.  Otherwise we know they will be the same.

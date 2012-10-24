@@ -14,15 +14,13 @@ namespace SlickQA.SlickTL
         [Import]
         private DirectoryManager Directories { get; set; }
 
-        private TestContext Context { get; set; }
+        [Import]
+        public ITestingContext Context { get; set; }
 
         private String LogFileName { get; set; }
 
-        public void initialize(object testinstance, TestContext context)
+        public void initialize(object testinstance)
         {
-            Context = context;
-            // configure logging for the testcase
-
             // Step 1. Create configuration object 
             var config = new LoggingConfiguration();
 
@@ -39,10 +37,14 @@ namespace SlickQA.SlickTL
             xmlLogFile.Footer = "</LogEntries>";
             //xmlLogFile.Footer = "\t</Entries>" + Environment.NewLine + "</LogEntries>";
 
+            var consoleLog = new ConsoleTarget();
+            consoleLog.Layout = "${date:format=hh\\:mm\\:ss.FFF tt}|${level:uppercase=true}|${logger}]: ${message}${onexception:inner=\r\n\t${exception}\r\n\t${stacktrace:format=Raw}}";
+
             // Step 4. Define rules
             var rule1 = new LoggingRule("*", LogLevel.Debug, xmlLogFile);
             config.LoggingRules.Clear();
             config.LoggingRules.Add(rule1);
+            config.LoggingRules.Add(new LoggingRule("*", LogLevel.Debug, consoleLog));
 
             // Step 5. Activate the configuration
             LogManager.Configuration = config;
@@ -52,6 +54,15 @@ namespace SlickQA.SlickTL
         public void cleanup()
         {
             LogManager.Configuration = null;
+
+            // Make sure console logging continues
+            var config = new LoggingConfiguration();
+            var consoleLog = new ConsoleTarget();
+            consoleLog.Layout = "${date:format=hh\\:mm\\:ss.FFF tt}|${level:uppercase=true}|${logger}]: ${message}${onexception:inner=\r\n\t${exception}\r\n\t${stacktrace:format=Raw}}";
+            config.LoggingRules.Clear();
+            config.LoggingRules.Add(new LoggingRule("*", LogLevel.Debug, consoleLog));
+            LogManager.Configuration = config;
+
             Context.AddResultFile(LogFileName);
         }
     }

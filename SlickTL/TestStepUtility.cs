@@ -28,7 +28,8 @@ namespace SlickQA.SlickTL
         [Import]
         public DirectoryManager Directories { get; set; }
 
-        public TestContext TestContext { get; set; }
+        [Import]
+        public ITestingContext TestContext { get; set; }
 
         public string Name
         {
@@ -67,9 +68,8 @@ namespace SlickQA.SlickTL
             }
         }
 
-        public void initialize(object instance, TestContext context)
+        public void initialize(object instance)
         {
-            TestContext = context;
         }
     }
 }

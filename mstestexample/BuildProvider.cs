@@ -10,7 +10,7 @@ namespace mstestexample
     {
         public static string BuildInfo()
         {
-            return "3";
+            return "5";
         }
     }
 }

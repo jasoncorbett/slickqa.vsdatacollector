@@ -3,20 +3,24 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SlickQA.DataCollector.Models;
 using SlickQA.SlickSharp;
 using SlickQA.SlickSharp.Logging;
 using SlickQA.SlickSharp.ObjectReferences;
 using SlickQA.SlickSharp.Utility;
 using SlickQA.SlickSharp.Web;
+using SlickQA.SlickTL;
 
 namespace SlickQA.TestAdapter
 {
-    public class SlickReporter
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
+    public class SlickReporter : ISlickUpdateService
     {
         public SlickTest SlickRunInfo { get; set; }
         public Configuration Environment { get; set; }
@@ -26,18 +30,25 @@ namespace SlickQA.TestAdapter
         public TestPlan Testplan { get; set; }
         public TestRun Testrun { get; set; }
         public List<Result> Results { get; set; }
+        public List<String> PostedFiles { get; set; }
         public int TestCount { get; set; }
+        public int TestCountForSlickUpdateService { get; set; }
         public bool CreateIfNecessaryMode { get; set; }
         public IDictionary<string, Component> ComponentCache { get; set; }
+        public ServiceHost Host { get; set; }
+        public ISimpleLogger Logger { get; set; }
 
 
-        public SlickReporter(SlickTest slickInfo, bool createIfNecessary = true)
+        public SlickReporter(ISimpleLogger logger, SlickTest slickInfo, bool createIfNecessary = true)
         {
+            Logger = logger;
             Results = new List<Result>();
             ComponentCache = new Dictionary<string, Component>();
             CreateIfNecessaryMode = createIfNecessary;
             SlickRunInfo = slickInfo;
             TestCount = 0;
+            TestCountForSlickUpdateService = 0;
+            PostedFiles = new List<string>();
         }
 
 
@@ -55,6 +66,11 @@ namespace SlickQA.TestAdapter
             InitializeBuild();
             InitializeTestplan();
             InitializeTestrun();
+
+            Host = new ServiceHost(this, new Uri[] { new Uri("net.pipe://localhost") });
+            Host.AddServiceEndpoint(typeof (ISlickUpdateService), new NetNamedPipeBinding(),
+                                    typeof (ISlickUpdateService).FullName);
+            Host.Open();
         }
 
         public void RecordEmptyResults()
@@ -124,6 +140,7 @@ namespace SlickQA.TestAdapter
                                         Hostname = System.Environment.MachineName,
                                         RunStatus = "TO_BE_RUN",
                                         ConfigurationReference = Environment,
+                                        Recorded = DateTime.UtcNow.ToUnixTime(),
                                     };
                 result.Post();
                 Results.Add(result);
@@ -145,59 +162,66 @@ namespace SlickQA.TestAdapter
             slickResult.Put();
 
             // TODO: Handle additional files
-            var posted = new List<Uri>();
             slickResult.Files = new List<StoredFile>();
             foreach (var attachment in result.Attachments)
             {
                 foreach (var file in attachment.Attachments)
                 {
-                    if (!posted.Contains(file.Uri))
-                    {
-                        var filepath = file.Uri.LocalPath;
-                        var filebytes = File.ReadAllBytes(filepath);
-                        var slickFile = new StoredFile()
-                                            {
-                                                FileName = Path.GetFileName(filepath),
-                                                Mimetype = MIMEAssistant.GetMIMEType(filepath),
-                                                Length = filebytes.Length
-                                            };
-                        slickFile.Post();
-                        slickFile.PostContent(filebytes);
-                        slickResult.Files.Add(slickFile);
-                        if(Path.GetFileName(filepath).Equals("testlog.xml", StringComparison.OrdinalIgnoreCase))
-                        {
-                            if(slickResult.Log == null)
-                                slickResult.Log = new List<LogEntry>();
-                            slickResult.Log.AddRange(LocalLogEntry.ReadFromFile(filepath));
-                        }
-                        else if(Path.GetFileName(filepath).Equals("steps.xml", StringComparison.OrdinalIgnoreCase))
-                        {
-                            Testcase test = slickResult.TestcaseReference;
-                            test.Get();
-                            if(test.Steps == null)
-                                test.Steps = new List<TestStep>();
-                            var serializer = new XmlSerializer(typeof (List<SlickQA.SlickTL.TestStep>), new XmlRootAttribute("Steps"));
-                            using (var stepFileStream = new FileStream(filepath, FileMode.Open))
-                            {
-                                try
-                                {
-                                    var steps = (List<SlickQA.SlickTL.TestStep>) serializer.Deserialize(stepFileStream);
-                                    foreach(var step in steps)
-                                    {
-                                        test.Steps.Add(new TestStep() {Name = step.StepName, ExpectedResult = step.ExpectedResult});
-                                    }
-                                    test.Put();
-                                }
-                                catch (Exception)
-                                {
-                                }
-                            }
-                        }
-                    }
+                    AddResultFile(slickResult, file.Uri.LocalPath);
                 }
             }
             slickResult.Put();
             // TODO: Handle logs
+        }
+
+        private void AddResultFile(Result slickResult, string filepath)
+        {
+            if (!PostedFiles.Contains(filepath))
+            {
+                var filebytes = File.ReadAllBytes(filepath);
+                var slickFile = new StoredFile()
+                                    {
+                                        FileName = Path.GetFileName(filepath),
+                                        Mimetype = MIMEAssistant.GetMIMEType(filepath),
+                                        Length = filebytes.Length
+                                    };
+                slickFile.Post();
+                slickFile.PostContent(filebytes);
+                slickResult.Files.Add(slickFile);
+                if (Path.GetFileName(filepath).Equals("testlog.xml", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (slickResult.Log == null)
+                        slickResult.Log = new List<LogEntry>();
+                    slickResult.Log.AddRange(LocalLogEntry.ReadFromFile(filepath));
+                }
+                else if (Path.GetFileName(filepath).Equals("steps.xml", StringComparison.OrdinalIgnoreCase))
+                {
+                    Testcase test = slickResult.TestcaseReference;
+                    test.Get();
+                    if (test.Steps == null)
+                        test.Steps = new List<SlickQA.SlickSharp.TestStep>();
+                    var serializer = new XmlSerializer(typeof (List<SlickQA.SlickTL.TestStep>),
+                                                       new XmlRootAttribute("Steps"));
+                    using (var stepFileStream = new FileStream(filepath, FileMode.Open))
+                    {
+                        try
+                        {
+                            var steps = (List<SlickQA.SlickTL.TestStep>) serializer.Deserialize(stepFileStream);
+                            foreach (var step in steps)
+                            {
+                                test.Steps.Add(new SlickQA.SlickSharp.TestStep()
+                                                   {Name = step.StepName, ExpectedResult = step.ExpectedResult});
+                            }
+                            test.Put();
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
+                }
+                PostedFiles.Add(filepath);
+            }
+
         }
 
         private void addToResultLog(Result result, String message, params object[] parms)
@@ -215,6 +239,7 @@ namespace SlickQA.TestAdapter
 
         public void AllDone()
         {
+            Host.Close();
             // Not sure if we need this now, but just in case
         }
 
@@ -303,10 +328,52 @@ namespace SlickQA.TestAdapter
             }
         }
 
+        public void TestFinishedSignal(string className, string outcome, string[] files)
+        {
+            try
+            {
+                Result result = Results[TestCountForSlickUpdateService++];
+                result.RunStatus = "FINISHED";
+                UnitTestOutcome unitOutcome = UnitTestOutcome.Unknown;
+                if (UnitTestOutcome.TryParse(outcome, out unitOutcome))
+                {
+                    result.Status = unitOutcome.ConvertUnitTestOutcomeToSlickResultStatus();
+
+                }
+                result.Recorded = DateTime.UtcNow.ToUnixTime();
+
+                result.Files = new List<StoredFile>();
+                foreach (var file in files)
+                {
+                    AddResultFile(result, file);
+                }
+                result.Put();
+            }
+            catch (Exception e)
+            {
+                Logger.Log("Unable to file {0} result for test class {1} because of exception {2}: {3}\r\n{4}", outcome, className, e.GetType().FullName, e.Message, e.StackTrace);
+            }
+        }
     }
 
     public static class ResultStatusConverter
     {
+        public static string ConvertUnitTestOutcomeToSlickResultStatus(this UnitTestOutcome outcome)
+        {
+            switch (outcome)
+            {
+                case UnitTestOutcome.Passed:
+                    return "PASS";
+                case UnitTestOutcome.Failed:
+                case UnitTestOutcome.Error:
+                case UnitTestOutcome.Timeout:
+                    return "FAIL";
+                case UnitTestOutcome.Aborted:
+                    return "SKIPPED";
+                default:
+                    return "NOT_TESTED";
+            }
+        }
         public static string ConvertToSlickResultStatus(this TestOutcome outcome)
         {
             switch (outcome)

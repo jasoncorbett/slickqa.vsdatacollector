@@ -22,12 +22,10 @@
   </TestPlan>
   <OrderedTest>orderedtest1.orderedtest</OrderedTest>
   <Environment>Windows VM</Environment>
-  <!--
   <BuildProvider>
     <AssemblyName>mstestexample.dll</AssemblyName>
     <Directory>C:\Development\slickqa.vsdatacollector\mstestexample\Bin\Debug</Directory>
     <TypeName>mstestexample.BuildProvider</TypeName>
     <MethodName>BuildInfo</MethodName>
   </BuildProvider>
-  -->
 </SlickTest>
