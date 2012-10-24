@@ -117,9 +117,9 @@ namespace SlickQA.TestAdapter
                                         ComponentReference = component,
                                         ReleaseReference = Release,
                                         BuildReference = Build,
-                                        Status = "NO_RESULT",
+                                        Status = ResultStatus.NO_RESULT,
                                         Hostname = Environment.MachineName,
-                                        RunStatus = "TO_BE_RUN",
+                                        RunStatus = RunStatus.TO_BE_RUN,
                                     };
                 result.Post();
                 Results.Add(result);
@@ -133,7 +133,7 @@ namespace SlickQA.TestAdapter
             var slickResult = Results[TestCount++];
             // TODO: Check DisplayName to make sure it matches the test name
             slickResult.Recorded = DateTime.Now.ToUnixTime();
-            slickResult.RunStatus = "FINISHED";
+	        slickResult.RunStatus = RunStatus.FINISHED;
             slickResult.Status = result.Outcome.ConvertToSlickResultStatus();
             if(!String.IsNullOrWhiteSpace(result.ErrorMessage))
                 slickResult.Reason = String.Format("ERROR: {0}\r\n{1}", result.ErrorMessage, result.ErrorStackTrace);
@@ -244,25 +244,24 @@ namespace SlickQA.TestAdapter
                 }
             }
         }
-
     }
 
     public static class ResultStatusConverter
     {
-        public static string ConvertToSlickResultStatus(this TestOutcome outcome)
+        public static ResultStatus ConvertToSlickResultStatus(this TestOutcome outcome)
         {
             switch (outcome)
             {
                 case TestOutcome.Passed:
-                    return "PASS";
+                    return ResultStatus.PASS;
                 case TestOutcome.Failed:
-                    return "FAIL";
+                    return ResultStatus.FAIL;
                 case TestOutcome.Skipped:
-                    return "SKIPPED";
+                    return ResultStatus.SKIPPED;
                 case TestOutcome.NotFound:
                 case TestOutcome.None:
                 default:
-                    return "NOT_TESTED";
+		            return ResultStatus.NOT_TESTED;
             }
         }
     }
