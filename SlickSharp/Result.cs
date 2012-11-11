@@ -68,8 +68,17 @@ namespace SlickQA.SlickSharp
 		[DataMember(Name = "reason")]
 		public String Reason;
 
+
 		[DataMember(Name = "recorded")]
-		public long Recorded;
+		public string RecordedString
+		{
+			get { return Recorded.ToUniversalTime().ToString("o"); }
+			set { DateTime t;
+				Recorded = DateTime.TryParse(value, out t) ? t : DateTime.UtcNow;
+			}
+		}
+
+		public DateTime Recorded { get; set; }
 
 		[DataMember(Name = "release")]
 		public ReleaseReference ReleaseReference;

@@ -57,6 +57,7 @@
     <Compile Include="BuildEquals.cs" />
     <Compile Include="ConvertFromReference.cs" />
     <Compile Include="ConfigurationEquals.cs" />
+    <Compile Include="DateTimeSerialization.cs" />
     <Compile Include="EnumSerialization.cs" />
     <Compile Include="JsonRequestTest.cs" />
     <Compile Include="ReleaseEquals.cs" />

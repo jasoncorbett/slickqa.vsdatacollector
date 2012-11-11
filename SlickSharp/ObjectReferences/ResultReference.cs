@@ -24,7 +24,17 @@ namespace SlickQA.SlickSharp.ObjectReferences
 		public BuildReference Build;
 
 		[DataMember(Name = "recorded")]
-		public long DateRecorded;
+		public string RecordedString
+		{
+			get { return Recorded.ToUniversalTime().ToString("o"); }
+			set
+			{
+				DateTime t;
+				Recorded = DateTime.TryParse(value, out t) ? t : DateTime.UtcNow;
+			}
+		}
+
+		public DateTime Recorded { get; set; }
 
 		[DataMember(Name = "resultId")]
 		public String Id;
@@ -50,7 +60,7 @@ namespace SlickQA.SlickSharp.ObjectReferences
 		{
 			Id = result.Id;
 			ResultStatus = result.Status;
-			DateRecorded = Convert.ToInt64(result.Recorded);
+			Recorded = result.Recorded;
 			Build = result.BuildReference;
 		}
 
@@ -65,7 +75,7 @@ namespace SlickQA.SlickSharp.ObjectReferences
 			        {
 			        	Id = resultReference.Id,
 			        	Status = resultReference.ResultStatus,
-			        	Recorded = resultReference.DateRecorded,
+			        	Recorded = resultReference.Recorded,
 			        	BuildReference = resultReference.Build
 			        };
 			r.Get();

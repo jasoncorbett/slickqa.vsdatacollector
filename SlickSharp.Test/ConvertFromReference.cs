@@ -117,7 +117,7 @@ namespace SlickQA.SlickSharp.Test
 		public void ResultReference_has_an_implicit_converstion_to_Result()
 		{
 			const string RESULT =
-				"{\"configurationOverride\":null,\"files\":[],\"history\":null,\"recorded\":123456789,\"runlength\":0,\"runstatus\":\"FINISHED\",\"testcase\":{},\"testrun\":null,\"project\":{},\"build\":{},\"release\":{},\"component\":{},\"id\":\"0123456789abcdef\",\"attributes\":null,\"extensions\":null,\"log\":null,\"reason\":\"Unit Test\",\"status\":\"CANCELLED\",\"config\":null,\"hostname\":\"blah.example.com\"}";
+				"{\"configurationOverride\":null,\"files\":[],\"history\":null,\"recorded\":\"1970-01-01T00:00:00.0000000Z\",\"runlength\":0,\"runstatus\":\"FINISHED\",\"testcase\":{},\"testrun\":null,\"project\":{},\"build\":{},\"release\":{},\"component\":{},\"id\":\"0123456789abcdef\",\"attributes\":null,\"extensions\":null,\"log\":null,\"reason\":\"Unit Test\",\"status\":\"CANCELLED\",\"config\":null,\"hostname\":\"blah.example.com\"}";
 
 			MemoryStream stream = StreamConversion.FromString(RESULT);
 			stream.Position = 0;
@@ -130,7 +130,7 @@ namespace SlickQA.SlickSharp.Test
 			var rr = new ResultReference
 			         {
 			         	Id = "0123456789abcdef",
-						DateRecorded = 123456789,
+						Recorded = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc),
 						ResultStatus = ResultStatus.CANCELLED
 			         };
 
@@ -138,7 +138,7 @@ namespace SlickQA.SlickSharp.Test
 			               {
 			               	Id = "0123456789abcdef",
 			               	Hostname = "blah.example.com",
-			               	Recorded = 123456789,
+			               	Recorded = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc),
 			               	Status = ResultStatus.CANCELLED,
 			               	Reason = "Unit Test"
 			               };

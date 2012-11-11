@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SlickQA.SlickSharp.ObjectReferences;
 
@@ -95,14 +96,14 @@ namespace SlickQA.SlickSharp.Test
 			        {
 			        	Id = "0123456789abcdefABCDEF",
 			        	BuildReference = new BuildReference(),
-			        	Recorded = 123456,
+			        	Recorded = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc),
 			        	Status = ResultStatus.CANCELLED,
 			        };
 			ResultReference rr = r;
 
 			Assert.AreEqual(r.Id, rr.Id);
 			Assert.AreEqual(r.BuildReference, rr.Build);
-			Assert.AreEqual(r.Recorded, rr.DateRecorded);
+			Assert.AreEqual(r.Recorded, rr.Recorded);
 			Assert.AreEqual(r.Status, rr.ResultStatus);
 		}
 

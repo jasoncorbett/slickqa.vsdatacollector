@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SlickQA.SlickSharp.Logging;
 using SlickQA.SlickSharp.Utility.Json;
@@ -24,6 +26,7 @@ namespace SlickQA.SlickSharp.Test
 
 			var jsonString = Encoding.UTF8.GetString(buff);
 
+			StringAssert.DoesNotMatch(jsonString, new Regex(".*statusstring.*", RegexOptions.IgnoreCase));
 			StringAssert.Contains(jsonString, "\"status\":\"BROKEN_TEST\"");
 			StringAssert.Contains(jsonString, "\"runstatus\":\"TO_BE_RUN\"");
 		}
