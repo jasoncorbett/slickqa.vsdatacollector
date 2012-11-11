@@ -141,7 +141,7 @@ namespace SlickQA.TestAdapter
                                         Hostname = System.Environment.MachineName,
                                         RunStatus = RunStatus.TO_BE_RUN,
                                         ConfigurationReference = Environment,
-                                        Recorded = DateTime.UtcNow.ToUnixTime(),
+                                        Recorded = DateTime.UtcNow,
                                     };
                 result.Post();
                 Results.Add(result);
@@ -154,7 +154,7 @@ namespace SlickQA.TestAdapter
             // TODO: Detect and handle out of range results
             var slickResult = Results[TestCount++];
             // TODO: Check DisplayName to make sure it matches the test name
-            slickResult.Recorded = result.EndTime.UtcDateTime.ToUnixTime();
+            slickResult.Recorded = result.EndTime.UtcDateTime;
             slickResult.RunStatus = RunStatus.FINISHED;
             slickResult.Status = result.Outcome.ConvertToSlickResultStatus();
             if(!String.IsNullOrWhiteSpace(result.ErrorMessage))
@@ -341,7 +341,7 @@ namespace SlickQA.TestAdapter
                     result.Status = unitOutcome.ConvertUnitTestOutcomeToSlickResultStatus();
 
                 }
-                result.Recorded = DateTime.UtcNow.ToUnixTime();
+                result.Recorded = DateTime.UtcNow;
 
                 result.Files = new List<StoredFile>();
                 foreach (var file in files)
