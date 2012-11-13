@@ -140,9 +140,10 @@ namespace SlickQA.TestAdapter
                                         ComponentReference = component,
                                         ReleaseReference = Release,
                                         BuildReference = Build,
-                                        Status = "NO_RESULT",
+                                        Status =
+                                        ResultStatus.NO_RESULT,
                                         Hostname = System.Environment.MachineName,
-                                        RunStatus = "TO_BE_RUN",
+                                        RunStatus = RunStatus.TO_BE_RUN,
                                         ConfigurationReference = Environment,
                                         Recorded = Started.ToUnixTime(),
                                     };
@@ -158,10 +159,10 @@ namespace SlickQA.TestAdapter
             var slickResult = Results[TestCount++];
             // TODO: Check DisplayName to make sure it matches the test name
 
+            slickResult.RunStatus = RunStatus.FINISHED;
             // End time is not giving me the UTC time, or at least that's what I've found.  Only update it if we have to.
             if(slickResult.Recorded == Started.ToUnixTime())
                 slickResult.Recorded = result.EndTime.UtcDateTime.ToUnixTime();
-            slickResult.RunStatus = "FINISHED";
             slickResult.Status = result.Outcome.ConvertToSlickResultStatus();
             if(!String.IsNullOrWhiteSpace(result.ErrorMessage))
                 slickResult.Reason = String.Format("ERROR: {0}\r\n{1}", result.ErrorMessage, result.ErrorStackTrace);
@@ -235,7 +236,7 @@ namespace SlickQA.TestAdapter
             logentries.Add(new LogEntry()
                                {
                                    EntryTime = (DateTime.Now.ToString(new CultureInfo( "en-US", false ).DateTimeFormat.RFC1123Pattern)),
-                                   Level = "INFO",
+                                   Level = LogLevel.INFO,
                                    LoggerName = "SlickReporter",
                                    Message = String.Format(message, parms)
                                });
@@ -387,14 +388,14 @@ namespace SlickQA.TestAdapter
             try
             {
                 Result result = Results[TestCountForSlickUpdateService++];
-                result.RunStatus = "FINISHED";
+                result.RunStatus = RunStatus.FINISHED;
                 UnitTestOutcome unitOutcome = UnitTestOutcome.Unknown;
                 if (UnitTestOutcome.TryParse(outcome, out unitOutcome))
                 {
                     result.Status = unitOutcome.ConvertUnitTestOutcomeToSlickResultStatus();
 
                 }
-                result.Recorded = DateTime.UtcNow.ToUnixTime();
+                result.Recorded = DateTime.UtcNow;
 
                 result.Files = new List<StoredFile>();
                 foreach (var file in files)
@@ -412,36 +413,37 @@ namespace SlickQA.TestAdapter
 
     public static class ResultStatusConverter
     {
-        public static string ConvertUnitTestOutcomeToSlickResultStatus(this UnitTestOutcome outcome)
+        public static ResultStatus ConvertUnitTestOutcomeToSlickResultStatus(this UnitTestOutcome outcome)
         {
             switch (outcome)
             {
                 case UnitTestOutcome.Passed:
-                    return "PASS";
+                    return ResultStatus.PASS;
                 case UnitTestOutcome.Failed:
                 case UnitTestOutcome.Error:
                 case UnitTestOutcome.Timeout:
-                    return "FAIL";
+                    return ResultStatus.FAIL;
                 case UnitTestOutcome.Aborted:
-                    return "SKIPPED";
+                    return ResultStatus.SKIPPED;
                 default:
-                    return "NOT_TESTED";
+		              return ResultStatus.NOT_TESTED;
             }
         }
-        public static string ConvertToSlickResultStatus(this TestOutcome outcome)
+
+        public static ResultStatus ConvertToSlickResultStatus(this TestOutcome outcome)
         {
             switch (outcome)
             {
                 case TestOutcome.Passed:
-                    return "PASS";
+                    return ResultStatus.PASS;
                 case TestOutcome.Failed:
-                    return "FAIL";
+                    return ResultStatus.FAIL;
                 case TestOutcome.Skipped:
-                    return "SKIPPED";
+                    return ResultStatus.SKIPPED;
                 case TestOutcome.NotFound:
                 case TestOutcome.None:
                 default:
-                    return "NOT_TESTED";
+		            return ResultStatus.NOT_TESTED;
             }
         }
     }
