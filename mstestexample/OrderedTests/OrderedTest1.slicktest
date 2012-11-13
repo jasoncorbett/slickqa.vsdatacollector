@@ -2,7 +2,7 @@
 <SlickTest>
   <Url>
     <Scheme>http</Scheme>
-    <HostName>10.2.2.85</HostName>
+    <HostName>10.0.21.117</HostName>
     <Port>8080</Port>
     <SitePath></SitePath>
   </Url>
@@ -10,11 +10,17 @@
     <Id>50452a7cda0685ba6a265acd</Id>
     <Name>Another Project</Name>
   </Project>
-  <Release>
-    <Id>504641e98de2b7518231b1b6</Id>
-    <Name>1</Name>
-    <ProjectId>50452a7cda0685ba6a265acd</ProjectId>
-  </Release>
+  <Release>1</Release>
+  <ReleaseProvider>
+    <AssemblyName>mstestexample.dll</AssemblyName>
+    <SearchDirectories>
+      <Directory>Foo</Directory>
+      <Directory>..</Directory>
+      <Directory>..\Bin\Debug</Directory>
+    </SearchDirectories>
+    <TypeName>mstestexample.BuildProvider</TypeName>
+    <MethodName>ReleaseInfo</MethodName>
+  </ReleaseProvider>
   <TestPlan>
     <Id>507307ebcbced438bbf2a5bd</Id>
     <Name>OrderedTest1</Name>
@@ -22,9 +28,13 @@
   </TestPlan>
   <OrderedTest>orderedtest1.orderedtest</OrderedTest>
   <Environment>Windows VM</Environment>
+  <Build>4</Build>
   <BuildProvider>
     <AssemblyName>mstestexample.dll</AssemblyName>
-    <Directory>C:\Development\slickqa.vsdatacollector\mstestexample\Bin\Debug</Directory>
+    <SearchDirectories>
+      <Directory>..</Directory>
+      <Directory>..\Bin\Debug</Directory>
+    </SearchDirectories>
     <TypeName>mstestexample.BuildProvider</TypeName>
     <MethodName>BuildInfo</MethodName>
   </BuildProvider>

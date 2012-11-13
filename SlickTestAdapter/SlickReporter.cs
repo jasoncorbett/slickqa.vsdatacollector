@@ -31,6 +31,7 @@ namespace SlickQA.TestAdapter
         public TestRun Testrun { get; set; }
         public List<Result> Results { get; set; }
         public List<String> PostedFiles { get; set; }
+        public DateTime Started { get; set; }
         public int TestCount { get; set; }
         public int TestCountForSlickUpdateService { get; set; }
         public bool CreateIfNecessaryMode { get; set; }
@@ -75,6 +76,8 @@ namespace SlickQA.TestAdapter
 
         public void RecordEmptyResults()
         {
+            Started = DateTime.UtcNow;
+
             foreach (var testinfo in SlickRunInfo.Tests)
             {
                 Component component = null;
@@ -93,6 +96,7 @@ namespace SlickQA.TestAdapter
                                             ProjectId = Project.Id
                                         };
                         component.Get(CreateIfNecessaryMode, 3);
+                        ComponentCache.Add(testinfo.Component, component);
                     }
                 }
                 Testcase test = Testcase.GetTestCaseByAutomationKey(testinfo.AutomationKey);
@@ -140,7 +144,7 @@ namespace SlickQA.TestAdapter
                                         Hostname = System.Environment.MachineName,
                                         RunStatus = "TO_BE_RUN",
                                         ConfigurationReference = Environment,
-                                        Recorded = DateTime.UtcNow.ToUnixTime(),
+                                        Recorded = Started.ToUnixTime(),
                                     };
                 result.Post();
                 Results.Add(result);
@@ -153,7 +157,10 @@ namespace SlickQA.TestAdapter
             // TODO: Detect and handle out of range results
             var slickResult = Results[TestCount++];
             // TODO: Check DisplayName to make sure it matches the test name
-            slickResult.Recorded = result.EndTime.UtcDateTime.ToUnixTime();
+
+            // End time is not giving me the UTC time, or at least that's what I've found.  Only update it if we have to.
+            if(slickResult.Recorded == Started.ToUnixTime())
+                slickResult.Recorded = result.EndTime.UtcDateTime.ToUnixTime();
             slickResult.RunStatus = "FINISHED";
             slickResult.Status = result.Outcome.ConvertToSlickResultStatus();
             if(!String.IsNullOrWhiteSpace(result.ErrorMessage))
@@ -190,16 +197,13 @@ namespace SlickQA.TestAdapter
                 slickResult.Files.Add(slickFile);
                 if (Path.GetFileName(filepath).Equals("testlog.xml", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (slickResult.Log == null)
-                        slickResult.Log = new List<LogEntry>();
+                    slickResult.Log = new List<LogEntry>();
                     slickResult.Log.AddRange(LocalLogEntry.ReadFromFile(filepath));
                 }
                 else if (Path.GetFileName(filepath).Equals("steps.xml", StringComparison.OrdinalIgnoreCase))
                 {
                     Testcase test = slickResult.TestcaseReference;
                     test.Get();
-                    if (test.Steps == null)
-                        test.Steps = new List<SlickQA.SlickSharp.TestStep>();
                     var serializer = new XmlSerializer(typeof (List<SlickQA.SlickTL.TestStep>),
                                                        new XmlRootAttribute("Steps"));
                     using (var stepFileStream = new FileStream(filepath, FileMode.Open))
@@ -207,6 +211,7 @@ namespace SlickQA.TestAdapter
                         try
                         {
                             var steps = (List<SlickQA.SlickTL.TestStep>) serializer.Deserialize(stepFileStream);
+                            test.Steps = new List<SlickQA.SlickSharp.TestStep>();
                             foreach (var step in steps)
                             {
                                 test.Steps.Add(new SlickQA.SlickSharp.TestStep()
@@ -270,6 +275,14 @@ namespace SlickQA.TestAdapter
 
         private void InitializeBuild()
         {
+            if (SlickRunInfo.BuildProvider.Method == null)
+            {
+                Logger.Log("Build Provider Method was not found!");
+                foreach (var log in SlickRunInfo.BuildProvider.Logs)
+                {
+                    Logger.Log(log);
+                }
+            }
             try
             {
                 var buildNumber = SlickRunInfo.BuildProvider.Method.Invoke(null, null) as String;
@@ -285,20 +298,61 @@ namespace SlickQA.TestAdapter
             }
             catch (Exception)
             {
-                Build = new Build() { ProjectId = Project.Id, ReleaseId = Release.Id, Id = Release.DefaultBuildId };
+                if(String.IsNullOrWhiteSpace(SlickRunInfo.Build))
+                {
+                    Build = new Build() { ProjectId = Project.Id, ReleaseId = Release.Id, Id = Release.DefaultBuildId };
+                }
+                else
+                {
+                    Build = new Build() { ProjectId = Project.Id, ReleaseId = Release.Id, Name = SlickRunInfo.Build };
+                }
                 Build.Get(CreateIfNecessaryMode, 3);
             }
         }
 
         private void InitializeRelease()
         {
-            Release = new Release()
-                          {
-                              ProjectId = SlickRunInfo.Release.ProjectId,
-                              Id = SlickRunInfo.Release.Id,
-                              Name = SlickRunInfo.Release.Name,
-                          };
-            Release.Get(CreateIfNecessaryMode, 3);
+
+            if (SlickRunInfo.ReleaseProvider.Method == null)
+            {
+                Logger.Log("Release Provider Method was not found!");
+                foreach (var log in SlickRunInfo.ReleaseProvider.Logs)
+                {
+                    Logger.Log(log);
+                }
+            }
+            try
+            {
+                var releaseName = SlickRunInfo.ReleaseProvider.Method.Invoke(null, null) as String;
+
+                var release = new Release()
+                                  {
+                                      Name = releaseName,
+                                      ProjectId = Project.Id,
+                                  };
+                release.Get(CreateIfNecessaryMode, 3);
+                Release = release;
+            }
+            catch (Exception)
+            {
+                if(!String.IsNullOrWhiteSpace(SlickRunInfo.Release))
+                {
+                    Release = new Release()
+                                  {
+                                      Name = SlickRunInfo.Release,
+                                      ProjectId = Project.Id,
+                                  };
+                }
+                else
+                {
+                    Release = new Release()
+                                  {
+                                      ProjectId = Project.Id,
+                                      Id = Project.DefaultRelease,
+                                  };
+                }
+                Release.Get(CreateIfNecessaryMode, 3);
+            }
         }
 
         private void InitializeEnvironment()

@@ -2,15 +2,15 @@
 <package >
   <metadata>
     <id>SlickQA.SlickTL</id>
-    <version>1.0.0</version>
+    <version>1.0.2</version>
     <authors>jcorbett</authors>
     <owners>jcorbett</owners>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseUrl>
     <projectUrl>http://code.google.com/p/slickqa</projectUrl>
-    <iconUrl>http://code.google.com/p/slickqa/logo?cct=1349988887</iconUrl>
+    <iconUrl>http://vsdatacollector.slickqa.googlecode.com/git/vs-slick.png</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>SlickTL is a library that can be used to help with creation of mstest test cases.  It adds ini config parsing (from the fabulous Nini project), and it adds configuration of logging.  Also included are slick specific pieces like annotations, and test steps for adding data to slick.</description>
-    <releaseNotes>This is an initial release of the project, updates coming soon</releaseNotes>
+    <releaseNotes>Fixes an issue where you could get an exception thrown during cleanup if not running in slick test adapter.</releaseNotes>
     <copyright>Copyright 2012</copyright>
     <tags>Testing mstest QA</tags>
     <dependencies>

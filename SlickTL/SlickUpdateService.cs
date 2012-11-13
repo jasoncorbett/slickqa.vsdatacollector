@@ -27,15 +27,24 @@ namespace SlickQA.SlickTL
 
         public void FrameworkCleanupFinished(object instance)
         {
-            var url = String.Format("net.pipe://localhost/{0}", typeof(ISlickUpdateService).FullName);
-            Log.Debug("Creating factory for url: {0}", url);
-            var pipeFactory = new ChannelFactory<ISlickUpdateService>(new NetNamedPipeBinding(),
-                                                                      new EndpointAddress(url));
-            Log.Debug("Creating Channel");
-            var slickUpdateService = pipeFactory.CreateChannel();
-            Log.Debug("Signaling test finished for {0}: {1}, with {2} files.", instance.GetType().FullName, Context.CurrentTestOutcome.ToString(), Context.ResultFiles.Count);
-            slickUpdateService.TestFinishedSignal(instance.GetType().FullName, Context.CurrentTestOutcome.ToString(), Context.ResultFiles.ToArray());
-            Log.Debug("Finished signaling test finished.");
+            try
+            {
+                var url = String.Format("net.pipe://localhost/{0}", typeof (ISlickUpdateService).FullName);
+                Log.Debug("Creating factory for url: {0}", url);
+                var pipeFactory = new ChannelFactory<ISlickUpdateService>(new NetNamedPipeBinding(),
+                                                                          new EndpointAddress(url));
+                Log.Debug("Creating Channel");
+                var slickUpdateService = pipeFactory.CreateChannel();
+                Log.Debug("Signaling test finished for {0}: {1}, with {2} files.", instance.GetType().FullName,
+                          Context.CurrentTestOutcome.ToString(), Context.ResultFiles.Count);
+                slickUpdateService.TestFinishedSignal(instance.GetType().FullName, Context.CurrentTestOutcome.ToString(),
+                                                      Context.ResultFiles.ToArray());
+                Log.Debug("Finished signaling test finished.");
+            }
+            catch (Exception)
+            {
+                Log.Debug("No reporting to slick happening at this time.  This is most likely because you are not using the test adapter.");
+            }
         }
     }
 }

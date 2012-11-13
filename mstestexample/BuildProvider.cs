@@ -8,9 +8,15 @@ namespace mstestexample
 {
     static class BuildProvider
     {
+
+        public static string ReleaseInfo()
+        {
+            return "2";
+        }
+
         public static string BuildInfo()
         {
-            return "5";
+            throw new NotImplementedException();
         }
     }
 }

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -98,7 +99,20 @@ namespace SlickQA.DataCollector.Models
 		}
 
 		public string AssemblyName { get; set; }
-		public string Directory { get; set; }
+
+	    [XmlIgnore]
+	    public string RelativeRoot { get; set; }
+
+        [XmlIgnore]
+        public string Directory { get; set; }
+
+        [XmlIgnore]
+        public List<string> Logs { get; set; }
+        
+        
+        [XmlArray]
+        [XmlArrayItem(ElementName = "Directory")]
+        public List<string> SearchDirectories { get; set; }
 		public string TypeName { get; set; }
 		public string MethodName { get; set; }
 
@@ -107,29 +121,44 @@ namespace SlickQA.DataCollector.Models
 		{
             get
             {
+                if(Logs == null)
+                    Logs = new List<string>();
+
                 if(_method == null)
                 {
                     string assemblyFile = null;
-                    string tempPath = Path.Combine(Environment.CurrentDirectory, AssemblyName);
-                    if (File.Exists(tempPath))
+
+                    Directory = String.Empty;
+
+                    if(String.IsNullOrWhiteSpace(RelativeRoot))
+                        RelativeRoot = Environment.CurrentDirectory;
+
+                    Logs.Add(String.Format("Method: RelativeRoot = {0}", RelativeRoot));
+
+                    foreach (var searchPath in SearchDirectories)
                     {
-                        assemblyFile = tempPath;
-                    }
-                    else
-                    {
-                        string path = Path.Combine(Directory, AssemblyName);
-                        if (File.Exists(path))
+                        Logs.Add(String.Format("Method: Checking relative path {0}", searchPath));
+                        var dirPath = Path.Combine(RelativeRoot, searchPath);
+                        var assemblyPath = Path.Combine(dirPath, AssemblyName);
+                        Logs.Add(String.Format("Method: Checking for {0}", assemblyPath));
+                        if(System.IO.Directory.Exists(dirPath) && File.Exists(assemblyPath))
                         {
-                            assemblyFile = path;
+                            Directory = dirPath;
+                            assemblyFile = assemblyPath;
+                            Logs.Add(String.Format("Method: Found assembly {0}", assemblyFile));
+                            break;
                         }
                     }
 
                     if (assemblyFile != null)
                     {
+                        Logs.Add(String.Format("Method: Loading assembly {0}", assemblyFile));
                         var assembly = Assembly.Load(File.ReadAllBytes(assemblyFile));
                         if (!string.IsNullOrWhiteSpace(TypeName))
                         {
+                            Logs.Add(String.Format("Method: Loading type name {0}", TypeName));
                             Type type = assembly.GetType(TypeName);
+                            Logs.Add(String.Format("Method: Loading method name {0}", MethodName));
                             _method = type.GetMethod(MethodName);
                         }
                     }

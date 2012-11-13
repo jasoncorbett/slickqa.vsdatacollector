@@ -70,10 +70,11 @@
     <None Include="default.ini">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="OrderedTest1.orderedtest">
+    <None Include="OrderedTests\OrderedTest1.orderedtest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
-    <None Include="OrderedTest1.slicktest">
+    <None Include="OrderedTests\OrderedTest1.slicktest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </None>

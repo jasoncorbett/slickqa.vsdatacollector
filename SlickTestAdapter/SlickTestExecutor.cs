@@ -107,6 +107,20 @@ namespace SlickQA.TestAdapter
                     retval = (SlickTest) serializer.Deserialize(filestream);
                 }
                 retval.OrderedTest = Path.Combine(Path.GetDirectoryName(source), retval.OrderedTest);
+                log("Current Working Directory = {0}", System.Environment.CurrentDirectory);
+                if (retval.ReleaseProvider != null)
+                {
+                    log("source = {0}", source);
+                    log("Path.GetDirectoryName(source) = {0}", Path.GetDirectoryName(source));
+                    retval.ReleaseProvider.RelativeRoot = Path.GetDirectoryName(source);
+                    log("retval.ReleaseProvider.RelativeRoot = {0}", retval.ReleaseProvider.RelativeRoot);
+                }
+                else
+                {
+                    log("ReleaseProvider is null!");
+                }
+                if (retval.BuildProvider != null)
+                    retval.BuildProvider.RelativeRoot = Path.GetDirectoryName(source);
                 retval.Tests = ParseOrderedTestXmlToSlickInfoList(retval.OrderedTest);
             }
                 catch(ReflectionTypeLoadException e)

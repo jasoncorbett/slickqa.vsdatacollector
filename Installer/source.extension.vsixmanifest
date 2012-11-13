@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="SlickTestAdapter.SlickQA.9c62bd8f-f1c4-4571-9f0f-6b1116cba355" Version="1.1" Language="en-US" Publisher="SlickQA" />
+    <Identity Id="SlickTestAdapter.SlickQA.9c62bd8f-f1c4-4571-9f0f-6b1116cba355" Version="1.1.4" Language="en-US" Publisher="SlickQA" />
     <DisplayName>Slick Visual Studio Extensions</DisplayName>
     <Description xml:space="preserve">A test adapter that reports to the Slick results database.A</Description>
     <MoreInfo>http://code.google.com/p/slickqa/</MoreInfo>

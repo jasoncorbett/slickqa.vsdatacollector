@@ -99,7 +99,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SelectResultDestination
 		public void Handle(SaveDataEvent eventData)
 		{
 			eventData.TestInfo.Project = CurrentProject;
-			eventData.TestInfo.Release = CurrentRelease;
+			eventData.TestInfo.Release = CurrentRelease.Name;
 		}
 
 		#endregion
@@ -110,7 +110,7 @@ namespace SlickQA.DataCollector.ConfigurationEditor.App.SelectResultDestination
 		{
 			CurrentProject = eventData.TestInfo.Project;
 
-			ReleaseInfo release = eventData.TestInfo.Release;
+			ReleaseInfo release = new ReleaseInfo() {ProjectId = CurrentProject.Id, Name = eventData.TestInfo.Release, };
 
 			View.SelectProject(CurrentProject);
 			View.SelectRelease(release);
