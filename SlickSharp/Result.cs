@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Runtime.Serialization;
 using SlickQA.SlickSharp.Attributes;
 using SlickQA.SlickSharp.Logging;
@@ -72,7 +73,11 @@ namespace SlickQA.SlickSharp
 		[DataMember(Name = "recorded")]
 		public string RecordedString
 		{
-			get { return Recorded.ToUniversalTime().ToString("o"); }
+			get
+			{
+                var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                return Convert.ToInt64((Recorded.ToUniversalTime() - epoch).TotalMilliseconds).ToString(CultureInfo.InvariantCulture);
+			}
 			set { DateTime t;
 				Recorded = DateTime.TryParse(value, out t) ? t : DateTime.UtcNow;
 			}
