@@ -145,7 +145,7 @@ namespace SlickQA.TestAdapter
                                         Hostname = System.Environment.MachineName,
                                         RunStatus = RunStatus.TO_BE_RUN,
                                         ConfigurationReference = Environment,
-                                        Recorded = Started.ToUnixTime(),
+                                        Recorded = Started,
                                     };
                 result.Post();
                 Results.Add(result);
@@ -161,8 +161,8 @@ namespace SlickQA.TestAdapter
 
             slickResult.RunStatus = RunStatus.FINISHED;
             // End time is not giving me the UTC time, or at least that's what I've found.  Only update it if we have to.
-            if(slickResult.Recorded == Started.ToUnixTime())
-                slickResult.Recorded = result.EndTime.UtcDateTime.ToUnixTime();
+            if (slickResult.Recorded == Started)
+                slickResult.Recorded = result.EndTime.UtcDateTime;
             slickResult.Status = result.Outcome.ConvertToSlickResultStatus();
             if(!String.IsNullOrWhiteSpace(result.ErrorMessage))
                 slickResult.Reason = String.Format("ERROR: {0}\r\n{1}", result.ErrorMessage, result.ErrorStackTrace);
