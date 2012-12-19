@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
@@ -18,6 +19,7 @@ namespace SlickQA.TestAdapter
         public SlickTest SlickInfo { get; set; }
         public SlickReporter Reporter { get; set; }
         public bool ReportToSlick { get; set; }
+        public Regex IsOrderedTest { get; set; }
 
 		public SlickExecutionRecorder(IFrameworkHandle handle, SlickTest slickTest)
 		{
@@ -28,7 +30,7 @@ namespace SlickQA.TestAdapter
 		    try
 		    {
                 Reporter.Initialize();
-                Reporter.RecordEmptyResults();
+                Reporter.RecordEmptyResults(slickTest.Tests);
 		    }
 		    catch (Exception e)
 		    {
@@ -50,11 +52,11 @@ namespace SlickQA.TestAdapter
 
 		public void RecordResult(TestResult testResult)
 		{
-		    _handle.RecordResult(testResult);
-            if (!String.IsNullOrWhiteSpace(testResult.DisplayName) && ReportToSlick)
+            if (ReportToSlick)
             {
                 Reporter.UpdateResult(testResult);
             }
+		    _handle.RecordResult(testResult);
 		}
 
 		public void RecordStart(TestCase testCase)

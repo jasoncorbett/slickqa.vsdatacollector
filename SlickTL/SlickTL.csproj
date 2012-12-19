@@ -90,6 +90,7 @@
     <Compile Include="TestingContext.cs" />
     <Compile Include="TestNameAttribute.cs" />
     <Compile Include="TestStepUtility.cs" />
+    <Compile Include="Wait.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Nini\Nini-LICENSE.txt" />

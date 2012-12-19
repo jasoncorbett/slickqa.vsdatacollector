@@ -29,11 +29,10 @@ namespace SlickQA.TestAdapter
         public Build Build { get; set; }
         public TestPlan Testplan { get; set; }
         public TestRun Testrun { get; set; }
-        public List<Result> Results { get; set; }
         public List<String> PostedFiles { get; set; }
         public DateTime Started { get; set; }
-        public int TestCount { get; set; }
-        public int TestCountForSlickUpdateService { get; set; }
+        public IEnumerator<SlickInfo> MainEnumerator { get; set; }
+        public IEnumerator<SlickInfo> UpdateServiceEnumerator { get; set; }
         public bool CreateIfNecessaryMode { get; set; }
         public IDictionary<string, Component> ComponentCache { get; set; }
         public ServiceHost Host { get; set; }
@@ -43,12 +42,11 @@ namespace SlickQA.TestAdapter
         public SlickReporter(ISimpleLogger logger, SlickTest slickInfo, bool createIfNecessary = true)
         {
             Logger = logger;
-            Results = new List<Result>();
             ComponentCache = new Dictionary<string, Component>();
             CreateIfNecessaryMode = createIfNecessary;
             SlickRunInfo = slickInfo;
-            TestCount = 0;
-            TestCountForSlickUpdateService = 0;
+            MainEnumerator = SlickRunInfo.Tests.GetEnumerator();
+            UpdateServiceEnumerator = SlickRunInfo.Tests.GetEnumerator();
             PostedFiles = new List<string>();
         }
 
@@ -74,112 +72,153 @@ namespace SlickQA.TestAdapter
             Host.Open();
         }
 
-        public void RecordEmptyResults()
+        public void RecordEmptyResults(SlickInfo Test)
         {
             Started = DateTime.UtcNow;
 
-            foreach (var testinfo in SlickRunInfo.Tests)
+            while (MainEnumerator.MoveNext())
             {
-                Component component = null;
-                if(!String.IsNullOrWhiteSpace(testinfo.Component))
+                var testinfo = MainEnumerator.Current;
+                if (!testinfo.IsOrderedTest)
                 {
-                    if (ComponentCache.ContainsKey(testinfo.Component))
+                    Result result = new Result();
+                    Component component = null;
+                    if (!String.IsNullOrWhiteSpace(testinfo.Component))
                     {
-                        component = ComponentCache[testinfo.Component];
+                        if (ComponentCache.ContainsKey(testinfo.Component))
+                        {
+                            component = ComponentCache[testinfo.Component];
+                        }
+                        else
+                        {
+                            component = new Component()
+                                            {
+                                                Name = testinfo.Component,
+                                                Code = testinfo.Component,
+                                                ProjectId = Project.Id
+                                            };
+                            component.Get(CreateIfNecessaryMode, 3);
+                            ComponentCache.Add(testinfo.Component, component);
+                        }
+                    }
+                    Testcase test = Testcase.GetTestCaseByAutomationKey(testinfo.AutomationKey);
+                    if (test == null)
+                    {
+                        test = new Testcase()
+                                   {
+                                       AutomationKey = testinfo.AutomationKey,
+                                       Attributes = testinfo.Attributes,
+                                       AutomationTool = "mstest",
+                                       AutomationId = testinfo.Id,
+                                       ProjectReference = Project,
+                                       ComponentReference = component,
+                                       Purpose = testinfo.Description,
+                                       Tags = testinfo.Tags,
+                                       Name = testinfo.Name,
+                                       Author = testinfo.Author,
+                                       IsAutomated = true
+                                   };
+                        test.Post();
                     }
                     else
                     {
-                        component = new Component()
-                                        {
-                                            Name = testinfo.Component,
-                                            Code = testinfo.Component,
-                                            ProjectId = Project.Id
-                                        };
-                        component.Get(CreateIfNecessaryMode, 3);
-                        ComponentCache.Add(testinfo.Component, component);
+                        // Update just in case something has changed
+                        test.Name = testinfo.Name;
+                        test.ComponentReference = component;
+                        test.Tags = testinfo.Tags;
+                        test.Purpose = testinfo.Description;
+                        test.IsAutomated = true;
+                        test.IsDeleted = false;
+                        test.AutomationTool = "mstest";
+                        test.Attributes = testinfo.Attributes;
+                        test.Author = testinfo.Author;
+                        test.Put();
                     }
+                    result = new Result()
+                                 {
+                                     TestcaseReference = test,
+                                     TestRunReference = Testrun,
+                                     ProjectReference = Project,
+                                     ComponentReference = component,
+                                     ReleaseReference = Release,
+                                     BuildReference = Build,
+                                     Status =
+                                         ResultStatus.NO_RESULT,
+                                     Hostname = System.Environment.MachineName,
+                                     RunStatus = RunStatus.TO_BE_RUN,
+                                     ConfigurationReference = Environment,
+                                     Recorded = Started,
+                                 };
+                    result.Post();
+                    testinfo.SlickResult = result;
                 }
-                Testcase test = Testcase.GetTestCaseByAutomationKey(testinfo.AutomationKey);
-                if (test == null)
-                {
-                    test = new Testcase()
-                        {
-                            AutomationKey = testinfo.AutomationKey,
-                            Attributes = testinfo.Attributes,
-                            AutomationTool = "mstest",
-                            AutomationId = testinfo.Id,
-                            ProjectReference = Project,
-                            ComponentReference = component,
-                            Purpose = testinfo.Description,
-                            Tags = testinfo.Tags,
-                            Name = testinfo.Name,
-                            Author = testinfo.Author,
-                            IsAutomated = true
-                        };
-                    test.Post();
-                }
-                else
-                {
-                    // Update just in case something has changed
-                    test.Name = testinfo.Name;
-                    test.ComponentReference = component;
-                    test.Tags = testinfo.Tags;
-                    test.Purpose = testinfo.Description;
-                    test.IsAutomated = true;
-                    test.IsDeleted = false;
-                    test.AutomationTool = "mstest";
-                    test.Attributes = testinfo.Attributes;
-                    test.Author = testinfo.Author;
-                    test.Put();
-                }
-                Result result = new Result()
-                                    {
-                                        TestcaseReference = test,
-                                        TestRunReference = Testrun,
-                                        ProjectReference = Project,
-                                        ComponentReference = component,
-                                        ReleaseReference = Release,
-                                        BuildReference = Build,
-                                        Status =
-                                        ResultStatus.NO_RESULT,
-                                        Hostname = System.Environment.MachineName,
-                                        RunStatus = RunStatus.TO_BE_RUN,
-                                        ConfigurationReference = Environment,
-                                        Recorded = Started,
-                                    };
-                result.Post();
-                Results.Add(result);
             }
-            
+            MainEnumerator.Reset();
+
         }
 
         public void UpdateResult(TestResult result)
         {
             // TODO: Detect and handle out of range results
-            var slickResult = Results[TestCount++];
-            // TODO: Check DisplayName to make sure it matches the test name
-
-            slickResult.RunStatus = RunStatus.FINISHED;
-            // End time is not giving me the UTC time, or at least that's what I've found.  Only update it if we have to.
-            if (slickResult.Recorded == Started)
-                slickResult.Recorded = result.EndTime.UtcDateTime;
-            slickResult.Status = result.Outcome.ConvertToSlickResultStatus();
-            if(!String.IsNullOrWhiteSpace(result.ErrorMessage))
-                slickResult.Reason = String.Format("ERROR: {0}\r\n{1}", result.ErrorMessage, result.ErrorStackTrace);
-            slickResult.RunLength = result.Duration.TotalMilliseconds.ToString("F0"); // from http://msdn.microsoft.com/en-us/library/kfsatb94.aspx
-            slickResult.Put();
-
-            // TODO: Handle additional files
-            slickResult.Files = new List<StoredFile>();
-            foreach (var attachment in result.Attachments)
+            if (MainEnumerator.MoveNext() && !MainEnumerator.Current.IsOrderedTest)
             {
-                foreach (var file in attachment.Attachments)
+
+                var slickResult = MainEnumerator.Current.SlickResult;
+                // TODO: Check DisplayName to make sure it matches the test name
+
+                if (slickResult.TestcaseReference != null)
                 {
-                    AddResultFile(slickResult, file.Uri.LocalPath);
+                    slickResult.RunStatus = RunStatus.FINISHED;
+
+                    // End time is not giving me the UTC time, or at least that's what I've found.  Only update it if we have to.
+                    if (slickResult.Recorded == Started)
+                        slickResult.Recorded = result.EndTime.UtcDateTime;
+                    slickResult.Status = result.Outcome.ConvertToSlickResultStatus();
+                    if (!String.IsNullOrWhiteSpace(result.ErrorMessage))
+                        slickResult.Reason = String.Format("ERROR: {0}\r\n{1}", result.ErrorMessage,
+                                                           result.ErrorStackTrace);
+
+                    // if we already set the run length, don't update it, unless the property said to...
+                    if (SlickRunInfo.UseMsTestDuration || String.IsNullOrEmpty(slickResult.RunLength) ||
+                        slickResult.RunLength == "0")
+                        slickResult.RunLength = result.Duration.TotalMilliseconds.ToString("F0");
+                    // from http://msdn.microsoft.com/en-us/library/kfsatb94.aspx
+                    slickResult.Put();
+
+                    slickResult.Files = new List<StoredFile>();
+                    foreach (var attachment in result.Attachments)
+                    {
+                        foreach (var file in attachment.Attachments)
+                        {
+                            AddResultFile(slickResult, file.Uri.LocalPath);
+                        }
+                    }
+                    slickResult.Put();
+                }
+            } else if (MainEnumerator.Current.IsOrderedTest &&
+                       result.Outcome.ConvertToSlickResultStatus() == ResultStatus.SKIPPED)
+            {
+                MarkAllResultsAsSkipped(MainEnumerator.Current);
+            }
+        }
+
+        private void MarkAllResultsAsSkipped(SlickInfo orderedTest)
+        {
+            foreach (var test in orderedTest.OrderedTestCases)
+            {
+                MainEnumerator.MoveNext();
+                if(test.IsOrderedTest)
+                    MarkAllResultsAsSkipped(test);
+                else
+                {
+                    Result result = test.SlickResult;
+                    result.RunStatus = RunStatus.FINISHED;
+                    result.RunLength = "0";
+                    result.Status = ResultStatus.SKIPPED;
+                    result.Recorded = DateTime.UtcNow;
+                    result.Put();
                 }
             }
-            slickResult.Put();
-            // TODO: Handle logs
         }
 
         private void AddResultFile(Result slickResult, string filepath)
@@ -276,7 +315,7 @@ namespace SlickQA.TestAdapter
 
         private void InitializeBuild()
         {
-            if (SlickRunInfo.BuildProvider.Method == null)
+            if (SlickRunInfo.BuildProvider != null && SlickRunInfo.BuildProvider.Method == null)
             {
                 Logger.Log("Build Provider Method was not found!");
                 foreach (var log in SlickRunInfo.BuildProvider.Logs)
@@ -314,7 +353,7 @@ namespace SlickQA.TestAdapter
         private void InitializeRelease()
         {
 
-            if (SlickRunInfo.ReleaseProvider.Method == null)
+            if (SlickRunInfo.ReleaseProvider != null && SlickRunInfo.ReleaseProvider.Method == null)
             {
                 Logger.Log("Release Provider Method was not found!");
                 foreach (var log in SlickRunInfo.ReleaseProvider.Logs)
@@ -383,11 +422,20 @@ namespace SlickQA.TestAdapter
             }
         }
 
+        public void TestStartedSignal(string className)
+        {
+            while (UpdateServiceEnumerator.MoveNext() && UpdateServiceEnumerator.Current.IsOrderedTest)
+                continue;
+            Result result = UpdateServiceEnumerator.Current.SlickResult;
+            result.Recorded = DateTime.UtcNow;
+            result.Put();
+        }
+
         public void TestFinishedSignal(string className, string outcome, string[] files)
         {
             try
             {
-                Result result = Results[TestCountForSlickUpdateService++];
+                Result result = UpdateServiceEnumerator.Current.SlickResult;
                 result.RunStatus = RunStatus.FINISHED;
                 UnitTestOutcome unitOutcome = UnitTestOutcome.Unknown;
                 if (UnitTestOutcome.TryParse(outcome, out unitOutcome))

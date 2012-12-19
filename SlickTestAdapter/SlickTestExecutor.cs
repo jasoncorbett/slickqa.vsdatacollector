@@ -73,7 +73,17 @@ namespace SlickQA.TestAdapter
 
         public void log(string format, params object[] items)
         {
-            _frameworkHandle.SendMessage(TestMessageLevel.Informational, String.Format(format, items));
+            if (format == null && items != null && items.Length > 0)
+            {
+                _frameworkHandle.SendMessage(TestMessageLevel.Informational, items[0].ToString());
+            } else if (items == null || items.Length == 0)
+            {
+                _frameworkHandle.SendMessage(TestMessageLevel.Informational, format);
+            }
+            else if(format != null && items.Length > 0)
+            {
+                _frameworkHandle.SendMessage(TestMessageLevel.Informational, String.Format(format, items));
+            }
         }
 
 		public void RunTests(IEnumerable<string> sources, IRunContext runContext, IFrameworkHandle frameworkHandle)
@@ -97,7 +107,9 @@ namespace SlickQA.TestAdapter
 
         public SlickTest LoadSlickTest(string source)
         {
+            System.Threading.Thread.Sleep(5000);
             SlickTest retval = null;
+
 
             try
             {
@@ -107,18 +119,8 @@ namespace SlickQA.TestAdapter
                     retval = (SlickTest) serializer.Deserialize(filestream);
                 }
                 retval.OrderedTest = Path.Combine(Path.GetDirectoryName(source), retval.OrderedTest);
-                log("Current Working Directory = {0}", System.Environment.CurrentDirectory);
                 if (retval.ReleaseProvider != null)
-                {
-                    log("source = {0}", source);
-                    log("Path.GetDirectoryName(source) = {0}", Path.GetDirectoryName(source));
                     retval.ReleaseProvider.RelativeRoot = Path.GetDirectoryName(source);
-                    log("retval.ReleaseProvider.RelativeRoot = {0}", retval.ReleaseProvider.RelativeRoot);
-                }
-                else
-                {
-                    log("ReleaseProvider is null!");
-                }
                 if (retval.BuildProvider != null)
                     retval.BuildProvider.RelativeRoot = Path.GetDirectoryName(source);
                 retval.Tests = ParseOrderedTestXmlToSlickInfoList(retval.OrderedTest);
@@ -129,7 +131,11 @@ namespace SlickQA.TestAdapter
                     {
                         log("Loader Exception: {0}", ex.GetType().FullName);
                         log("Loader Exception Message: {0}", ex.Message);
-                        log(ex.StackTrace);
+                        if (ex.GetType() == typeof (System.IO.FileNotFoundException))
+                        {
+                            log("File it couldn't find: {0}", ((FileNotFoundException)ex).FileName);
+                        }
+                        log(ex.StackTrace ?? e.StackTrace ?? "No Stack Trace Found!");
                     }
                 }
             catch (Exception e)
@@ -143,9 +149,14 @@ namespace SlickQA.TestAdapter
             return retval;
         }
 
-        private List<SlickInfo> ParseOrderedTestXmlToSlickInfoList(string orderedTestPath)
+        private SlickInfo ParseOrderedTestXmlToSlickInfoList(string orderedTestPath)
         {
-            var retval = new List<SlickInfo>();
+            var retval = new SlickInfo()
+                         {
+                             Name = Path.GetFileName(orderedTestPath),
+                             IsOrderedTest = true,
+                             OrderedTestCases = new List<SlickInfo>(),
+                         };
             var orderedTestDir = Path.GetDirectoryName(orderedTestPath);
 
             // Read XML
@@ -171,11 +182,11 @@ namespace SlickQA.TestAdapter
 
                 if (storagePath.Contains(".orderedtest"))
                 {
-                    retval.AddRange(ParseOrderedTestXmlToSlickInfoList(fullPath));
+                    retval.OrderedTestCases.Add(ParseOrderedTestXmlToSlickInfoList(fullPath));
                 }
                 else
                 {
-                    var dll = Assembly.Load(File.ReadAllBytes(fullPath));
+                    var dll = Assembly.LoadFrom(fullPath);
                     // Find all classes that are test classes
                     foreach (var type in dll.GetTypes())
                     {
@@ -193,7 +204,7 @@ namespace SlickQA.TestAdapter
                                 {
                                     if (method.GetHash() == id)
                                     {
-                                        retval.Add(new SlickInfo
+                                        retval.OrderedTestCases.Add(new SlickInfo
                                                        {
                                                            Id = method.GetTestCaseId(),
                                                            AutomationKey = method.GetAutomationKey(),

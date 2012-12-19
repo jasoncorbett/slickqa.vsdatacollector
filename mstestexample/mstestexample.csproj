@@ -44,6 +44,7 @@
       <HintPath>..\packages\NLog.2.0.0.2000\lib\net40\NLog.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
@@ -61,7 +62,10 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="AbstractFoo.cs" />
     <Compile Include="BuildProvider.cs" />
+    <Compile Include="EmptyTest.cs" />
+    <Compile Include="FooTest.cs" />
     <Compile Include="SlickTLTests.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -77,6 +81,12 @@
     <None Include="OrderedTests\OrderedTest1.slicktest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
+    </None>
+    <None Include="OrderedTests\OrderedTest2.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="OrderedTests\OrderedTest3.orderedtest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
   </ItemGroup>

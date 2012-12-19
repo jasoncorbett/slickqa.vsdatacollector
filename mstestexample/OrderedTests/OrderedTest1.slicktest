@@ -2,7 +2,7 @@
 <SlickTest>
   <Url>
     <Scheme>http</Scheme>
-    <HostName>10.0.21.117</HostName>
+    <HostName>10.2.2.68</HostName>
     <Port>8080</Port>
     <SitePath></SitePath>
   </Url>
@@ -38,4 +38,5 @@
     <TypeName>mstestexample.BuildProvider</TypeName>
     <MethodName>BuildInfo</MethodName>
   </BuildProvider>
+  <UseMsTestDuration>true</UseMsTestDuration>
 </SlickTest>

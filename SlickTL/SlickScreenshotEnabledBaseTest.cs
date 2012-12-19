@@ -12,6 +12,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace SlickQA.SlickTL
 {
+    [TestClass]
     public abstract class SlickScreenshotEnabledBaseTest : SlickBaseTest
     {
         public bool AlwaysTakeScreenshot { get; set; }
@@ -25,7 +26,7 @@ namespace SlickQA.SlickTL
         [TestInitialize]
         public void InitializeTakeScreenshot()
         {
-            AlwaysTakeScreenshot = false;
+            AlwaysTakeScreenshot = true;
         }
 
         public virtual void AttachScreenshotToResult(string filename, ImageFormat format = null)

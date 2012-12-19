@@ -14,7 +14,37 @@ namespace SlickQA.SlickTL
     public interface ISlickUpdateService
     {
         [OperationContract]
+        void TestStartedSignal(string className);
+
+        [OperationContract]
         void TestFinishedSignal(string className, string outcome, string[] files);
+    }
+
+    [Export(typeof(IFrameworkInitializePart))]
+    public class TestStartedSignaler : IFrameworkInitializePart
+    {
+        public static Logger Log = LogManager.GetCurrentClassLogger();
+
+        public string Name
+        {
+            get { return "TestStartedSignaler"; }
+        }
+
+        public void initialize(object instance)
+        {
+            try
+            {
+                var url = String.Format("net.pipe://localhost/{0}", typeof (ISlickUpdateService).FullName);
+                var pipeFactory = new ChannelFactory<ISlickUpdateService>(new NetNamedPipeBinding(),
+                                                                          new EndpointAddress(url));
+                var slickUpdateService = pipeFactory.CreateChannel();
+                slickUpdateService.TestStartedSignal(instance.GetType().FullName);
+            }
+            catch (Exception ex)
+            {
+                Log.Debug("Problem signaling the test adapter that the test has started, no worries.  For reference the exception was of type {0}, and the message was {1}.", ex.GetType().Name, ex.Message);
+            }
+        }
     }
 
     [Export]

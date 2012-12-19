@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
+using FluentAssertions.Assertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SlickQA.SlickTL;
 
@@ -15,6 +17,17 @@ namespace mstestexample
 
         [TestConfiguration("SectionName.Key")]
         public string ExampleConfig { get; set; }
+
+        [Import]
+        public DirectoryManager Directories { get; set; }
+
+        [TestInitialize]
+        public void Setup()
+        {
+            TestLog.Debug("Inside Setup");
+            Directories.Should().NotBeNull();
+            ExampleConfig.Should().Be("Value");
+        }
 
         [TestMethod]
         [TestName("Example Slick Base Test")]
@@ -53,6 +66,38 @@ namespace mstestexample
             Step("Check that foo!=bar", "String 'foo' is not equal to string 'bar'");
             "foo".Should().NotBe("bar");
             Step("All Done.");
+        }
+
+        [TestMethod]
+        [TestName("Wait.For timeout test")]
+        [TestAuthor("Jason Corbett")]
+        [TestedFeature("SlickTL")]
+        [TestCategory("slicktl")]
+        [Description("This test will check that the timeout on Wait.For happens correctly.")]
+        public void WaitForTimeoutError()
+        {
+            Step("Run a Wait.For that always returns false with a 10 second timeout.", "Timeout Exception occurs.");
+            Action act = () => Wait.For(() => false, "A method that always returns false", 10);
+
+            act.ShouldThrow<TimeoutError>().WithMessage("always returns false", ComparisonMode.Substring);
+        }
+
+        [TestMethod]
+        [TestName("Wait.For successful test")]
+        [TestAuthor("Jason Corbett")]
+        [TestedFeature("SlickTL")]
+        [TestCategory("slicktl")]
+        [Description("This test will check that Wait.For waits for a condition to be true.")]
+        public void WaitForSuccessful()
+        {
+            Step("Run a Wait.For that returns true if 3 seconds has passed by.", "Wait.For does not throw an exception, and takes a max of 5 seconds.");
+            DateTime start = DateTime.Now;
+            Action act = () => Wait.For(delegate() { return (DateTime.Now - start).TotalSeconds > 2; }, "A method that checks that more than 2 seconds has passed by", 10);
+
+            act.ShouldNotThrow<TimeoutError>();
+            (DateTime.Now - start).TotalSeconds.Should()
+                                  .BeLessThan(6,
+                                              "The difference between the start time and now should be less than 6 seconds.");
         }
     }
 }

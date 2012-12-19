@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,7 +24,10 @@ namespace SlickQA.DataCollector.Models
         public String OrderedTest { get; set; }
         public String Environment { get; set; }
 
+        [DefaultValue(false)]
+        public Boolean UseMsTestDuration { get; set; }
+
         [XmlIgnore]
-        public List<SlickInfo> Tests { get; set; }
+        public SlickInfo Tests { get; set; }
     }
 }
