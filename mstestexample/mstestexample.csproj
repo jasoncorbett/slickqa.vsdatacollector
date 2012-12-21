@@ -64,6 +64,7 @@
   <ItemGroup>
     <Compile Include="AbstractFoo.cs" />
     <Compile Include="BuildProvider.cs" />
+    <Compile Include="DoubleInitialize.cs" />
     <Compile Include="EmptyTest.cs" />
     <Compile Include="FooTest.cs" />
     <Compile Include="SlickTLTests.cs" />

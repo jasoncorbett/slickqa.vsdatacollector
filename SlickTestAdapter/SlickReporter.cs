@@ -164,6 +164,7 @@ namespace SlickQA.TestAdapter
             {
 
                 var slickResult = MainEnumerator.Current.SlickResult;
+                Logger.Log("Recording final result of '{0}' for test '{1}', slick result is for test '{2}'.", result.Outcome, result.DisplayName, slickResult.TestcaseReference.Name);
                 // TODO: Check DisplayName to make sure it matches the test name
 
                 if (slickResult.TestcaseReference != null)
@@ -427,6 +428,7 @@ namespace SlickQA.TestAdapter
             while (UpdateServiceEnumerator.MoveNext() && UpdateServiceEnumerator.Current.IsOrderedTest)
                 continue;
             Result result = UpdateServiceEnumerator.Current.SlickResult;
+            Logger.Log("Test {0} - Starting...", result.TestcaseReference.Name);
             result.Recorded = DateTime.UtcNow;
             result.Put();
         }
@@ -436,6 +438,7 @@ namespace SlickQA.TestAdapter
             try
             {
                 Result result = UpdateServiceEnumerator.Current.SlickResult;
+                Logger.Log("Test {1} - '{0}'.", outcome, result.TestcaseReference.Name);
                 result.RunStatus = RunStatus.FINISHED;
                 UnitTestOutcome unitOutcome = UnitTestOutcome.Unknown;
                 if (UnitTestOutcome.TryParse(outcome, out unitOutcome))

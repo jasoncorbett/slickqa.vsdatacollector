@@ -20,11 +20,14 @@ namespace SlickQA.SlickTL
         public static TestFinishedSignaler TestFinishedSignaler { get; set; }
         public static IEnumerable<IFrameworkInitializePart> FrameworkInitializerParts { get; set; }
         public static IEnumerable<IFrameworkCleanupPart> CleanupParts { get; set; }
+        public static bool InitializeHasBeenRun { get; set; }
 
         public static void Initialize(object testInstance, TestContext context)
         {
             if (Container == null)
             {
+                // first time only
+                InitializeHasBeenRun = false;
                 Container = new CompositionContainer(new ApplicationCatalog());
                 TestingContext = Container.GetExportedValue<ITestingContext>();
                 TestFinishedSignaler = Container.GetExportedValue<TestFinishedSignaler>();
@@ -33,34 +36,47 @@ namespace SlickQA.SlickTL
                 FrameworkInitializerParts = Container.GetExportedValues<IFrameworkInitializePart>();
                 CleanupParts = Container.GetExportedValues<IFrameworkCleanupPart>();
             }
-            // these 3 have to be handled individually first so that everything else can log
-            TestingContext.Initialize(testInstance, context);
-            Directories.initialize(testInstance, context);
-            LoggingManager.initialize(testInstance);
 
-            foreach (var initializer in FrameworkInitializerParts)
+            if(!InitializeHasBeenRun)
             {
-                Log.Debug("Initializing Framework Part '{0}'.", initializer.Name);
-                try
-                {
-                    initializer.initialize(testInstance);
-                }
-                catch (Exception e)
-                {
-                    Log.Warn("Error occurred while trying to initialize framework part '{0}': {1}", initializer.Name, e.Message);
-                    Log.WarnException("Error from initialize.", e);
-                    throw;
-                }
-            }
+                Log.Debug("Running initialize for test '{0}'.", context.TestName);
+                // these 3 have to be handled individually first so that everything else can log
+                TestingContext.Initialize(testInstance, context);
+                Directories.initialize(testInstance, context);
+                LoggingManager.initialize(testInstance);
 
-            Log.Debug("Performing composition on test instance.");
-            Container.ComposeParts(testInstance);
-            Log.Debug("Framework Initialization Complete.");
+                foreach (var initializer in FrameworkInitializerParts)
+                {
+                    Log.Debug("Initializing Framework Part '{0}'.", initializer.Name);
+                    try
+                    {
+                        initializer.initialize(testInstance);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Warn("Error occurred while trying to initialize framework part '{0}': {1}", initializer.Name,
+                                 e.Message);
+                        Log.WarnException("Error from initialize.", e);
+                        throw;
+                    }
+                }
+
+                Log.Debug("Performing composition on test instance.");
+                Container.ComposeParts(testInstance);
+                Log.Debug("Framework Initialization Complete.");
+                InitializeHasBeenRun = true;
+            }
+            else
+            {
+                Log.Debug("Initialize has already been run for test '{0}'.", context.TestName);
+            }
+            
         }
 
         public static void Cleanup(object testInstance, TestContext context)
         {
             Log.Debug("Performing Framework Cleanup");
+            InitializeHasBeenRun = false;
             foreach (var cleanupPart in CleanupParts)
             {
                 Log.Debug("Calling cleanup on framework part '{0}'.", cleanupPart.Name);
@@ -81,4 +97,5 @@ namespace SlickQA.SlickTL
 
 
     }
+
 }
