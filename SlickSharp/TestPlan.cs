@@ -22,6 +22,7 @@ namespace SlickQA.SlickSharp
 	[DataContract]
 	[CollectionApiPath("testplans")]
 	[ItemApiPath("", "Id", 0)]
+    [ItemQueryParameter("name", "Name")]
 	public sealed class TestPlan : JsonObject<TestPlan>, IJsonObject
 	{
 		[DataMember(Name = "createdBy")]

@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\ItemQueryParameterAttribute.cs" />
     <Compile Include="Build.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="Configuration.cs" />

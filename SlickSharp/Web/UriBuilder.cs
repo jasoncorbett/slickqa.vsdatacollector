@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Web;
 using System.Text.RegularExpressions;
 using SlickQA.SlickSharp.Attributes;
@@ -63,36 +64,66 @@ namespace SlickQA.SlickSharp.Web
 				apiList.OrderBy(a => ((ItemApiPathAttribute)a).Index).Select(b => (ItemApiPathAttribute)b).ToList();
 			foreach (ItemApiPathAttribute item in getApis)
 			{
-				PropertyInfo property = type.GetProperty(item.PropertyName);
-				object value;
-				if (property != null)
-				{
-					value = property.GetValue(searchObject, null);
-				}
-				else
-				{
-					FieldInfo field = type.GetField(item.PropertyName);
-					value = field.GetValue(searchObject);
-				}
+			    var value = GetValueByName(searchObject, type, item.PropertyName);
 
-				if (!IsNonDefaultValue(value))
-				{
-					continue;
-				}
-				if (String.IsNullOrWhiteSpace(item.ApiPath))
-				{
-					getPath = HttpUtility.UrlPathEncode(value.ToString());
-				}
-				else
-				{
-					getPath = item.ApiPath + "/" + HttpUtility.UrlPathEncode(value.ToString());
-				}
-				break;
+			    if (IsNonDefaultValue(value))
+			    {
+			        if (String.IsNullOrWhiteSpace(item.ApiPath))
+			        {
+			            getPath = HttpUtility.UrlPathEncode(value.ToString());
+			        }
+			        else
+			        {
+			            getPath = item.ApiPath + "/" + HttpUtility.UrlPathEncode(value.ToString());
+			        }
+			        break;
+			    }
 			}
-			return getPath;
+
+
+		    return getPath;
 		}
 
-		internal static bool IsNonDefaultValue(object propVal)
+	    private static object GetValueByName(object searchObject, Type type, string propertyName)
+	    {
+	        PropertyInfo property = type.GetProperty(propertyName);
+	        object value;
+	        if (property != null)
+	        {
+	            value = property.GetValue(searchObject, null);
+	        }
+	        else
+	        {
+	            FieldInfo field = type.GetField(propertyName);
+	            value = field.GetValue(searchObject);
+	        }
+	        return value;
+	    }
+
+        public static String GetFindPath(object searchObject)
+        {
+            string uri = null;
+			Type type = searchObject.GetType();
+            var queryApis = type.GetCustomAttributes(typeof(ItemQueryParameterAttribute), true).Cast<ItemQueryParameterAttribute>().ToList();
+            if (queryApis.Count > 0)
+            {
+                var queryParams = new StringBuilder("?");
+                foreach (var queryApi in queryApis)
+                {
+                    var value = GetValueByName(searchObject, type, queryApi.PropertyName);
+                    if (IsNonDefaultValue(value))
+                    {
+                        queryParams.AppendFormat("{0}={1}&", queryApi.QueryParamName,
+                                                    HttpUtility.UrlPathEncode(value.ToString()));
+                    }
+                }
+                queryParams.Replace("&", String.Empty, queryParams.Length - 1, 1);
+                uri = queryParams.ToString();
+            }
+            return uri;
+        }
+
+	    internal static bool IsNonDefaultValue(object propVal)
 		{
 			if (propVal != null)
 			{
@@ -119,6 +150,13 @@ namespace SlickQA.SlickSharp.Web
 
 			return FullUri(listPath + "/" + getPath);
 		}
+
+        public static Uri RetrieveFindUri<T>(JsonObject<T> searchObject) where T : class, IJsonObject
+        {
+            var listPath = GetListPath(searchObject);
+            var findPath = GetFindPath(searchObject);
+            return FullUri(listPath + findPath);
+        }
 
 		public static string GetListPath<T>(JsonObject<T> searchObject) where T : class, IJsonObject
 		{

@@ -71,25 +71,58 @@ namespace SlickQA.SlickSharp
 
 
 		[DataMember(Name = "recorded")]
-		public string RecordedString
+		public long RecordedTime
 		{
 			get
 			{
                 var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-                return Convert.ToInt64((Recorded.ToUniversalTime() - epoch).TotalMilliseconds).ToString(CultureInfo.InvariantCulture);
+			    return Convert.ToInt64((Recorded.ToUniversalTime() - epoch).TotalMilliseconds);
 			}
-			set { DateTime t;
-				Recorded = DateTime.TryParse(value, out t) ? t : DateTime.UtcNow;
+			set { 
+                DateTime t;
+				Recorded = DateTime.TryParse(value.ToString(CultureInfo.InvariantCulture), out t) ? t : DateTime.UtcNow;
 			}
 		}
 
 		public DateTime Recorded { get; set; }
 
+		[DataMember(Name = "started")]
+		public long StartedTime
+		{
+			get
+			{
+                var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+			    return Convert.ToInt64((Started.ToUniversalTime() - epoch).TotalMilliseconds);
+			}
+			set { 
+                DateTime t;
+				Started = DateTime.TryParse(value.ToString(CultureInfo.InvariantCulture), out t) ? t : DateTime.UtcNow;
+			}
+		}
+
+		public DateTime Started { get; set; }
+
+		[DataMember(Name = "finished")]
+		public long FinishedTime
+		{
+			get
+			{
+                var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+			    return Convert.ToInt64((Finished.ToUniversalTime() - epoch).TotalMilliseconds);
+			}
+			set { 
+                DateTime t;
+				Finished = DateTime.TryParse(value.ToString(CultureInfo.InvariantCulture), out t) ? t : DateTime.UtcNow;
+			}
+		}
+
+		public DateTime Finished { get; set; }
+
 		[DataMember(Name = "release")]
 		public ReleaseReference ReleaseReference;
 
 		[DataMember(Name = "runlength")]
-		public String RunLength;
+		public int? RunLength;
 
 		public RunStatus RunStatus { get; set; }
 

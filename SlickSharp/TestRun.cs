@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Globalization;
 using System.Runtime.Serialization;
 using SlickQA.SlickSharp.Attributes;
 using SlickQA.SlickSharp.ObjectReferences;
@@ -30,11 +31,22 @@ namespace SlickQA.SlickSharp
 		[DataMember(Name = "config")]
 		public ConfigurationReference ConfigurationReference;
 
-		[DataMember(Name = "dateCreated")]
-		public string Created;
+        [DataMember(Name = "dateCreated")]
+        public long CreatedTime
+        {
+            get
+            {
+                var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                return Convert.ToInt64((Created.ToUniversalTime() - epoch).TotalMilliseconds);
+            }
+            set
+            {
+                DateTime t;
+                Created = DateTime.TryParse(value.ToString(CultureInfo.InvariantCulture), out t) ? t : DateTime.UtcNow;
+            }
+        }
 
-		[IgnoreDataMember] // TODO: Turn this into a real data member once the server side testrun has the appropriate field
-		public bool Finished;
+        public DateTime Created { get; set; }
 
 		[DataMember(Name = "id")]
 		public String Id;
@@ -53,6 +65,53 @@ namespace SlickQA.SlickSharp
 
 		[DataMember(Name = "testplanId")]
 		public String TestPlanId;
+
+        [DataMember(Name = "runStarted")]
+        public long RunStartedTime
+        {
+            get
+            {
+                var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                return Convert.ToInt64((RunStarted.ToUniversalTime() - epoch).TotalMilliseconds);
+            }
+            set
+            {
+                DateTime t;
+                RunStarted = DateTime.TryParse(value.ToString(CultureInfo.InvariantCulture), out t) ? t : DateTime.UtcNow;
+            }
+        }
+
+        public DateTime RunStarted { get; set; }
+
+        [DataMember(Name = "runFinished")]
+        public long RunFinishedTime
+        {
+            get
+            {
+                var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                return Convert.ToInt64((RunFinished.ToUniversalTime() - epoch).TotalMilliseconds);
+            }
+            set
+            {
+                DateTime t;
+                RunFinished = DateTime.TryParse(value.ToString(CultureInfo.InvariantCulture), out t) ? t : DateTime.UtcNow;
+            }
+        }
+
+        public DateTime RunFinished { get; set; }
+
+        public RunStatus State { get; set; }
+
+		[DataMember(Name = "state")]
+		public String StateString
+		{
+			get { return State.ToString(); }
+			set
+			{
+				RunStatus s;
+				State = Enum.TryParse(value, true, out s) ? s : RunStatus.TO_BE_RUN;
+			}
+		}
 
 		public bool Equals(TestRun other)
 		{

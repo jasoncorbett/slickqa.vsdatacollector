@@ -69,6 +69,52 @@ namespace SlickQA.SlickSharp
 			throw ex;
 		}
 
+        public void FindOne(bool createIfNotFound = false, int attempts = 0)
+        {
+            Uri uri = UriBuilder.RetrieveFindUri(this);
+            IHttpWebRequest httpWebRequest = RequestFactory.Create(uri);
+            httpWebRequest.Method = WebRequestMethods.Http.Get;
+
+            // at times we don't get a good response back from slick when the GET should succeed
+            //  because of this we try 3 times, just to be sure
+            Exception ex = null;
+            while (attempts <= 3)
+            {
+                try
+                {
+                    List<T> temp = StreamConverter<T>.ReadListResponse(httpWebRequest);
+                    if (temp.Count > 0)
+                    {
+                        ApplyChanges(temp[0]);
+                        return;
+                    }
+                    else
+                    {
+                        Post();
+                    }
+                }
+                catch (NotFoundException)
+                {
+                    if (createIfNotFound)
+                    {
+                        Post();
+                    }
+                    return;
+                }
+                catch (RetryException)
+                {
+                    FindOne(createIfNotFound, attempts);
+                }
+                catch (Exception e)
+                {
+                    ex = e;
+                    attempts++;
+                }
+            }
+            Debug.Assert(ex != null, "ex != null");
+            throw ex;
+        }
+
 		public static List<T> GetList()
 		{
 			Uri uri = UriBuilder.FullUri(UriBuilder.GetListPath<T>(null));
@@ -171,7 +217,7 @@ namespace SlickQA.SlickSharp
 			}
 		}
 
-		private void ApplyChanges(T temp)
+		public void ApplyChanges(T temp)
 		{
 			Type type = typeof(T);
 
