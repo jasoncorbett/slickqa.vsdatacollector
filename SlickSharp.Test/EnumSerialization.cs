@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SlickQA.SlickSharp.Logging;
@@ -34,10 +33,9 @@ namespace SlickQA.SlickSharp.Test
 		[TestMethod]
 		public void LogLevelEnumTranslatesToStringCorrectly()
 		{
-			var l = new LogEntry();
-			l.Level = LogLevel.ERROR;
+			var l = new LogEntry {Level = LogLevel.ERROR};
 
-			var buff = StreamConverter<LogEntry>.ConvertToByteBuffer(l);
+		    var buff = StreamConverter<LogEntry>.ConvertToByteBuffer(l);
 
 			var jsonString = Encoding.UTF8.GetString(buff);
 

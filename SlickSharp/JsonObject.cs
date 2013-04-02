@@ -24,12 +24,15 @@ using UriBuilder = SlickQA.SlickSharp.Web.UriBuilder;
 
 namespace SlickQA.SlickSharp
 {
-	[DataContract]
+    using JetBrains.Annotations;
+
+    [DataContract]
 	public abstract class JsonObject<T> where T : class, IJsonObject
 	{
 		private const int MAX_ATTEMPTS = 3;
 
 		//TODO: Test with base Exception thrown
+        [PublicAPI]
 		public void Get(bool createIfNotFound = false, int attempts = 0)
 		{
 			Uri uri = UriBuilder.RetrieveGetUri(this);
@@ -69,6 +72,7 @@ namespace SlickQA.SlickSharp
 			throw ex;
 		}
 
+        [PublicAPI]
         public void FindOne(bool createIfNotFound = false, int attempts = 0)
         {
             Uri uri = UriBuilder.RetrieveFindUri(this);
@@ -88,10 +92,7 @@ namespace SlickQA.SlickSharp
                         ApplyChanges(temp[0]);
                         return;
                     }
-                    else
-                    {
-                        Post();
-                    }
+                    Post();
                 }
                 catch (NotFoundException)
                 {
@@ -115,6 +116,7 @@ namespace SlickQA.SlickSharp
             throw ex;
         }
 
+        [PublicAPI]
 		public static List<T> GetList()
 		{
 			Uri uri = UriBuilder.FullUri(UriBuilder.GetListPath<T>(null));
@@ -122,6 +124,7 @@ namespace SlickQA.SlickSharp
 			return RetrieiveList(uri);
 		}
 
+        [PublicAPI]
 		public static List<T> GetList(string relUrl)
 		{
 			try
@@ -156,6 +159,7 @@ namespace SlickQA.SlickSharp
 			}
 		}
 
+        [PublicAPI]
 		public void Post()
 		{
 			Uri uri = UriBuilder.FullUri(UriBuilder.GetListPath(this));
@@ -187,6 +191,7 @@ namespace SlickQA.SlickSharp
 			}
 		}
 
+        [PublicAPI]
 		public void Put()
 		{
 			Uri uri = UriBuilder.RetrieveGetUri(this);
@@ -217,7 +222,7 @@ namespace SlickQA.SlickSharp
 			}
 		}
 
-		public void ApplyChanges(T temp)
+	    protected void ApplyChanges(T temp)
 		{
 			Type type = typeof(T);
 
@@ -230,6 +235,7 @@ namespace SlickQA.SlickSharp
 			}
 		}
 
+        [PublicAPI]
 		public void Delete()
 		{
 			throw new NotImplementedException(

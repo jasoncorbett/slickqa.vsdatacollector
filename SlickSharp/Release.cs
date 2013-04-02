@@ -21,7 +21,9 @@ using UriBuilder = SlickQA.SlickSharp.Web.UriBuilder;
 
 namespace SlickQA.SlickSharp
 {
-	[DataContract]
+    using JetBrains.Annotations;
+
+    [DataContract]
 	[CollectionApiPath("projects/{ProjectId}/releases")]
 	[ItemApiPath("", "Id", 0)]
 	[ItemApiPath("byname", "Name", 1)]
@@ -50,6 +52,7 @@ namespace SlickQA.SlickSharp
 		[IgnoreDataMember]
 		public string ProjectId { get; set; }
 
+        [PublicAPI]
 		public void SetAsDefault()
 		{
 			Uri uri = UriBuilder.FullUri(UriBuilder.NormalizePath(this, "projects/{ProjectId}/setdefaultrelease/{Id}"));

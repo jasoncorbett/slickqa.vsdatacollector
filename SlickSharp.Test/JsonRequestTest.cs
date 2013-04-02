@@ -18,43 +18,46 @@ using SlickQA.SlickSharp.Web;
 
 namespace SlickQA.SlickSharp.Test
 {
-	[TestClass]
-	public sealed class JsonRequestTest
-	{
-		[TestMethod]
-		public void Uses_correct_content_type()
-		{
-			var req = new DummyWebRequest();
+    [TestClass]
+    public sealed class JsonRequestTest
+    {
+        [TestMethod]
+        public void Uses_correct_content_type()
+        {
+            // ReSharper disable ObjectCreationAsStatement
+            var req = new DummyWebRequest();
 
-			new JsonRequest(req);
 
-			Assert.AreEqual("application/json", req.ContentType);
-		}
+            new JsonRequest(req);
 
-		#region Nested type: DummyWebRequest
+            Assert.AreEqual("application/json", req.ContentType);
+            // ReSharper restore ObjectCreationAsStatement
+        }
 
-		private sealed class DummyWebRequest : WebRequest
-		{
-			public override string ContentType { get; set; }
-		}
+        #region Nested type: DummyWebRequest
 
-		#endregion
+        private sealed class DummyWebRequest : WebRequest
+        {
+            public override string ContentType { get; set; }
+        }
 
-		//[TestMethod]
-		//[ExpectedException(typeof(NotFoundException))]
-		//public void Throws_not_found_exception_for_404_error_code()
-		//{
-		//    var mockRequest = new Mock<WebRequest>();
-		//    var mockResponse = new Mock<IHttpWebResponse>();
+        #endregion
 
-		//    mockResponse.SetupGet(r => r.StatusCode).Returns(HttpStatusCode.NotFound);
-		//    mockRequest.Setup(request => request.GetResponse()).Throws(new WebException("Not Found", null,
-		//                                                                                WebExceptionStatus.ProtocolError,
-		//                                                                                mockResponse.Object));
+        //[TestMethod]
+        //[ExpectedException(typeof(NotFoundException))]
+        //public void Throws_not_found_exception_for_404_error_code()
+        //{
+        //    var mockRequest = new Mock<WebRequest>();
+        //    var mockResponse = new Mock<IHttpWebResponse>();
 
-		//    var jsonReq = new JsonRequest(mockRequest.Object);
+        //    mockResponse.SetupGet(r => r.StatusCode).Returns(HttpStatusCode.NotFound);
+        //    mockRequest.Setup(request => request.GetResponse()).Throws(new WebException("Not Found", null,
+        //                                                                                WebExceptionStatus.ProtocolError,
+        //                                                                                mockResponse.Object));
 
-		//    jsonReq.GetResponse();
-		//}
-	}
+        //    var jsonReq = new JsonRequest(mockRequest.Object);
+
+        //    jsonReq.GetResponse();
+        //}
+    }
 }

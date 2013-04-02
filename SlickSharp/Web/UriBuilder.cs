@@ -100,7 +100,7 @@ namespace SlickQA.SlickSharp.Web
 	        return value;
 	    }
 
-        public static String GetFindPath(object searchObject)
+	    private static String GetFindPath(object searchObject)
         {
             string uri = null;
 			Type type = searchObject.GetType();

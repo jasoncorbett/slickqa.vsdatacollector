@@ -16,8 +16,12 @@ using System.Collections.Generic;
 
 namespace SlickQA.SlickSharp.Queries
 {
+    using JetBrains.Annotations;
+
+    [PublicAPI]
 	public static class TestPlanQuery
 	{
+        [PublicAPI]
 		public static List<TestPlan> GetTestPlans(this Project project)
 		{
 			try

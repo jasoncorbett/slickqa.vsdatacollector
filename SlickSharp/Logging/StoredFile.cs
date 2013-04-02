@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization;
@@ -25,7 +24,9 @@ using UriBuilder = SlickQA.SlickSharp.Web.UriBuilder;
 
 namespace SlickQA.SlickSharp.Logging
 {
-	[DataContract]
+    using JetBrains.Annotations;
+
+    [DataContract]
 	[CollectionApiPath("files")]
 	[ItemApiPath("", "Id", 0)]
 	public sealed class StoredFile : JsonObject<StoredFile>, IJsonObject
@@ -51,6 +52,7 @@ namespace SlickQA.SlickSharp.Logging
 	    [DataMember(Name = "chunkSize")] 
         public int ChunkSize;
 
+        [PublicAPI]
         public void PostFile(String filepath)
         {
             if (File.Exists(filepath))
@@ -60,7 +62,7 @@ namespace SlickQA.SlickSharp.Logging
                 using (var stream = File.OpenRead(filepath))
                 {
                     var digest = md5.ComputeHash(stream);
-                    StringBuilder sBuilder = new StringBuilder();
+                    var sBuilder = new StringBuilder();
 
                     // Loop through each byte of the hashed data  
                     // and format each one as a hexadecimal string. 
@@ -69,7 +71,7 @@ namespace SlickQA.SlickSharp.Logging
                         sBuilder.Append(digest[i].ToString("x2"));
                     }
                     Md5 = sBuilder.ToString();
-                    this.Put();
+                    Put();
                     // reset the stream to the beggining.
                 }
                 using (var stream = File.OpenRead(filepath))
@@ -103,6 +105,7 @@ namespace SlickQA.SlickSharp.Logging
             }
         }
 
+        [PublicAPI]
 		public void PostContent(byte[] file)
 		{
 			Uri uri = UriBuilder.FullUri(UriBuilder.NormalizePath(this, "files/{Id}/content"));
@@ -119,7 +122,6 @@ namespace SlickQA.SlickSharp.Logging
 				using (Stream stream = response.GetResponseStream())
 				{
 					StreamConverter<StoredFile>.ReadFromStream(stream);
-					return;
 				}
 			}
 		}
