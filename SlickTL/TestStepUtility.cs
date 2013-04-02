@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace SlickQA.SlickTL
 {
@@ -42,7 +37,7 @@ namespace SlickQA.SlickTL
             if (! File.Exists(stepFilePath))
             {
                 var steplist = new List<TestStep>(1);
-                steplist.Add(new TestStep() {StepName = step, ExpectedResult = expectedResult});
+                steplist.Add(new TestStep {StepName = step, ExpectedResult = expectedResult});
                 var serializer = new XmlSerializer(typeof (List<TestStep>), new XmlRootAttribute("Steps"));
                 using (var stepFileStream = new FileStream(stepFilePath, FileMode.CreateNew))
                 {
@@ -53,14 +48,14 @@ namespace SlickQA.SlickTL
             else
             {
                 var serializer = new XmlSerializer(typeof (List<TestStep>), new XmlRootAttribute("Steps"));
-                List<TestStep> stepList = null;
+                List<TestStep> stepList;
                 using (var stepFileStream = new FileStream(stepFilePath, FileMode.Open))
                 {
                     stepList = (List<TestStep>) serializer.Deserialize(stepFileStream);
                 }
                 if(stepList == null)
                     stepList = new List<TestStep>();
-                stepList.Add(new TestStep() {StepName = step, ExpectedResult = expectedResult});
+                stepList.Add(new TestStep {StepName = step, ExpectedResult = expectedResult});
                 using (var stepFileStream = new FileStream(stepFilePath, FileMode.Truncate))
                 {
                     serializer.Serialize(stepFileStream, stepList);

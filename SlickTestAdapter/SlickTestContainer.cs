@@ -60,17 +60,14 @@ namespace SlickQA.TestAdapter
 
 		private DateTime GetTimeStamp()
 		{
-			if (!string.IsNullOrWhiteSpace(Source) && File.Exists(Source))
+		    if (!string.IsNullOrWhiteSpace(Source) && File.Exists(Source))
 			{
 				return File.GetLastWriteTime(Source);
 			}
-			else
-			{
-				return DateTime.MinValue;
-			}
+		    return DateTime.MinValue;
 		}
 
-		private SlickTestContainer(SlickTestContainer copy)
+	    private SlickTestContainer(SlickTestContainer copy)
 			:this(copy.Discoverer, copy.Source, copy.ExecutorUri)
 		{
 			_timeStamp = copy._timeStamp;

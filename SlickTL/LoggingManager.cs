@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using NLog;
 using NLog.Config;
 using NLog.Targets;
@@ -37,8 +37,11 @@ namespace SlickQA.SlickTL
             xmlLogFile.Footer = "</LogEntries>";
             //xmlLogFile.Footer = "\t</Entries>" + Environment.NewLine + "</LogEntries>";
 
-            var consoleLog = new ConsoleTarget();
-            consoleLog.Layout = "${date:format=hh\\:mm\\:ss.FFF tt}|${level:uppercase=true}|${logger}]: ${message}${onexception:inner=\r\n\t${exception}\r\n\t${stacktrace:format=Raw}}";
+            var consoleLog = new ConsoleTarget
+            {
+                Layout =
+                    "${date:format=hh\\:mm\\:ss.FFF tt}|${level:uppercase=true}|${logger}]: ${message}${onexception:inner=\r\n\t${exception}\r\n\t${stacktrace:format=Raw}}"
+            };
 
             // Step 4. Define rules
             var rule1 = new LoggingRule("*", LogLevel.Debug, xmlLogFile);
@@ -57,8 +60,11 @@ namespace SlickQA.SlickTL
 
             // Make sure console logging continues
             var config = new LoggingConfiguration();
-            var consoleLog = new ConsoleTarget();
-            consoleLog.Layout = "${date:format=hh\\:mm\\:ss.FFF tt}|${level:uppercase=true}|${logger}]: ${message}${onexception:inner=\r\n\t${exception}\r\n\t${stacktrace:format=Raw}}";
+            var consoleLog = new ConsoleTarget
+            {
+                Layout =
+                    "${date:format=hh\\:mm\\:ss.FFF tt}|${level:uppercase=true}|${logger}]: ${message}${onexception:inner=\r\n\t${exception}\r\n\t${stacktrace:format=Raw}}"
+            };
             config.LoggingRules.Clear();
             config.LoggingRules.Add(new LoggingRule("*", LogLevel.Debug, consoleLog));
             LogManager.Configuration = config;

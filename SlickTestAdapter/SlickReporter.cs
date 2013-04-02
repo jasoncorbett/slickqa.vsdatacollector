@@ -2,19 +2,13 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.ServiceModel;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SlickQA.DataCollector.Models;
 using SlickQA.SlickSharp;
 using SlickQA.SlickSharp.Logging;
-using SlickQA.SlickSharp.ObjectReferences;
-using SlickQA.SlickSharp.Utility;
 using SlickQA.SlickSharp.Web;
 using SlickQA.SlickTL;
 
@@ -67,7 +61,7 @@ namespace SlickQA.TestAdapter
             InitializeTestplan();
             InitializeTestrun();
 
-            Host = new ServiceHost(this, new Uri[] { new Uri("net.pipe://localhost") });
+            Host = new ServiceHost(this, new[] { new Uri("net.pipe://localhost") });
             Host.AddServiceEndpoint(typeof (ISlickUpdateService), new NetNamedPipeBinding(),
                                     typeof (ISlickUpdateService).FullName);
             Host.Open();
@@ -83,7 +77,6 @@ namespace SlickQA.TestAdapter
                 var testinfo = MainEnumerator.Current;
                 if ((!testinfo.IsOrderedTest) && (!testinfo.DoNotReport))
                 {
-                    Result result = new Result();
                     Component component = null;
                     if (!String.IsNullOrWhiteSpace(testinfo.Component))
                     {
@@ -93,7 +86,7 @@ namespace SlickQA.TestAdapter
                         }
                         else
                         {
-                            component = new Component()
+                            component = new Component
                                             {
                                                 Name = testinfo.Component,
                                                 Code = testinfo.Component,
@@ -106,7 +99,7 @@ namespace SlickQA.TestAdapter
                     Testcase test = Testcase.GetTestCaseByAutomationKey(testinfo.AutomationKey);
                     if (test == null)
                     {
-                        test = new Testcase()
+                        test = new Testcase
                                    {
                                        AutomationKey = testinfo.AutomationKey,
                                        Attributes = testinfo.Attributes,
@@ -136,21 +129,21 @@ namespace SlickQA.TestAdapter
                         test.Author = testinfo.Author;
                         test.Put();
                     }
-                    result = new Result()
-                                 {
-                                     TestcaseReference = test,
-                                     TestRunReference = Testrun,
-                                     ProjectReference = Project,
-                                     ComponentReference = component,
-                                     ReleaseReference = Release,
-                                     BuildReference = Build,
-                                     Status =
-                                         ResultStatus.NO_RESULT,
-                                     Hostname = System.Environment.MachineName,
-                                     RunStatus = RunStatus.TO_BE_RUN,
-                                     ConfigurationReference = Environment,
-                                     Recorded = Started,
-                                 };
+                    var result = new Result
+                    {
+                        TestcaseReference = test,
+                        TestRunReference = Testrun,
+                        ProjectReference = Project,
+                        ComponentReference = component,
+                        ReleaseReference = Release,
+                        BuildReference = Build,
+                        Status =
+                            ResultStatus.NO_RESULT,
+                        Hostname = System.Environment.MachineName,
+                        RunStatus = RunStatus.TO_BE_RUN,
+                        ConfigurationReference = Environment,
+                        Recorded = Started,
+                    };
                     result.Post();
                     testinfo.SlickResult = result;
                 }
@@ -233,7 +226,7 @@ namespace SlickQA.TestAdapter
 
                 if (!PostedFiles.Contains(filepath))
                 {
-                    var slickFile = new StoredFile()
+                    var slickFile = new StoredFile
                                         {
                                             FileName = Path.GetFileName(filepath),
                                             Mimetype = MIMEAssistant.GetMIMEType(filepath),
@@ -251,17 +244,17 @@ namespace SlickQA.TestAdapter
                     {
                         Testcase test = slickResult.TestcaseReference;
                         test.Get();
-                        var serializer = new XmlSerializer(typeof (List<SlickQA.SlickTL.TestStep>),
+                        var serializer = new XmlSerializer(typeof (List<SlickTL.TestStep>),
                                                            new XmlRootAttribute("Steps"));
                         using (var stepFileStream = new FileStream(filepath, FileMode.Open))
                         {
                             try
                             {
-                                var steps = (List<SlickQA.SlickTL.TestStep>) serializer.Deserialize(stepFileStream);
-                                test.Steps = new List<SlickQA.SlickSharp.TestStep>();
+                                var steps = (List<SlickTL.TestStep>) serializer.Deserialize(stepFileStream);
+                                test.Steps = new List<SlickSharp.TestStep>();
                                 foreach (var step in steps)
                                 {
-                                    test.Steps.Add(new SlickQA.SlickSharp.TestStep()
+                                    test.Steps.Add(new SlickSharp.TestStep
                                                        {
                                                            Name = step.StepName,
                                                            ExpectedResult =
@@ -287,14 +280,16 @@ namespace SlickQA.TestAdapter
 
         private void addToResultLog(Result result, String message, params object[] parms)
         {
-            var logentries = new List<LogEntry>();
-            logentries.Add(new LogEntry()
-                               {
-                                   EntryTime = (DateTime.Now.ToString(new CultureInfo( "en-US", false ).DateTimeFormat.RFC1123Pattern)),
-                                   Level = LogLevel.INFO,
-                                   LoggerName = "SlickReporter",
-                                   Message = String.Format(message, parms)
-                               });
+            var logentries = new List<LogEntry>
+            {
+                new LogEntry
+                {
+                    EntryTime = (DateTime.Now.ToString(new CultureInfo("en-US", false).DateTimeFormat.RFC1123Pattern)),
+                    Level = LogLevel.INFO,
+                    LoggerName = "SlickReporter",
+                    Message = String.Format(message, parms)
+                }
+            };
             result.AddToLog(logentries);
         }
 
@@ -311,7 +306,7 @@ namespace SlickQA.TestAdapter
 
         private void InitializeTestrun()
         {
-            Testrun = new TestRun()
+            Testrun = new TestRun
                           {
                               ProjectReference = Project,
                               ReleaseReference = Release,
@@ -326,7 +321,7 @@ namespace SlickQA.TestAdapter
 
         private void InitializeTestplan()
         {
-            Testplan = new TestPlan()
+            Testplan = new TestPlan
                            {
                                ProjectReference = Project,
                                Name = SlickRunInfo.TestPlan.Name,
@@ -371,11 +366,11 @@ namespace SlickQA.TestAdapter
                 }
                 if (String.IsNullOrWhiteSpace(SlickRunInfo.Build))
                 {
-                    Build = new Build() {ProjectId = Project.Id, ReleaseId = Release.Id, Id = Release.DefaultBuildId};
+                    Build = new Build {ProjectId = Project.Id, ReleaseId = Release.Id, Id = Release.DefaultBuildId};
                 }
                 else
                 {
-                    Build = new Build() {ProjectId = Project.Id, ReleaseId = Release.Id, Name = SlickRunInfo.Build};
+                    Build = new Build {ProjectId = Project.Id, ReleaseId = Release.Id, Name = SlickRunInfo.Build};
                 }
                 Build.Get(CreateIfNecessaryMode, 3);
             }
@@ -435,7 +430,7 @@ namespace SlickQA.TestAdapter
                 var releaseName = SlickRunInfo.ReleaseProvider.Method.Invoke(null, null) as String;
                 Directory.SetCurrentDirectory(current);
 
-                var release = new Release()
+                var release = new Release
                                   {
                                       Name = releaseName,
                                       ProjectId = Project.Id,
@@ -454,7 +449,7 @@ namespace SlickQA.TestAdapter
 
                 if (!String.IsNullOrWhiteSpace(SlickRunInfo.Release))
                 {
-                    Release = new Release()
+                    Release = new Release
                                   {
                                       Name = SlickRunInfo.Release,
                                       ProjectId = Project.Id,
@@ -462,7 +457,7 @@ namespace SlickQA.TestAdapter
                 }
                 else
                 {
-                    Release = new Release()
+                    Release = new Release
                                   {
                                       ProjectId = Project.Id,
                                       Id = Project.DefaultRelease,
@@ -481,7 +476,7 @@ namespace SlickQA.TestAdapter
             Environment = Configuration.GetEnvironmentConfiguration(SlickRunInfo.Environment);
             if(Environment == null)
             {
-                Environment = new Configuration()
+                Environment = new Configuration
                                   {
                                       Name = SlickRunInfo.Environment,
                                       ConfigurationType = "ENVIRONMENT",
@@ -537,8 +532,8 @@ namespace SlickQA.TestAdapter
                     Result result = UpdateServiceEnumerator.Current.SlickResult;
                     Logger.Log("Test {1} - '{0}'.", outcome, result.TestcaseReference.Name);
                     result.RunStatus = RunStatus.FINISHED;
-                    UnitTestOutcome unitOutcome = UnitTestOutcome.Unknown;
-                    if (UnitTestOutcome.TryParse(outcome, out unitOutcome))
+                    UnitTestOutcome unitOutcome;
+                    if (Enum.TryParse(outcome, out unitOutcome))
                     {
                         result.Status = unitOutcome.ConvertUnitTestOutcomeToSlickResultStatus();
 

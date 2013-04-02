@@ -36,8 +36,7 @@ namespace mstestexample
         [Description("This test should always pass.")]
         public void ShouldPass()
         {
-            var value = "Assertions are easy";
-            value.Should().StartWith("Assertions").And.EndWith("easy");
+            "Assertions are easy".Should().StartWith("Assertions").And.EndWith("easy");
         }
 
         [TestMethod]

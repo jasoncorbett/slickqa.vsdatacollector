@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.IO;
-using System.Linq;
-using System.Text;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NLog;
 
@@ -24,7 +21,7 @@ namespace SlickQA.SlickTL
         [TestInitialize]
         public void initializeFramework()
         {
-            TestLog = LogManager.GetLogger("testcase." + this.GetType().Name);
+            TestLog = LogManager.GetLogger("testcase." + GetType().Name);
             FrameworkUtility.Initialize(this, TestContext);
             StepCounter = 0;
         }

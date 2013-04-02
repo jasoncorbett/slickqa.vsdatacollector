@@ -10,7 +10,7 @@ namespace SlickEventListeners
 	[Export(typeof(ISolutionEventsListener))]
     public class SolutionEventsListener : IVsSolutionEvents, ISolutionEventsListener
     {
-		private IVsSolution _solution;
+		private readonly IVsSolution _solution;
 		private uint _cookie = VSConstants.VSCOOKIE_NIL;
 
 		[ImportingConstructor]

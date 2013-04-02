@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using Microsoft.VisualStudio.TestTools.UITesting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NLog;
@@ -36,7 +33,7 @@ namespace SlickQA.SlickTL
         public void InitializeFramework()
         {
             AlwaysTakeScreenshot = true;
-            TestLog = LogManager.GetLogger("testcase." + this.GetType().Name);
+            TestLog = LogManager.GetLogger("testcase." + GetType().Name);
             FrameworkUtility.Initialize(this, TestContext);
             StepCounter = 0;
         }

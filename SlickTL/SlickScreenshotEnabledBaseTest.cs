@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NLog;
@@ -35,7 +32,7 @@ namespace SlickQA.SlickTL
             if (format == null)
                 format = ImageFormat.Png;
 
-            Bitmap bmp = null;
+            Bitmap bmp;
             try
             {
                 Rectangle totalSize = Rectangle.Empty;
@@ -43,7 +40,7 @@ namespace SlickQA.SlickTL
                 foreach (Screen s in Screen.AllScreens)
                     totalSize = Rectangle.Union(totalSize, s.Bounds);
 
-                bmp = new Bitmap(totalSize.Width, totalSize.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                bmp = new Bitmap(totalSize.Width, totalSize.Height, PixelFormat.Format32bppArgb);
 
                 Graphics screenShotGraphics = Graphics.FromImage(bmp);
 
@@ -60,28 +57,24 @@ namespace SlickQA.SlickTL
                 return;
             }
 
-            if (bmp != null)
+            if(!filename.Contains(Path.DirectorySeparatorChar))
             {
-                if(!filename.Contains(Path.DirectorySeparatorChar))
-                {
-                    filename = Path.Combine(directories.CurrentTestOutputDirectory, filename);
-                }
-                if(string.IsNullOrWhiteSpace(Path.GetExtension(filename)))
-                {
-                    filename = String.Format("{0}.{1}", filename, format.ToString().ToLower());
-                }
-                try
-                {
-                    bmp.Save(filename, format);
-                    context.AddResultFile(filename);
-                }
-                catch (Exception e)
-                {
-                    testLog.Error("Unable to take screenshot '{0}' with format '{1}' because of exception '{2}': {3}", filename, format, e.GetType().FullName, e.Message);
-                    testLog.ErrorException("Error", e);
-                }
+                filename = Path.Combine(directories.CurrentTestOutputDirectory, filename);
             }
-            
+            if(string.IsNullOrWhiteSpace(Path.GetExtension(filename)))
+            {
+                filename = String.Format("{0}.{1}", filename, format.ToString().ToLower());
+            }
+            try
+            {
+                bmp.Save(filename, format);
+                context.AddResultFile(filename);
+            }
+            catch (Exception e)
+            {
+                testLog.Error("Unable to take screenshot '{0}' with format '{1}' because of exception '{2}': {3}", filename, format, e.GetType().FullName, e.Message);
+                testLog.ErrorException("Error", e);
+            }
         }
 
         public virtual void AttachScreenshotToResult(string filename, ImageFormat format = null)
