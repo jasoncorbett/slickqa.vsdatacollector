@@ -1,8 +1,0 @@
-;; This buffer is for notes you don't want to save, and for Lisp evaluation.
-;; If you want to create a file, visit that file with C-x C-f,
-;; then enter the text in that file's own buffer.
-
-TODO: Changing Host without changing site path causes validation error even if the resulting url is correct
-TODO: Crashes when after clicking Get Projects with a server with no projects
-TODO: Changing URL disables Get Projects button but leaves drop downs enabled
-
