@@ -35,6 +35,9 @@ namespace SlickQA.SlickSharp
 		[DataMember(Name = "name")]
 		public String Name;
 
+	    [DataMember(Name = "description")] 
+        public String Description;
+
 		[IgnoreDataMember]
 		public string ProjectId { get; set; }
 
