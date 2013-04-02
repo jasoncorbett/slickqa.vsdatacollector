@@ -16,6 +16,9 @@ using System;
 
 namespace SlickQA.SlickTL
 {
+    using JetBrains.Annotations;
+
+    [PublicAPI]
 	[AttributeUsage(AttributeTargets.Method)]
 	public sealed class TestCaseIdAttribute : Attribute, IStringValueAttribute
 	{

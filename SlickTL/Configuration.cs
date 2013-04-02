@@ -4,17 +4,21 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using NLog;
 using SlickQA.SlickTL.Config;
 
 namespace SlickQA.SlickTL
 {
+    using JetBrains.Annotations;
+
     public interface ITestConfiguration : IFrameworkInitializePart
     {
         string ConfigurationValue(string key, string defaultValue = null);
     }
 
+
+    [MeansImplicitUse(ImplicitUseKindFlags.Assign)]
     public class TestConfigurationAttribute : Attribute
     {
         public string ConfigurationName { get; set; }
@@ -87,7 +91,7 @@ namespace SlickQA.SlickTL
 
                 // next load the dll configuration (if necessary)
                 var dllName = DllNameFromObjectInstance(instance);
-                IConfigSource dllConfig = null;
+                IConfigSource dllConfig;
 
                 if (DllConfigurations.ContainsKey(dllName))
                 {
@@ -103,7 +107,7 @@ namespace SlickQA.SlickTL
 
                 // next load the test configuration source (if necessary)
                 var testType = instance.GetType();
-                IConfigSource testConfig = null;
+                IConfigSource testConfig;
 
                 if (TestConfigurations.ContainsKey(testType))
                 {
@@ -122,8 +126,7 @@ namespace SlickQA.SlickTL
 
                 // merge all the sources
                 var currentSource = new IniConfigSource();
-                foreach (var source in
-                         new IConfigSource[] {DefaultConfiguration, dllConfig, testConfig, RuntimeConfiguration})
+                foreach (var source in new[] {DefaultConfiguration, dllConfig, testConfig, RuntimeConfiguration})
                 {
                     if (source != null)
                         currentSource.Merge(source);
@@ -179,35 +182,25 @@ namespace SlickQA.SlickTL
                     Log.Info("Using Test Configuration '{0}'=>'{1}'", key, value);
                     return value;
                 }
-                else if(defaultValue != null)
+                if(defaultValue != null)
                 {
                     Log.Info("Test Configuration not found, using default value '{0}'=>'{1}'.", key, defaultValue);
                     return defaultValue;
                 }
-                else
-                {
-                    var message = String.Format("No Test Configuration found for '{0}'!", key);
-                    Log.Error(message);
-                    throw new KeyNotFoundException(message);
-                }
+                var message = String.Format("No Test Configuration found for '{0}'!", key);
+                Log.Error(message);
+                throw new KeyNotFoundException(message);
             }
-            else
+            // This shouldn't happen, but just in case we don't want to blow up without debugging information.
+            Log.Error("Unable to check for configuration '{0}', CurrentConfiguration is null!", key);
+
+            // I don't want to check for empty / or whitespace.  I specifically want to just check for null.
+            if (defaultValue != null)
             {
-                // This shouldn't happen, but just in case we don't want to blow up without debugging information.
-                Log.Error("Unable to check for configuration '{0}', CurrentConfiguration is null!", key);
-
-                // I don't want to check for empty / or whitespace.  I specifically want to just check for null.
-                if (defaultValue != null)
-                {
-                    Log.Info("Even though current configuration is null, using default value '{1}' for key '{0}'.", key, defaultValue);
-                    return defaultValue;
-                }
-                else
-                {
-                    throw new KeyNotFoundException(String.Format("Unable to find Test Configuration key '{0}', as current configuration is null!", key));
-                }
-
+                Log.Info("Even though current configuration is null, using default value '{1}' for key '{0}'.", key, defaultValue);
+                return defaultValue;
             }
+            throw new KeyNotFoundException(String.Format("Unable to find Test Configuration key '{0}', as current configuration is null!", key));
         }
 
         public static string DllNameFromObjectInstance(object instance)
@@ -239,8 +232,7 @@ namespace SlickQA.SlickTL
         public IConfigSource LoadDllConfiguration(object instance)
         {
             IConfigSource retval = null;
-            var filename = Path.Combine(Directories.ConfigurationDirectory,
-                                        TestConfiguration.DllNameFromObjectInstance(instance) + ".ini");
+            var filename = Path.Combine(Directories.ConfigurationDirectory, DllNameFromObjectInstance(instance) + ".ini");
             if(File.Exists(filename))
                 retval = new IniConfigSource(filename);
             return retval;

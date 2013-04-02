@@ -40,6 +40,10 @@
     <Reference Include="FluentAssertions">
       <HintPath>..\packages\FluentAssertions.1.7.1.1\Lib\net40\FluentAssertions.dll</HintPath>
     </Reference>
+    <Reference Include="JetBrains.Annotations, Version=6.1.0.0, Culture=neutral, PublicKeyToken=3f033448d4bb5376, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\JetBrains.Annotations.7.0\lib\net45\JetBrains.Annotations.dll</HintPath>
+    </Reference>
     <Reference Include="NLog">
       <HintPath>..\packages\NLog.2.0.0.2000\lib\net40\NLog.dll</HintPath>
     </Reference>

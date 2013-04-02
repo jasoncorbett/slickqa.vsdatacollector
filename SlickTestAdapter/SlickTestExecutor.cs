@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -18,7 +17,10 @@ using SlickQA.SlickTL;
 
 namespace SlickQA.TestAdapter
 {
-	[ExtensionUri(Constants.EXECUTOR_URI_STRING)]
+    using JetBrains.Annotations;
+
+    [ExtensionUri(Constants.EXECUTOR_URI_STRING)]
+    [UsedImplicitly]
 	public class SlickTestExecutor : ITestExecutor
 	{
 	    private IFrameworkHandle _frameworkHandle;
@@ -39,7 +41,7 @@ namespace SlickQA.TestAdapter
 			        _cancellationToken = new TestRunCancellationToken();
 			        foreach (var orderedTest in slickExecutionRecorder.SlickInfo.OrderedTests)
 			        {
-			            bridge.RunAllTests(new string[] {orderedTest}, runContext, slickExecutionRecorder, new Uri(OrderedTestExecutor.ExecutorUriString), _cancellationToken );
+			            bridge.RunAllTests(new[] {orderedTest}, runContext, slickExecutionRecorder, new Uri(OrderedTestExecutor.ExecutorUriString), _cancellationToken );
 			        }
                     slickExecutionRecorder.AllDone();
 			        _cancellationToken = null;
@@ -104,7 +106,7 @@ namespace SlickQA.TestAdapter
 			        _cancellationToken = new TestRunCancellationToken();
 			        foreach (var orderedTest in slickExecutionRecorder.SlickInfo.OrderedTests)
 			        {
-			            bridge.RunAllTests(new string[] {orderedTest}, runContext, slickExecutionRecorder, new Uri(OrderedTestExecutor.ExecutorUriString), _cancellationToken);
+			            bridge.RunAllTests(new[] {orderedTest}, runContext, slickExecutionRecorder, new Uri(OrderedTestExecutor.ExecutorUriString), _cancellationToken);
 			        }
                     slickExecutionRecorder.AllDone();
 		            _cancellationToken = null;
@@ -127,8 +129,7 @@ namespace SlickQA.TestAdapter
                 }
                 if ((retval.OrderedTests == null || retval.OrderedTests.Count == 0) && retval.OrderedTest != null)
                 {
-                    retval.OrderedTests = new List<string>();
-                    retval.OrderedTests.Add(retval.OrderedTest);
+                    retval.OrderedTests = new List<string> {retval.OrderedTest};
                 }
                 log("There are {0} ordered tests.", retval.OrderedTests.Count);
                 for (int i = 0; i < retval.OrderedTests.Count; i++)
@@ -142,7 +143,7 @@ namespace SlickQA.TestAdapter
                 if (retval.BuildDescriptionProvider != null)
                     retval.BuildDescriptionProvider.RelativeRoot = Path.GetDirectoryName(source);
                 
-                retval.Tests = new SlickInfo()
+                retval.Tests = new SlickInfo
                                    {
                                        IsOrderedTest = true,
                                        OrderedTestCases = new List<SlickInfo>(),
@@ -162,7 +163,7 @@ namespace SlickQA.TestAdapter
                     {
                         log("Loader Exception: {0}", ex.GetType().FullName);
                         log("Loader Exception Message: {0}", ex.Message);
-                        if (ex.GetType() == typeof (System.IO.FileNotFoundException))
+                        if (ex.GetType() == typeof (FileNotFoundException))
                         {
                             log("File it couldn't find: {0}", ((FileNotFoundException)ex).FileName);
                         }
@@ -182,7 +183,7 @@ namespace SlickQA.TestAdapter
 
         private SlickInfo ParseOrderedTestXmlToSlickInfoList(string orderedTestPath)
         {
-            var retval = new SlickInfo()
+            var retval = new SlickInfo
                          {
                              Name = Path.GetFileName(orderedTestPath),
                              IsOrderedTest = true,

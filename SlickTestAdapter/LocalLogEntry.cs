@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using SlickQA.SlickSharp.Logging;
 
 namespace SlickQA.TestAdapter
 {
+    using System.Linq;
+
+    using JetBrains.Annotations;
+
+    [UsedImplicitly]
     public class LocalLogEntry
     {
         public string EntryTime { get; set; }
@@ -21,16 +23,15 @@ namespace SlickQA.TestAdapter
 
         public LogEntry ConvertToSlickLogEntry()
         {
-            var retval = new LogEntry();
-            retval.EntryTime = EntryTime;
-	        LogLevel l;
+            var retval = new LogEntry {EntryTime = EntryTime};
+            LogLevel l;
             retval.Level = Enum.TryParse(Level.ToUpper(), true, out l) ? l : LogLevel.INFO;
             retval.LoggerName = LoggerName;
             retval.Message = Message;
             retval.ExceptionClassName = ExceptionClassName;
             retval.ExceptionMessage = ExceptionMessage;
             if (!String.IsNullOrWhiteSpace(ExceptionStackTrace))
-                retval.ExceptionStackTrace = new List<string>(ExceptionStackTrace.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries));
+                retval.ExceptionStackTrace = new List<string>(ExceptionStackTrace.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries));
             return retval;
         }
 
@@ -38,14 +39,13 @@ namespace SlickQA.TestAdapter
         {
             var retval = new List<LogEntry>();
 
-            var serializer = new XmlSerializer(typeof (List<LocalLogEntry>), new XmlRootAttribute() {ElementName = "LogEntries", Namespace = ""});
+            var serializer = new XmlSerializer(typeof (List<LocalLogEntry>), new XmlRootAttribute {ElementName = "LogEntries", Namespace = ""});
             using (var logfile = new FileStream(filepath, FileMode.Open))
             {
                 var log = (List<LocalLogEntry>) serializer.Deserialize(logfile);
                 if (log != null && log.Count > 0)
                 {
-                    foreach (var localLogEntry in log)
-                        retval.Add(localLogEntry.ConvertToSlickLogEntry());
+                    retval.AddRange(log.Select(localLogEntry => localLogEntry.ConvertToSlickLogEntry()));
                 }
             }
 
