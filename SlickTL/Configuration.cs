@@ -149,6 +149,16 @@ namespace SlickQA.SlickTL
             InjectConfiguration(instance);
         }
 
+        public int IntegerConfigurationValue(string key, int defaultValue = 0)
+        {
+            return Convert.ToInt32(ConfigurationValue(key, Convert.ToString(defaultValue)));
+        }
+
+        public bool BooleanConfigurationValue(string key, bool defaultValue = false)
+        {
+            return Convert.ToBoolean(ConfigurationValue(key, Convert.ToString(defaultValue)));
+        }
+
         public string ConfigurationValue(string key, string defaultValue = null)
         {
             // in this method it's vital to log a message and throw an exception for an error.  See
@@ -257,7 +267,12 @@ namespace SlickQA.SlickTL
                     {
                         // by putting this in a try, and storing the first exception, we'll log 
                         // every missing configuration for a test, not just the first one
-                        property.SetValue(instance, ConfigurationValue(configAttr.ConfigurationName, configAttr.DefaultValue), null);
+                        if(property.PropertyType == typeof(String))
+                            property.SetValue(instance, ConfigurationValue(configAttr.ConfigurationName, configAttr.DefaultValue), null);
+                        else if(property.PropertyType == typeof(int))
+                            property.SetValue(instance, IntegerConfigurationValue(configAttr.ConfigurationName, Convert.ToInt32(configAttr.DefaultValue)), null);
+                        else if(property.PropertyType == typeof(bool))
+                            property.SetValue(instance, BooleanConfigurationValue(configAttr.ConfigurationName, Convert.ToBoolean(configAttr.DefaultValue)), null);
                     }
                     catch (Exception e)
                     {

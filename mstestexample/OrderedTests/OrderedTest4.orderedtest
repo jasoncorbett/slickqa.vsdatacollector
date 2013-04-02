@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<OrderedTest name="OrderedTest4" storage="c:\development\slickqa.vsdatacollector\mstestexample\orderedtests\orderedtest4.orderedtest" id="6094d73a-810f-4049-8453-c61a173ddf25" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <TestLinks>
+    <TestLink id="65f5bb6e-61f1-077c-14b7-7f3e2facaff5" name="ShouldPass" storage="..\bin\debug\mstestexample.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="98d477cc-451e-0aa5-ef3d-7264cf99c74f" name="TakeFailureScreenshot" storage="..\bin\debug\mstestexample.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="ab017f2a-29d3-d934-d94e-737364e0b5b4" name="TestWithSteps" storage="..\bin\debug\mstestexample.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  </TestLinks>
+</OrderedTest>

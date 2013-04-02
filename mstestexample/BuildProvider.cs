@@ -11,12 +11,17 @@ namespace mstestexample
 
         public static string ReleaseInfo()
         {
-            return "2";
+            return "4";
         }
 
         public static string BuildInfo()
         {
-            throw new NotImplementedException();
+            return "5";
+        }
+
+        public static string GetBuildDescription()
+        {
+            return "This\nis\na\nsample\nBuild\nString\nInfo";
         }
     }
 }

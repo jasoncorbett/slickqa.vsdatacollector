@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NLog;
 
 namespace SlickQA.SlickTL
 {
@@ -29,7 +30,7 @@ namespace SlickQA.SlickTL
             AlwaysTakeScreenshot = true;
         }
 
-        public virtual void AttachScreenshotToResult(string filename, ImageFormat format = null)
+        public static void DoScreenshotAndAttach(string filename, ITestingContext context, Logger testLog, DirectoryManager directories, ImageFormat format = null)
         {
             if (format == null)
                 format = ImageFormat.Png;
@@ -54,8 +55,8 @@ namespace SlickQA.SlickTL
             }
             catch (Exception ex)
             {
-                TestLog.Error("Unable to take screenshot '{0}' with format '{1}' because of exception '{2}': {3}", filename, format, ex.GetType().FullName, ex.Message);
-                TestLog.ErrorException("Error", ex);
+                testLog.Error("Unable to take screenshot '{0}' with format '{1}' because of exception '{2}': {3}", filename, format, ex.GetType().FullName, ex.Message);
+                testLog.ErrorException("Error", ex);
                 return;
             }
 
@@ -63,7 +64,7 @@ namespace SlickQA.SlickTL
             {
                 if(!filename.Contains(Path.DirectorySeparatorChar))
                 {
-                    filename = Path.Combine(TestDirectories.CurrentTestOutputDirectory, filename);
+                    filename = Path.Combine(directories.CurrentTestOutputDirectory, filename);
                 }
                 if(string.IsNullOrWhiteSpace(Path.GetExtension(filename)))
                 {
@@ -72,13 +73,26 @@ namespace SlickQA.SlickTL
                 try
                 {
                     bmp.Save(filename, format);
-                    Context.AddResultFile(filename);
+                    context.AddResultFile(filename);
                 }
                 catch (Exception e)
                 {
-                    TestLog.Error("Unable to take screenshot '{0}' with format '{1}' because of exception '{2}': {3}", filename, format, e.GetType().FullName, e.Message);
-                    TestLog.ErrorException("Error", e);
+                    testLog.Error("Unable to take screenshot '{0}' with format '{1}' because of exception '{2}': {3}", filename, format, e.GetType().FullName, e.Message);
+                    testLog.ErrorException("Error", e);
                 }
+            }
+            
+        }
+
+        public virtual void AttachScreenshotToResult(string filename, ImageFormat format = null)
+        {
+            try
+            {
+                DoScreenshotAndAttach(filename, Context, TestLog, TestDirectories, format);
+            }
+            catch (Exception e)
+            {
+                TestLog.Warn("Taking screenshot threw exception!", e);
             }
         }
         

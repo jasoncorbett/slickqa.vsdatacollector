@@ -47,6 +47,11 @@ namespace SlickQA.TestAdapter
 			return method.GetAttributeValue<TestCaseIdAttribute>();
 		}
 
+        public static bool IsDoNotReport(this MethodInfo method)
+        {
+            return method.GetCustomAttribute(typeof (DoNotReportAttribute)) != null;
+        }
+
 		public static string GetTestName(this MethodInfo method)
 		{
 			Debug.Assert(method.DeclaringType != null, "method.DeclaringType != null");

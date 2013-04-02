@@ -18,6 +18,18 @@ namespace mstestexample
         [TestConfiguration("SectionName.Key")]
         public string ExampleConfig { get; set; }
 
+        [TestConfiguration("ValueTypes.Integer")]
+        public int IntValue { get; set; }
+
+        [TestConfiguration("ValueTypes.UseDefault", DefaultValue = "42")]
+        public int IntUseDefault { get; set; }
+
+        [TestConfiguration("ValueTypes.Boolean")]
+        public bool BoolValue { get; set; }
+
+        [TestConfiguration("ValueTypes.UseDefault", DefaultValue = "true")]
+        public bool BoolUseDefault { get; set; }
+
         [Import]
         public DirectoryManager Directories { get; set; }
 
@@ -98,6 +110,26 @@ namespace mstestexample
             (DateTime.Now - start).TotalSeconds.Should()
                                   .BeLessThan(6,
                                               "The difference between the start time and now should be less than 6 seconds.");
+        }
+
+        [DoNotReport]
+        [TestName("DoNotReport Test")]
+        [Description("This test shouldn't be reported, but should be run.")]
+        [TestMethod]
+        public void DoNotReportTest()
+        {
+            Step("This won't be used.");
+        }
+
+        [TestName("Configuration Value Types")]
+        [Description("This test makes sure that we can get integer and boolean configuration values from the ini file.")]
+        [TestMethod]
+        public void ConfigurationValueTest()
+        {
+            IntValue.Should().BeGreaterThan(0);
+            IntUseDefault.Should().Be(42);
+            BoolValue.Should().BeTrue();
+            BoolUseDefault.Should().BeTrue();
         }
     }
 }

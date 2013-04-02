@@ -44,6 +44,7 @@ namespace SlickQA.SlickTL
                 TestingContext.Initialize(testInstance, context);
                 Directories.initialize(testInstance, context);
                 LoggingManager.initialize(testInstance);
+                Log.Debug("Initializing '{0}' framework parts.", FrameworkInitializerParts.Count());
 
                 foreach (var initializer in FrameworkInitializerParts)
                 {

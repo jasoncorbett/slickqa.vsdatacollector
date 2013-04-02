@@ -2,5 +2,6 @@
 <OrderedTest name="orderedtest3" storage="c:\development\slickqa.vsdatacollector\mstestexample\orderedtests\orderedtest3.orderedtest" id="b5cd3214-a6ba-4ac6-9100-41805bc7d762" continueAfterFailure="true" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
   <TestLinks>
     <TestLink id="2a46b09a-8207-d7b2-2f5e-5cf6ff2aec54" name="DialogBoxTest" storage="..\bin\debug\mstestexample.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <TestLink id="c37ea04e-7a65-01ba-9e55-70d0e9b0e3a6" name="DoNotReportTest" storage="..\bin\debug\mstestexample.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   </TestLinks>
 </OrderedTest>

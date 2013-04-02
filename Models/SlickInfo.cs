@@ -17,6 +17,8 @@ namespace SlickQA.DataCollector.Models
 		public string AutomationKey { get; set; }
         public string Author { get; set; }
         public bool IsOrderedTest { get; set; }
+        public bool DoNotReport { get; set; }
+        public bool SlickTLTest { get; set; }
         public List<SlickInfo> OrderedTestCases { get; set; }
 
         [XmlIgnore]
@@ -52,7 +54,8 @@ namespace SlickQA.DataCollector.Models
         {
             if (CurrentOrderedTest.OrderedTestCases == null)
                 return false;
-            if (CurrentOrderedTest.OrderedTestCases.Count == (Positions[CurrentOrderedTest] + 1))
+            if (CurrentOrderedTest.OrderedTestCases.Count == (Positions[CurrentOrderedTest] + 1) &&
+                !(Current.IsOrderedTest && !Positions.ContainsKey(Current)))
             {
                 // we've hit the end of this ordered test
                 if (Parents.Count == 0)

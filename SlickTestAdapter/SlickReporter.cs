@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
@@ -78,8 +79,9 @@ namespace SlickQA.TestAdapter
 
             while (MainEnumerator.MoveNext())
             {
+                Logger.Log("Working on creating empty result for test {0}, isOrderedTest = {1}.", MainEnumerator.Current.Name, MainEnumerator.Current.IsOrderedTest);
                 var testinfo = MainEnumerator.Current;
-                if (!testinfo.IsOrderedTest)
+                if ((!testinfo.IsOrderedTest) && (!testinfo.DoNotReport))
                 {
                     Result result = new Result();
                     Component component = null;
@@ -154,13 +156,16 @@ namespace SlickQA.TestAdapter
                 }
             }
             MainEnumerator.Reset();
-
+            MainEnumerator.MoveNext();
+            Testrun.RunStarted = DateTime.UtcNow;
+            Testrun.State = RunStatus.RUNNING;
+            Testrun.Put();
         }
 
         public void UpdateResult(TestResult result)
         {
             // TODO: Detect and handle out of range results
-            if (MainEnumerator.MoveNext() && !MainEnumerator.Current.IsOrderedTest)
+            if (MainEnumerator.MoveNext() && (!MainEnumerator.Current.IsOrderedTest) && (!MainEnumerator.Current.DoNotReport))
             {
 
                 var slickResult = MainEnumerator.Current.SlickResult;
@@ -180,9 +185,8 @@ namespace SlickQA.TestAdapter
                                                            result.ErrorStackTrace);
 
                     // if we already set the run length, don't update it, unless the property said to...
-                    if (SlickRunInfo.UseMsTestDuration || String.IsNullOrEmpty(slickResult.RunLength) ||
-                        slickResult.RunLength == "0")
-                        slickResult.RunLength = result.Duration.TotalMilliseconds.ToString("F0");
+                    if (SlickRunInfo.UseMsTestDuration || slickResult.RunLength == null || slickResult.RunLength == 0)
+                        slickResult.RunLength = Convert.ToInt32(result.Duration.TotalMilliseconds);
                     // from http://msdn.microsoft.com/en-us/library/kfsatb94.aspx
                     slickResult.Put();
 
@@ -214,7 +218,7 @@ namespace SlickQA.TestAdapter
                 {
                     Result result = test.SlickResult;
                     result.RunStatus = RunStatus.FINISHED;
-                    result.RunLength = "0";
+                    result.RunLength = 0;
                     result.Status = ResultStatus.SKIPPED;
                     result.Recorded = DateTime.UtcNow;
                     result.Put();
@@ -224,48 +228,59 @@ namespace SlickQA.TestAdapter
 
         private void AddResultFile(Result slickResult, string filepath)
         {
-            if (!PostedFiles.Contains(filepath))
+            try
             {
-                var filebytes = File.ReadAllBytes(filepath);
-                var slickFile = new StoredFile()
-                                    {
-                                        FileName = Path.GetFileName(filepath),
-                                        Mimetype = MIMEAssistant.GetMIMEType(filepath),
-                                        Length = filebytes.Length
-                                    };
-                slickFile.Post();
-                slickFile.PostContent(filebytes);
-                slickResult.Files.Add(slickFile);
-                if (Path.GetFileName(filepath).Equals("testlog.xml", StringComparison.OrdinalIgnoreCase))
+
+                if (!PostedFiles.Contains(filepath))
                 {
-                    slickResult.Log = new List<LogEntry>();
-                    slickResult.Log.AddRange(LocalLogEntry.ReadFromFile(filepath));
-                }
-                else if (Path.GetFileName(filepath).Equals("steps.xml", StringComparison.OrdinalIgnoreCase))
-                {
-                    Testcase test = slickResult.TestcaseReference;
-                    test.Get();
-                    var serializer = new XmlSerializer(typeof (List<SlickQA.SlickTL.TestStep>),
-                                                       new XmlRootAttribute("Steps"));
-                    using (var stepFileStream = new FileStream(filepath, FileMode.Open))
+                    var slickFile = new StoredFile()
+                                        {
+                                            FileName = Path.GetFileName(filepath),
+                                            Mimetype = MIMEAssistant.GetMIMEType(filepath),
+                                        };
+                    slickFile.Post();
+                    slickFile.PostFile(filepath);
+                    
+                    slickResult.Files.Add(slickFile);
+                    if (Path.GetFileName(filepath).Equals("testlog.xml", StringComparison.OrdinalIgnoreCase))
                     {
-                        try
+                        slickResult.Log = new List<LogEntry>();
+                        slickResult.Log.AddRange(LocalLogEntry.ReadFromFile(filepath));
+                    }
+                    else if (Path.GetFileName(filepath).Equals("steps.xml", StringComparison.OrdinalIgnoreCase))
+                    {
+                        Testcase test = slickResult.TestcaseReference;
+                        test.Get();
+                        var serializer = new XmlSerializer(typeof (List<SlickQA.SlickTL.TestStep>),
+                                                           new XmlRootAttribute("Steps"));
+                        using (var stepFileStream = new FileStream(filepath, FileMode.Open))
                         {
-                            var steps = (List<SlickQA.SlickTL.TestStep>) serializer.Deserialize(stepFileStream);
-                            test.Steps = new List<SlickQA.SlickSharp.TestStep>();
-                            foreach (var step in steps)
+                            try
                             {
-                                test.Steps.Add(new SlickQA.SlickSharp.TestStep()
-                                                   {Name = step.StepName, ExpectedResult = step.ExpectedResult});
+                                var steps = (List<SlickQA.SlickTL.TestStep>) serializer.Deserialize(stepFileStream);
+                                test.Steps = new List<SlickQA.SlickSharp.TestStep>();
+                                foreach (var step in steps)
+                                {
+                                    test.Steps.Add(new SlickQA.SlickSharp.TestStep()
+                                                       {
+                                                           Name = step.StepName,
+                                                           ExpectedResult =
+                                                               step.ExpectedResult
+                                                       });
+                                }
+                                test.Put();
                             }
-                            test.Put();
-                        }
-                        catch (Exception)
-                        {
+                            catch (Exception)
+                            {
+                            }
                         }
                     }
+                    PostedFiles.Add(filepath);
                 }
-                PostedFiles.Add(filepath);
+            }
+            catch (Exception e)
+            {
+                Logger.Log("Error posting file '{0}' because of {1}: {2}\r\n{3}", filepath, e.GetType().Name, e.Message, e.StackTrace);
             }
 
         }
@@ -285,8 +300,13 @@ namespace SlickQA.TestAdapter
 
         public void AllDone()
         {
+            if (Testrun != null)
+            {
+                Testrun.State = RunStatus.FINISHED;
+                Testrun.RunFinished = DateTime.UtcNow;
+                Testrun.Put();
+            }
             Host.Close();
-            // Not sure if we need this now, but just in case
         }
 
         private void InitializeTestrun()
@@ -299,6 +319,7 @@ namespace SlickQA.TestAdapter
                               TestPlanId = Testplan.Id,
                               Name = Testplan.Name,
                               ConfigurationReference = Environment,
+                              Created = DateTime.UtcNow,
                           };
             Testrun.Post();
         }
@@ -309,13 +330,13 @@ namespace SlickQA.TestAdapter
                            {
                                ProjectReference = Project,
                                Name = SlickRunInfo.TestPlan.Name,
-                               Id = SlickRunInfo.TestPlan.Id
                            };
-            Testplan.Get(CreateIfNecessaryMode, 3);
+            Testplan.FindOne(CreateIfNecessaryMode, 3);
         }
 
         private void InitializeBuild()
         {
+            Logger.Log("Current Directory = {0}", Directory.GetCurrentDirectory());
             if (SlickRunInfo.BuildProvider != null && SlickRunInfo.BuildProvider.Method == null)
             {
                 Logger.Log("Build Provider Method was not found!");
@@ -324,30 +345,75 @@ namespace SlickQA.TestAdapter
                     Logger.Log(log);
                 }
             }
+            var current = Directory.GetCurrentDirectory();
             try
             {
+                Directory.SetCurrentDirectory(SlickRunInfo.BuildProvider.Directory);
                 var buildNumber = SlickRunInfo.BuildProvider.Method.Invoke(null, null) as String;
+                Directory.SetCurrentDirectory(current);
 
                 var build = new Build
-                            {
-                                Name = buildNumber,
-                                ProjectId = Project.Id,
-                                ReleaseId = Release.Id
-                            };
+                                {
+                                    Name = buildNumber,
+                                    ProjectId = Project.Id,
+                                    ReleaseId = Release.Id
+                                };
                 build.Get(CreateIfNecessaryMode, 3);
                 Build = build;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                if(String.IsNullOrWhiteSpace(SlickRunInfo.Build))
+                if (ex.InnerException != null)
                 {
-                    Build = new Build() { ProjectId = Project.Id, ReleaseId = Release.Id, Id = Release.DefaultBuildId };
+                    Logger.Log(
+                        "Error getting build provider information, attempting to use Build.  Exception {0}: {1}\r\n{2}",
+                        ex.InnerException.GetType().Name, ex.InnerException.Message, ex.InnerException.StackTrace);
+                }
+                if (String.IsNullOrWhiteSpace(SlickRunInfo.Build))
+                {
+                    Build = new Build() {ProjectId = Project.Id, ReleaseId = Release.Id, Id = Release.DefaultBuildId};
                 }
                 else
                 {
-                    Build = new Build() { ProjectId = Project.Id, ReleaseId = Release.Id, Name = SlickRunInfo.Build };
+                    Build = new Build() {ProjectId = Project.Id, ReleaseId = Release.Id, Name = SlickRunInfo.Build};
                 }
                 Build.Get(CreateIfNecessaryMode, 3);
+            }
+            finally
+            {
+                Directory.SetCurrentDirectory(current);
+            }
+            try
+            {
+                Logger.Log("Current Directory = {0}", Directory.GetCurrentDirectory());
+                if (SlickRunInfo.BuildDescriptionProvider != null && SlickRunInfo.BuildDescriptionProvider.Method == null)
+                {
+                        Logger.Log("Logs from BuildDescriptionProvider:");
+                        foreach (var logentry in SlickRunInfo.BuildDescriptionProvider.Logs)
+                            Logger.Log("\t{0}", logentry);
+                }
+                Directory.SetCurrentDirectory(SlickRunInfo.BuildDescriptionProvider.Directory);
+                Logger.Log("Calling BuildDescriptionProvider with method name {0}.", SlickRunInfo.BuildDescriptionProvider.MethodName);
+                Build.Description = SlickRunInfo.BuildDescriptionProvider.Method.Invoke(null, null) as String;
+                Logger.Log("Got '{0}' from BuildDescriptionProvider.", Build.Description);
+                Directory.SetCurrentDirectory(current);
+                
+                Logger.Log("Updating build information with description.");
+                Build.Put();
+                Logger.Log("Done updating build information with description.");
+            }
+            catch (Exception ex)
+            {
+                if (ex.InnerException != null)
+                {
+                    Logger.Log(
+                        "Error getting build description provider information, attempting to use Build.  Exception {0}: {1}\r\n{2}",
+                        ex.InnerException.GetType().Name, ex.InnerException.Message, ex.InnerException.StackTrace);
+                }
+            }
+            finally
+            {
+                Directory.SetCurrentDirectory(current);
             }
         }
 
@@ -362,9 +428,12 @@ namespace SlickQA.TestAdapter
                     Logger.Log(log);
                 }
             }
+            var current = Directory.GetCurrentDirectory();
             try
             {
+                Directory.SetCurrentDirectory(SlickRunInfo.ReleaseProvider.Directory);
                 var releaseName = SlickRunInfo.ReleaseProvider.Method.Invoke(null, null) as String;
+                Directory.SetCurrentDirectory(current);
 
                 var release = new Release()
                                   {
@@ -374,9 +443,16 @@ namespace SlickQA.TestAdapter
                 release.Get(CreateIfNecessaryMode, 3);
                 Release = release;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                if(!String.IsNullOrWhiteSpace(SlickRunInfo.Release))
+                if (ex.InnerException != null)
+                {
+                    Logger.Log(
+                        "Error getting release provider information, attempting to use Release.  Exception {0}: {1}\r\n{2}",
+                        ex.InnerException.GetType().Name, ex.InnerException.Message, ex.InnerException.StackTrace);
+                }
+
+                if (!String.IsNullOrWhiteSpace(SlickRunInfo.Release))
                 {
                     Release = new Release()
                                   {
@@ -393,6 +469,10 @@ namespace SlickQA.TestAdapter
                                   };
                 }
                 Release.Get(CreateIfNecessaryMode, 3);
+            }
+            finally
+            {
+                Directory.SetCurrentDirectory(current);
             }
         }
 
@@ -412,7 +492,7 @@ namespace SlickQA.TestAdapter
 
         private void InitializeProject()
         {
-            Project = new Project {Id = SlickRunInfo.Project.Id, Name = SlickRunInfo.Project.Name};
+            Project = new Project {Name = SlickRunInfo.Project.Name};
             Project.Get(CreateIfNecessaryMode, 3);
             if(Project.Components != null && Project.Components.Count > 0)
             {
@@ -425,39 +505,62 @@ namespace SlickQA.TestAdapter
 
         public void TestStartedSignal(string className)
         {
-            while (UpdateServiceEnumerator.MoveNext() && UpdateServiceEnumerator.Current.IsOrderedTest)
-                continue;
-            Result result = UpdateServiceEnumerator.Current.SlickResult;
-            Logger.Log("Test {0} - Starting...", result.TestcaseReference.Name);
-            result.Recorded = DateTime.UtcNow;
-            result.Put();
+            try
+            {
+                do
+                {
+                    UpdateServiceEnumerator.MoveNext();
+                } while (UpdateServiceEnumerator.Current.IsOrderedTest || (!UpdateServiceEnumerator.Current.SlickTLTest));
+
+                if (!UpdateServiceEnumerator.Current.DoNotReport)
+                {
+                    Result result = UpdateServiceEnumerator.Current.SlickResult;
+                    Logger.Log("Test {0} - Starting...", result.TestcaseReference.Name);
+                    result.Recorded = DateTime.UtcNow;
+                    result.Started = DateTime.UtcNow;
+                    result.RunStatus = RunStatus.RUNNING;
+                    result.Put();
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Log("Unable to record test started signal because of execption '{0}': '{1}'\r\n{2}", e.GetType().Name, e.Message, e.StackTrace);
+            }
         }
 
         public void TestFinishedSignal(string className, string outcome, string[] files)
         {
-            try
+            if (!UpdateServiceEnumerator.Current.DoNotReport)
             {
-                Result result = UpdateServiceEnumerator.Current.SlickResult;
-                Logger.Log("Test {1} - '{0}'.", outcome, result.TestcaseReference.Name);
-                result.RunStatus = RunStatus.FINISHED;
-                UnitTestOutcome unitOutcome = UnitTestOutcome.Unknown;
-                if (UnitTestOutcome.TryParse(outcome, out unitOutcome))
+                try
                 {
-                    result.Status = unitOutcome.ConvertUnitTestOutcomeToSlickResultStatus();
+                    Result result = UpdateServiceEnumerator.Current.SlickResult;
+                    Logger.Log("Test {1} - '{0}'.", outcome, result.TestcaseReference.Name);
+                    result.RunStatus = RunStatus.FINISHED;
+                    UnitTestOutcome unitOutcome = UnitTestOutcome.Unknown;
+                    if (UnitTestOutcome.TryParse(outcome, out unitOutcome))
+                    {
+                        result.Status = unitOutcome.ConvertUnitTestOutcomeToSlickResultStatus();
 
+                    }
+                    var now = DateTime.UtcNow;
+                    result.RunLength = Convert.ToInt32((now - result.Recorded).TotalMilliseconds);
+                    result.Recorded = now;
+                    result.Finished = now;
+                    result.RunStatus = RunStatus.FINISHED;
+
+                    result.Files = new List<StoredFile>();
+                    foreach (var file in files)
+                    {
+                        AddResultFile(result, file);
+                    }
+                    result.Put();
                 }
-                result.Recorded = DateTime.UtcNow;
-
-                result.Files = new List<StoredFile>();
-                foreach (var file in files)
+                catch (Exception e)
                 {
-                    AddResultFile(result, file);
+                    Logger.Log("Unable to file {0} result for test class {1} because of exception {2}: {3}\r\n{4}",
+                               outcome, className, e.GetType().FullName, e.Message, e.StackTrace);
                 }
-                result.Put();
-            }
-            catch (Exception e)
-            {
-                Logger.Log("Unable to file {0} result for test class {1} because of exception {2}: {3}\r\n{4}", outcome, className, e.GetType().FullName, e.Message, e.StackTrace);
             }
         }
     }

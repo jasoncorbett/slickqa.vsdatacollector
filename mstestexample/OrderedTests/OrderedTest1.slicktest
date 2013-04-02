@@ -2,12 +2,11 @@
 <SlickTest>
   <Url>
     <Scheme>http</Scheme>
-    <HostName>10.10.250.152</HostName>
+    <HostName>10.10.250.36</HostName>
     <Port>8080</Port>
     <SitePath></SitePath>
   </Url>
   <Project>
-    <Id>50452a7cda0685ba6a265acd</Id>
     <Name>Another Project</Name>
   </Project>
   <Release>1</Release>
@@ -22,11 +21,12 @@
     <MethodName>ReleaseInfo</MethodName>
   </ReleaseProvider>
   <TestPlan>
-    <Id>507307ebcbced438bbf2a5bd</Id>
     <Name>OrderedTest1</Name>
-    <ProjectId>50452a7cda0685ba6a265acd</ProjectId>
   </TestPlan>
   <OrderedTest>orderedtest1.orderedtest</OrderedTest>
+    <!--<OrderedTest>orderedtest1.orderedtest</OrderedTest>
+    <OrderedTest>orderedtest4.orderedtest</OrderedTest>
+  </OrderedTests>-->
   <Environment>Windows VM</Environment>
   <Build>4</Build>
   <BuildProvider>
@@ -38,5 +38,14 @@
     <TypeName>mstestexample.BuildProvider</TypeName>
     <MethodName>BuildInfo</MethodName>
   </BuildProvider>
-  <UseMsTestDuration>true</UseMsTestDuration>
+  <BuildDescriptionProvider>
+    <AssemblyName>mstestexample.dll</AssemblyName>
+    <SearchDirectories>
+      <Directory>..</Directory>
+      <Directory>..\Bin\Debug</Directory>
+    </SearchDirectories>
+    <TypeName>mstestexample.BuildProvider</TypeName>
+    <MethodName>GetBuildDescription</MethodName>
+  </BuildDescriptionProvider>
+  <UseMsTestDuration>false</UseMsTestDuration>
 </SlickTest>

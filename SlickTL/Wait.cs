@@ -23,11 +23,24 @@ namespace SlickQA.SlickTL
         public static void For(WaitForCondition condition, string summary=null, int timeoutInSeconds = 300, int intervalInMilliseconds = 250)
         {
             DateTime start = DateTime.Now;
-            bool finished = condition.Invoke();
+            bool finished = false;
+            try
+            {
+                finished = condition.Invoke();
+            }
+            catch (Exception)
+            {
+            }
             while ((DateTime.Now - start).TotalSeconds <= timeoutInSeconds && !finished)
             {
                 Thread.Sleep(intervalInMilliseconds);
-                finished = condition.Invoke();
+                try
+                {
+                    finished = condition.Invoke();
+                }
+                catch (Exception)
+                {
+                }
             }
             if (!finished)
             {

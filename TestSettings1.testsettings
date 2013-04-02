@@ -15,6 +15,12 @@
     <AgentRule name="LocalMachineDefaultRole">
       <DataCollectors>
         <DataCollector uri="datacollector://microsoft/VideoRecorder/1.0" assemblyQualifiedName="Microsoft.VisualStudio.TestTools.DataCollection.VideoRecorder.VideoRecorderDataCollector, Microsoft.VisualStudio.TestTools.DataCollection.VideoRecorder, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" friendlyName="Video Recorder">
+          <Configuration>
+            <MediaRecorder sendRecordedMediaForPassedTestCase="false" xmlns="">
+              <ScreenCaptureVideo frameRate="16" bitRate="3000" quality="90" />
+              <AudioRecorder enabled="true" />
+            </MediaRecorder>
+          </Configuration>
         </DataCollector>
       </DataCollectors>
     </AgentRule>

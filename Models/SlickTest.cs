@@ -21,6 +21,11 @@ namespace SlickQA.DataCollector.Models
         public TestPlanInfo TestPlan { get; set; }
         public String Build { get; set; }
         public BuildProviderInfo BuildProvider { get; set; }
+        public BuildProviderInfo BuildDescriptionProvider { get; set; }
+        [XmlArray]
+        [XmlArrayItem(ElementName = "OrderedTest")]
+        public List<String> OrderedTests { get; set; }
+
         public String OrderedTest { get; set; }
         public String Environment { get; set; }
 

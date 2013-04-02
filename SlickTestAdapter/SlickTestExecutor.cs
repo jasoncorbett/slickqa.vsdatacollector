@@ -14,6 +14,7 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SlickQA.DataCollector.Models;
+using SlickQA.SlickTL;
 
 namespace SlickQA.TestAdapter
 {
@@ -36,7 +37,10 @@ namespace SlickQA.TestAdapter
                     log("Running '{0}'", test.Source);
 			        var slickExecutionRecorder = new SlickExecutionRecorder(frameworkHandle, LoadSlickTest(test.Source));
 			        _cancellationToken = new TestRunCancellationToken();
-			        bridge.RunAllTests(new string[] {slickExecutionRecorder.SlickInfo.OrderedTest}, runContext, slickExecutionRecorder, new Uri(OrderedTestExecutor.ExecutorUriString), _cancellationToken );
+			        foreach (var orderedTest in slickExecutionRecorder.SlickInfo.OrderedTests)
+			        {
+			            bridge.RunAllTests(new string[] {orderedTest}, runContext, slickExecutionRecorder, new Uri(OrderedTestExecutor.ExecutorUriString), _cancellationToken );
+			        }
                     slickExecutionRecorder.AllDone();
 			        _cancellationToken = null;
 			    }
@@ -98,7 +102,10 @@ namespace SlickQA.TestAdapter
 			    {
 			        var slickExecutionRecorder = new SlickExecutionRecorder(frameworkHandle, LoadSlickTest(testSource));
 			        _cancellationToken = new TestRunCancellationToken();
-			        bridge.RunAllTests(new string[] {slickExecutionRecorder.SlickInfo.OrderedTest}, runContext, slickExecutionRecorder, new Uri(OrderedTestExecutor.ExecutorUriString), _cancellationToken);
+			        foreach (var orderedTest in slickExecutionRecorder.SlickInfo.OrderedTests)
+			        {
+			            bridge.RunAllTests(new string[] {orderedTest}, runContext, slickExecutionRecorder, new Uri(OrderedTestExecutor.ExecutorUriString), _cancellationToken);
+			        }
                     slickExecutionRecorder.AllDone();
 		            _cancellationToken = null;
 			    }
@@ -118,12 +125,36 @@ namespace SlickQA.TestAdapter
                 {
                     retval = (SlickTest) serializer.Deserialize(filestream);
                 }
-                retval.OrderedTest = Path.Combine(Path.GetDirectoryName(source), retval.OrderedTest);
+                if ((retval.OrderedTests == null || retval.OrderedTests.Count == 0) && retval.OrderedTest != null)
+                {
+                    retval.OrderedTests = new List<string>();
+                    retval.OrderedTests.Add(retval.OrderedTest);
+                }
+                log("There are {0} ordered tests.", retval.OrderedTests.Count);
+                for (int i = 0; i < retval.OrderedTests.Count; i++)
+                {
+                    retval.OrderedTests[i] = Path.Combine(Path.GetDirectoryName(source), retval.OrderedTests[i]);
+                }
                 if (retval.ReleaseProvider != null)
                     retval.ReleaseProvider.RelativeRoot = Path.GetDirectoryName(source);
                 if (retval.BuildProvider != null)
                     retval.BuildProvider.RelativeRoot = Path.GetDirectoryName(source);
-                retval.Tests = ParseOrderedTestXmlToSlickInfoList(retval.OrderedTest);
+                if (retval.BuildDescriptionProvider != null)
+                    retval.BuildDescriptionProvider.RelativeRoot = Path.GetDirectoryName(source);
+                
+                retval.Tests = new SlickInfo()
+                                   {
+                                       IsOrderedTest = true,
+                                       OrderedTestCases = new List<SlickInfo>(),
+                                       Name = "Wrapper"
+                                   };
+                foreach (var orderedTest in retval.OrderedTests)
+                {
+                    log("Parsing Ordered Test {0}...", orderedTest);
+                    var test = ParseOrderedTestXmlToSlickInfoList(orderedTest);
+                    log("Parsed Ordered Test {0} and found {1} tests.", orderedTest, test.OrderedTestCases.Count);
+                    retval.Tests.OrderedTestCases.Add(test);
+                }
             }
                 catch(ReflectionTypeLoadException e)
                 {
@@ -214,6 +245,8 @@ namespace SlickQA.TestAdapter
                                                            Tags = method.GetTags(),
                                                            Attributes = method.GetAttributes(),
                                                            Author = method.GetAuthor(),
+                                                           DoNotReport = method.IsDoNotReport(),
+                                                           SlickTLTest = typeof(SlickBaseTest).IsAssignableFrom(type) || typeof(CodedUIScreenshotBaseTest).IsAssignableFrom(type),
                                                        });
                                         found = true;
                                         break;
@@ -227,7 +260,6 @@ namespace SlickQA.TestAdapter
                         }
                     }
                 }
-
 
             }
             return retval;

@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>SlickQA.SlickTL</id>
-    <version>1.0.4</version>
+    <version>1.0.9</version>
     <authors>jcorbett</authors>
     <owners>jcorbett</owners>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseUrl>
@@ -10,8 +10,8 @@
     <iconUrl>http://vsdatacollector.slickqa.googlecode.com/git/vs-slick.png</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>SlickTL is a library that can be used to help with creation of mstest test cases.  It adds ini config parsing (from the fabulous Nini project), and it adds configuration of logging.  Also included are slick specific pieces like annotations, and test steps for adding data to slick.</description>
-    <releaseNotes>Allowing initialize to be called more than once with a flag.</releaseNotes>
-    <copyright>Copyright 2012</copyright>
+    <releaseNotes>Adding a BuildDescriptionProvider tag to the slicktest file.</releaseNotes>
+    <copyright>Copyright 2013</copyright>
     <tags>Testing mstest QA</tags>
     <dependencies>
       <dependency id="NLog" version="2.0.0.2000" />
