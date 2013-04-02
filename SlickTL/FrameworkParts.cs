@@ -1,6 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace SlickQA.SlickTL
+﻿namespace SlickQA.SlickTL
 {
     public interface INamablePart
     {

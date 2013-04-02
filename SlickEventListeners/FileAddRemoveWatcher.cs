@@ -3,7 +3,7 @@ using System.ComponentModel.Composition;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+
 using ValidateArg = Microsoft.VisualStudio.TestPlatform.ObjectModel.ValidateArg;
 
 namespace SlickEventListeners
