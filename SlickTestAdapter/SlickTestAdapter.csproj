@@ -81,10 +81,6 @@
     <Compile Include="SlickTestExecutor.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\slickqa.slicksharp\SlickSharp\SlickSharp.csproj">
-      <Project>{4db0f133-f095-4c10-bf62-0939195f26fb}</Project>
-      <Name>SlickSharp</Name>
-    </ProjectReference>
     <ProjectReference Include="..\LinkedHashMap\LinkedHashMap.csproj">
       <Project>{79621F2D-2D07-4F1F-B154-4731EBB03DF3}</Project>
       <Name>LinkedHashMap</Name>
@@ -96,6 +92,10 @@
     <ProjectReference Include="..\SlickEventListeners\SlickEventListeners.csproj">
       <Project>{4A927FEA-160F-4740-88F8-EEE0679993FC}</Project>
       <Name>SlickEventListeners</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SlickSharp\SlickSharp.csproj">
+      <Project>{4db0f133-f095-4c10-bf62-0939195f26fb}</Project>
+      <Name>SlickSharp</Name>
     </ProjectReference>
     <ProjectReference Include="..\SlickTL\SlickTL.csproj">
       <Project>{58c26953-1b7e-48e2-b563-c82feae9d569}</Project>

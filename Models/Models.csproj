@@ -49,13 +49,13 @@
     <Compile Include="UrlInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\slickqa.slicksharp\SlickSharp\SlickSharp.csproj">
-      <Project>{4db0f133-f095-4c10-bf62-0939195f26fb}</Project>
-      <Name>SlickSharp</Name>
-    </ProjectReference>
     <ProjectReference Include="..\LinkedHashMap\LinkedHashMap.csproj">
       <Project>{79621f2d-2d07-4f1f-b154-4731ebb03df3}</Project>
       <Name>LinkedHashMap</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SlickSharp\SlickSharp.csproj">
+      <Project>{4db0f133-f095-4c10-bf62-0939195f26fb}</Project>
+      <Name>SlickSharp</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
